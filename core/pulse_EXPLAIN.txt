@@ -1,0 +1,25 @@
+MODULE: pulse
+PYTHON_FILE: core/pulse.py
+LAST_UPDATED_UTC: 2026-05-02 10:39:33Z
+STATUS: Implemented
+
+WHAT_THIS_FILE_DOES:
+- This module currently contains concrete symbols listed below. Update this file whenever behavior changes.
+
+CURRENT_STRUCTURE:
+- Classes: None yet
+- Functions: _simulate_price, main, stream_ticks_to_redis
+- Imports: MetaTrader5, __future__, core.bus, core.clock, dotenv, logging, os, pathlib, schemas.tick, sys, time
+- Has __main__ guard: Yes
+- Approx lines: 81
+
+INPUTS_OUTPUTS:
+- Inputs: TODO (describe runtime inputs when implemented)
+- Outputs/Side effects: TODO (describe data writes, external calls, or state changes)
+
+DEPENDENCIES:
+- Internal modules: TODO
+- External services/APIs: TODO
+
+UPDATE_RULE:
+- Keep this file synchronized with the actual Python behavior after every code change.

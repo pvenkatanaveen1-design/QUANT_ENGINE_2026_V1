@@ -1,0 +1,14 @@
+{
+  "EURUSD": {
+    "symbol": "EURUSD",
+    "min_spread_pips": 2.5,
+    "session_open": "07:00",
+    "session_close": "20:00",
+    "atr_period": 14,
+    "atr_multiplier_sl": 1.5,
+    "atr_multiplier_tp": 3.0,
+    "max_position_size_lots": 0.1,
+    "pip_value_per_lot": 10.0,
+    "enabled": true
+  }
+}
