@@ -1,0 +1,43 @@
+Date: 2026-05-07
+Project: QUANT_ENGINE_2026
+
+Prompts Used Today:
+1) Update requirements.txt for Phase 2:
+   - Add MetaTrader5
+2) Update config system for MT5 support:
+   - core/config.py + core/config.txt
+   - Add MT5_LOGIN, MT5_PASSWORD, MT5_SERVER, MT5_SYMBOLS
+3) Create MT5 pulse ingestion module:
+   - core/pulse.py + core/pulse.txt
+   - scripts/test_pulse.py + scripts/test_pulse.txt
+4) Update dashboard for live market data:
+   - dashboard/dashboard_app.py + dashboard/dashboard.txt
+5) Update pulse price-format logic:
+   - format_price(symbol, value)
+6) Create trading clock module:
+   - core/clock.py + core/clock.txt
+   - Add pytz to requirements.txt
+
+Today Changes (Summary):
+- Phase 2 MT5 config variables added and documented.
+- MT5 pulse engine added for multi-symbol live tick ingestion.
+- Redis market keys published:
+  - market:{symbol}:bid
+  - market:{symbol}:ask
+  - market:{symbol}:spread
+  - market:{symbol}:timestamp
+- System keys published:
+  - pulse:status
+  - mt5:connection
+- Dashboard upgraded with LIVE MARKET DATA section, 2-second auto-refresh, status indicators, sorted table, and local-time display.
+- Price display/Redis formatting rules improved for forex, gold, JPY pairs, and crypto.
+- Trading clock module added for UTC/IST time, session detection, weekend detection, and 10-second Redis updates:
+  - clock:utc
+  - clock:ist
+  - clock:session
+  - clock:is_weekend
+
+Notes:
+- Scope focused on Phase 2 market-data and market-time systems.
+- No ML libraries or trading frameworks added.
+

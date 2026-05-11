@@ -1,0 +1,47 @@
+# config/funded_rules.yaml
+# Prop firm specific rules.
+# Set active_firm to your current challenge firm.
+# The compliance engine reads active_firm and enforces those rules.
+# Verify all values at your firm's website before buying the challenge.
+
+active_firm: "FTMO"   # Options: FTMO, E8, THE5ERS, CUSTOM
+
+FTMO:
+  daily_dd_pct: 0.05            # 5% from start-of-day balance
+  max_dd_pct: 0.10              # 10% from initial deposit (NOT peak)
+  dd_measured_from: "initial"   # "initial" = from deposit, "peak" = from peak balance
+  daily_reset_hour_utc: 22      # FTMO day resets at 22:00 UTC (Prague midnight CET)
+  news_trading_allowed: true    # FTMO allows news trading (2026)
+  weekend_hold_allowed: false   # FTMO: close all positions by Friday close
+  min_trading_days: 10          # Must trade at least 10 days in 30-day challenge
+  consistency_rule: false       # FTMO does not have a strict consistency rule
+
+E8:
+  daily_dd_pct: 0.05
+  max_dd_pct: 0.08
+  dd_measured_from: "initial"
+  daily_reset_hour_utc: 0
+  news_trading_allowed: true
+  weekend_hold_allowed: false
+  min_trading_days: 0
+  consistency_rule: false
+
+THE5ERS:
+  daily_dd_pct: 0.04            # The5ers varies — verify current plan
+  max_dd_pct: 0.06
+  dd_measured_from: "peak"      # The5ers uses peak balance rule — HARDER
+  daily_reset_hour_utc: 0
+  news_trading_allowed: true
+  weekend_hold_allowed: false
+  min_trading_days: 0
+  consistency_rule: false
+
+CUSTOM:
+  daily_dd_pct: 0.04
+  max_dd_pct: 0.08
+  dd_measured_from: "initial"
+  daily_reset_hour_utc: 0
+  news_trading_allowed: true
+  weekend_hold_allowed: true
+  min_trading_days: 0
+  consistency_rule: false

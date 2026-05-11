@@ -1,0 +1,33 @@
+`scripts/test_broker_bridge.py` — scenarios
+============================================
+
+What you need
+-------------
+- **Redis** running (same as the rest of QUANT_ENGINE_2026).
+- **MetaTrader 5** installed, logged into a **DEMO** account (Phase 12 refuses non-demo).
+- **Python `MetaTrader5`** package installed.
+- **`.env`**: `SYSTEM_MODE=TEST` (the bridge refuses LIVE).
+- Optional: `run.py` already running so `pulse` owns MT5 — the bridge can **reuse** that session.
+
+Scenario 1 — **live probe (small demo order)**
+- Seeds a **green** safety stack (heartbeat, shield, kill, news, clock, `SYSTEM_MODE` in Redis).
+- Refreshes tight `market:*` ticks and runs **cost guard** + **router** so `router:last_decision=APPROVED` for **EURUSD**.
+- Calls **`send_market_order("EURUSD", "BUY", 0.01)`**.
+- **Expected:** `execution:last_status` **FILLED** (green UI) *if* the broker accepts the deal; otherwise **REJECTED** (MT5 retcode in `execution:last_reason`). Not a script bug — always verify in MT5 Journal.
+
+Scenario 2 — **router blocks**
+- Forces `router:last_decision=BLOCKED` while other keys look fine.
+- **Expected:** **`execution:last_status=BLOCKED`**, yellow dashboard state, reason mentions router approval.
+
+Scenario 3 — **kill switch**
+- Router APPROVED again, then `kill_switch:active=true`.
+- **Expected:** **BLOCKED**, reason mentions kill switch.
+
+Scenario 4 — **bad heartbeat**
+- Router APPROVED, `heartbeat:overall=UNHEALTHY`.
+- **Expected:** **BLOCKED**, reason mentions `heartbeat:overall`.
+
+Safety reminder
+---------------
+This is **infrastructure**, not a strategy. Only **0.01** lots are allowed in code for this phase.
+All sends still require **TEST** mode + **demo** account + passing Redis gates.

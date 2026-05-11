@@ -1,0 +1,23 @@
+Regime Intelligence Dependencies
+
+Upstream:
+- MT5 terminal session (data source)
+- core/pulse.py (RAW_MARKET_DATA + Redis pulse keys)
+- systems/data/tick_sanitizer.py
+- systems/data/market_data_hub.py
+- EventType.CANDLE_CLOSED (H1 required for live classification)
+
+Storage:
+- DuckDB candles/regime_history (analytics/history)
+- SQLite trades (performance till yesterday by regime_at_entry)
+
+Cross-process truth:
+- core/system_registry.py (status + heartbeat)
+- core/bus.py Redis keys for waiting/fallback/operator diagnostics
+
+Downstream:
+- EventType.REGIME_CHANGED
+- EventType.REGIME_PROBABILITY
+- EventType.REGIME_TRANSITION
+- Strategy selector/risk systems consume regime state and tradeability.
+

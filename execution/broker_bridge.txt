@@ -1,0 +1,69 @@
+MT5 broker bridge — `execution/broker_bridge.py` (Phase 12)
+=========================================================
+
+What it is
+----------
+- **Execution adapter** between Redis + the **execution router** and **MetaTrader 5**.
+- Places **market BUY/SELL** only, **volume 0.01**, **DEMO account** only, **`SYSTEM_MODE=TEST`** only.
+- **No** strategy loop, **no** auto-trader: something else (script / future OMS) must call `send_market_order`.
+
+MT5 execution flow (happy path)
+-------------------------------
+1. Strategy or test code ensures **`evaluate_trade_request(symbol)`** has run so `router:*` shows **APPROVED** for that symbol.
+2. Call **`send_market_order(symbol, "BUY"|"SELL", 0.01)`**.
+3. Bridge re-reads **Redis safety** (below) and `.env` **SYSTEM_MODE**.
+4. If allowed, bridge ensures MT5 is initialized (reuses `core.pulse` session when `run.py` is up).
+5. Bridge verifies **`account_info().trade_mode`** is **DEMO**.
+6. Builds **`TRADE_ACTION_DEAL`** request (comment `QUANT_ENGINE_2026`, magic `2026`).
+7. **`order_send`** → result normalized to **FILLED** or **REJECTED**.
+8. **`publish_execution_status`** writes **`execution:*`** for dashboards and ops.
+
+Router dependency
+-----------------
+- The bridge is **downstream** of the router: it requires **`router:last_decision == APPROVED`** and a matching **`router:last_symbol`**.
+- You still need the router’s prerequisites (cost guard keys, session, etc.) satisfied *before* it will publish APPROVED.
+
+Execution safety hierarchy (bridge pre-send)
+--------------------------------------------
+All must pass or the bridge **blocks** (no `order_send`):
+
+| Check | Source |
+|--------|--------|
+| `SYSTEM_MODE == TEST` | `load_config()` / `.env` |
+| `router:last_decision == APPROVED` | Redis |
+| Requested **symbol** == `router:last_symbol` | Redis |
+| `risk:block_trading` **not** true | Redis |
+| `kill_switch:active` **not** on/ACTIVE | Redis |
+| `heartbeat:overall == HEALTHY` (case-insensitive) | Redis |
+| **Demo account** | MT5 `account_info()` |
+
+Why TEST mode only
+------------------
+- Phase 12 is **infrastructure** validation: wiring, safety, Redis, one micro lot.
+- **LIVE** / funded trading needs a later phase with extra legal/ops checks — the bridge **refuses** non-TEST mode even if MT5 is open.
+
+Redis keys read
+---------------
+- `router:last_decision`, `router:last_symbol`
+- `risk:block_trading`, `kill_switch:active`, `heartbeat:overall`
+
+Redis keys written
+------------------
+- `execution:last_symbol`, `execution:last_side`, `execution:last_volume`
+- `execution:last_status` — **FILLED**, **REJECTED**, **BLOCKED**, or **IDLE** (worker idle)
+- `execution:last_ticket`, `execution:last_reason`, `execution:last_update`
+- `execution:bridge_status` — e.g. **IDLE**, **RUNNING**, **ERROR**
+
+`run.py` worker
+-----------------
+- **`run_broker_bridge()`** connects (or reuses MT5), checks **DEMO**, publishes **IDLE**, then sleeps forever.
+- It does **not** submit orders by itself.
+
+Public functions
+----------------
+- `initialize_mt5`, `validate_execution_environment`, `build_order_request`, `send_market_order`
+- `handle_execution_response`, `publish_execution_status`, `run_broker_bridge_test`
+
+Beginner warning
+----------------
+Even **0.01** lots are real broker exposure on **demo** — always use a **DEMO** login and watch MT5 **Journal** / **Trade** tabs when testing.

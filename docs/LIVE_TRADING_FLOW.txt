@@ -1,0 +1,180 @@
+============================================================
+QUANTA — LIVE TRADING FLOW
+============================================================
+Read this before your first live trade.
+If you do not understand any step, DO NOT go live yet.
+
+============================================================
+OVERVIEW: WHAT HAPPENS EVERY SECOND
+============================================================
+
+1. MT5 sends tick data → core/pulse.py
+2. Tick is cleaned → tick_sanitizer.py
+3. Clean tick is stored in DuckDB → market_data_hub.py
+4. Every H1 candle close → regime_detector.py classifies market
+5. If regime is TRENDING and session is LONDON:
+   → strategies check for breakout setups
+   → scoring engine rates signal quality (0-100)
+   → if score ≥ 60, signal passes to risk layer
+6. Risk layer checks (ALL must pass):
+   a. Kill switch is NOT active
+   b. Daily DD has not hit limit
+   c. News is not within 30 minutes
+   d. Spread is below max (2 pips for gold)
+   e. Correlation guard: not too much USD/XAU exposure
+   f. Position sizer: lot size is safe
+7. If all checks pass → order goes to MT5 via router.py
+8. Fill confirmed → profiler.py tracks slippage
+9. Trade stored in SQLite → trade_repository.py
+10. Trade monitored: SL/TP/trailing stop via exit_manager.py
+
+============================================================
+DAILY STARTUP CHECKLIST (run before market opens)
+============================================================
+
+□ Open dashboard: http://VPS_IP:8501 (or localhost)
+□ Check System Overview → all systems GREEN
+□ Check Kill Switch: NOT active
+□ Check today's DD: near zero (fresh day)
+□ Check news calendar: any HIGH impact news today?
+□ Check spread: gold spread showing correctly
+□ Verify MT5 is connected and ticks are flowing
+□ Check regime: what is the current classification?
+□ Check session: which session is active right now?
+
+============================================================
+LONDON SESSION ROUTINE (12:30 IST — 20:30 IST)
+============================================================
+
+12:00 IST  — Review economic calendar. Any news at 12:30 or 13:30?
+12:30 IST  — London opens. System becomes active.
+             Watch for breakout signals on XAUUSD H1
+12:30-14:30 — Prime breakout window (first 2 hours of London)
+14:00 IST  — NY pre-market. Overlap begins.
+14:00-16:30 — High liquidity. Best signal quality.
+16:30+     — If 2 trades already taken today → system blocks new entries
+             If daily DD limit reached → kill switch auto-activates
+
+============================================================
+WHEN A TRADE IS PLACED
+============================================================
+
+You will see:
+  - Dashboard → Live Trading → new trade appears in open positions
+  - Telegram (optional): trade notification if you set up alerts
+
+What to verify after each trade:
+  □ Entry price matches expected (dashboard → Execution Analytics)
+  □ SL is set correctly (should be 1.5 × ATR)
+  □ TP is set correctly (should be SL × 2.0)
+  □ Lot size is correct (should be 0.5% equity / SL pips)
+
+============================================================
+WHEN A TRADE IS CLOSED
+============================================================
+
+The system handles all exits automatically:
+  - Stop Loss: MT5 internal hard stop
+  - Take Profit: MT5 internal take profit
+  - Trailing Stop: updated by exit_manager.py
+  - Time Exit: after 4 hours if neither SL nor TP hit
+
+After the trade closes:
+  - Trade is logged in SQLite with entry, exit, PnL
+  - Slippage is recorded in execution_profiler
+  - Daily DD is updated in state_store
+  - Dashboard → Journal shows the trade
+
+============================================================
+SCENARIOS THAT STOP TRADING
+============================================================
+
+A) Daily DD limit breached (e.g., -4% in one day)
+   → kill_switch auto-activates
+   → ALL signals blocked until next day
+   → You must manually reset at start of next trading day
+   → CHECK: Did you breach the funded account DD limit?
+
+B) Kill switch activated via Telegram /kill
+   → Trading stops immediately
+   → Existing orders remain open (MT5 handles them)
+   → Reset via Telegram /reset or dashboard
+
+C) High impact news
+   → news_guard blocks all signals 30 minutes before event
+   → System resumes automatically after news clears
+
+D) Spread explosion (>2 pips)
+   → cost_guard blocks signals
+   → Resumes when spread normalizes
+
+E) MT5 disconnect
+   → heartbeat.py fires HEARTBEAT_FAILED
+   → Kill switch activates
+   → Fix connection → verify positions → reset kill switch
+
+============================================================
+NIGHTLY END-OF-DAY ROUTINE
+============================================================
+
+□ Review Journal: how many trades today?
+□ Check daily PnL: profit or loss?
+□ Check if daily DD limit is below 3% (warning zone)
+□ Review execution quality: slippage within normal?
+□ Check regime tomorrow: any major news events?
+□ If LIVE account: log into broker portal and verify trade history
+□ Check equity matches between dashboard and broker portal
+
+============================================================
+WEEKLY REVIEW CHECKLIST
+============================================================
+
+□ Profit factor for the week: above 1.2?
+□ Win rate: between 40-60%?
+□ Average slippage: below 1 pip?
+□ Any anomalies in execution?
+□ Any orphan trades detected?
+□ Recovery dashboard: clean?
+□ Log files: any warnings/errors to address?
+
+============================================================
+ESCALATION: WHEN TO STOP TRADING
+============================================================
+
+STOP trading immediately if:
+  1. Weekly loss > 4% (prop firm buffer alert)
+  2. Multiple orphan trades detected
+  3. Regime is showing CHAOS / NEWS_CHAOS for >2 days
+  4. Slippage spiking to >2 pips consistently
+  5. You see unexpected positions in MT5 you did not expect
+
+NEVER trade if:
+  - Kill switch will not reset after manual attempt
+  - Dashboard shows data feed errors
+  - MT5 is showing connection issues
+  - You have not reviewed today's news events
+
+============================================================
+FUNDED ACCOUNT SPECIFIC RULES
+============================================================
+
+FTMO:
+  Max daily loss: 5% of account balance
+  Max total loss: 10% of account balance
+  Min trading days: 10 (challenge phase)
+  Profit target: 10% (challenge phase 1), 5% (phase 2)
+
+E8:
+  Max daily loss: 5%
+  Max total loss: 8%
+  No minimum trading days
+  Profit target: 8% (phase 1)
+
+The5ers:
+  Max daily loss: 4%
+  Max total loss: 6%
+  Profit target: 8% (phase 1)
+
+RULE: Always trade as if you are in the strictest firm's rules.
+Default config: daily DD limit = 3%, total DD limit = 8%
+This gives you a buffer before hitting any firm's actual limits.

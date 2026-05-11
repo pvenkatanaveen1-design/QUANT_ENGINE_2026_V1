@@ -1,0 +1,203 @@
+Dashboard architecture:
+- `dashboard/dashboard_app.py` is a minimal Streamlit UI layer.
+- It does not connect to Redis directly; it reads through `core/bus.py`.
+- This keeps architecture clean: UI -> bus layer -> Redis.
+
+SYSTEM MODE STATUS (Phase 5.1):
+- Rendered **at the top** of the page (right after the title/caption) via **`get_system_mode()`** from **`core.system_mode`** (backed by **`SYSTEM_MODE`** in `.env`).
+- Shows **Current Mode** as a metric: **`TEST`** or **`LIVE`**.
+- **`TEST`**: yellow **`st.warning`** banner — simulated values, real execution disabled (by design of this phase).
+- **`LIVE`**: green **`st.success`** plus red **`st.error`** production reminder — real broker systems are expected when you wire them; still **no automatic execution** from the dashboard alone.
+- Changing `.env` requires **restarting Streamlit** to refresh the mode banner.
+
+SYSTEM ENGINE STATUS + PHASE STATUS (Phase 6.1):
+- Rendered **immediately after SYSTEM MODE STATUS** so operators see the **`python run.py`** supervisor slice before legacy **`system:status`** JSON.
+- **Subsystem table** (`config_registry`, `pulse`, `atr_engine`, `clock`, `heartbeat`, `shield`, `broker_bridge`, `trade_logger`, `order_tracker`, `trade_manager`): columns **SYSTEM**, **STATUS** (color-coded: RUNNING/COMPLETE green, WARNING yellow, FAILED red, STARTING info, STOPPED warning), **ERROR**, **LAST UPDATE** (local wall-clock via shared timestamp helper).
+- Data comes from **`core.system_registry`** keys **`system:{name}:*`** populated by **`run.py`** and subsystem wrappers ( **`mark_system_failed`** on crashes ).
+- **Phase block**: **`foundation`**, **`market_data`**, **`risk`** from **`phase:{phase}:status`** — typically foundation COMPLETE, market_data COMPLETE, risk RUNNING after a healthy startup.
+- If Redis is unreachable, registry reads degrade to **FAILED** rows with an error hint instead of crashing the page.
+- The rest of the dashboard still auto-refreshes **every 2 seconds** (`time.sleep` + **`st.rerun()`**).
+
+ACTIVE SYSTEM CONFIGURATION (Phase 7 — centralized config visibility):
+- Rendered **after SYSTEM ENGINE STATUS**.
+- **Primary data:** Redis keys **`config:*`** written by **`core/config_registry.py`** about every **30 seconds** when **`python run.py`** is running (`config_registry` thread starts **first**).
+- **Fallback:** if `config:last_update` is missing, values come from **`get_all_config()`** so the table still renders (with a caption that says to start `run.py` for Redis snapshots).
+- **Layout:** one **`st.dataframe`** with columns **Group** | **Setting** | **Value** — groups: *Runtime & connectivity*, *Market (MT5)*, *Risk & funded rules*.
+- **LIVE mode:** red **`st.error`** banner at the top of the section; **TEST** uses **`st.info`**.
+- **Not editable:** no writes to `.env` from the UI; future releases can layer edit controls on top of this registry contract.
+
+Redis integration:
+- The dashboard calls `get_value("system:status")` from `core.bus`.
+- `core.bus` handles Redis connection details and JSON parsing.
+- The UI only focuses on displaying the returned status object.
+
+System Health Status (heartbeat):
+- The dashboard includes a `SYSTEM HEALTH STATUS` section below current system status.
+- It reads keys written by `core/heartbeat.py` (typically every 5 seconds):
+  - `heartbeat:status` — expected running label (e.g. "running"); green when running, red otherwise, warning if missing.
+  - `heartbeat:last_check` — Unix time of the last heartbeat cycle; shown as local date/time; warning if missing.
+  - `heartbeat:mt5_healthy` — shown as **connected** vs **disconnected** via `normalize_status(..., aspect="connection")`; green when connected, red when disconnected, warning when missing.
+  - `heartbeat:market_fresh` — green when fresh, **warning when stale** (data older than heartbeat threshold), warning when unknown.
+  - `heartbeat:clock_fresh` — green when fresh, **warning when stale**, warning when unknown.
+  - `heartbeat:overall` — string rollup **HEALTHY** (green), **DEGRADED** (warning, e.g. pulse `starting`), **UNHEALTHY** (red); legacy JSON booleans still render correctly.
+- Layout uses two rows of three columns for a compact grid.
+- Raw heartbeat payloads **plus upstream pulse/mt5/market/clock keys** and canonical normalized tokens appear under **Heartbeat debug** (collapsed expander); call `normalize_status(value, aspect=...)` with the aspect that matches the key (booleans map differently per aspect).
+- Missing Redis keys do not crash the page; they surface as warning messages.
+
+Active risk configuration (Phase 4.1):
+- Section **`ACTIVE RISK CONFIGURATION`** sits between **SYSTEM HEALTH STATUS** and **RISK SHIELD STATUS**.
+- Values come only from **`core.config.load_config()`** (backed by `.env`): **`PROP_FIRM_NAME`**, **`ACCOUNT_SIZE`**,
+  **`DAILY_DD_WARNING`**, **`DAILY_DD_BLOCK`**, **`MAX_DD_BLOCK`**, **`MAX_DD_APPROACH`** (derived or overridden),
+  **`DEFAULT_RISK_PER_TRADE`**.
+- Beginner note: editing `.env` requires **restarting Streamlit** (and the shield daemon) to pick up new limits.
+- Layout: one row of three metrics (firm, account size, default risk %), then four columns for drawdown gates.
+
+Risk Shield Status (drawdown):
+- Section **`RISK SHIELD STATUS`** appears after **SYSTEM HEALTH STATUS**.
+- Reads **account** snapshot keys plus **`risk:*`** keys written by **`risk/shield.py`** (every **5** seconds in daemon mode, or via **`scripts/test_shield.py`** demo).
+  - `account:balance`, `account:equity` — formatted as comma-separated numbers; unknown when missing.
+  - `risk:daily_dd`, `risk:max_dd` — percentages with two decimals.
+  - `risk:shield` — drives banner color: **SAFE** green (**st.success**), **WARNING** yellow (**st.warning**), **BLOCKED** red (**st.error**); falls back to `risk:status` if shield missing.
+  - `risk:status` — shown as text alongside the banner.
+  - `risk:block_trading` — green **false**, red **true** with caption about refusing orders.
+  - `risk:last_update` — Unix time formatted via same helper as heartbeat (**local wall clock string**).
+- Layout: row of four metrics, then shield banner + last update, then status + block row.
+
+Drawdown Tracker Status (Phase 7 — funded daily DD infrastructure):
+- Section **`DRAWDOWN TRACKER STATUS`** appears **after `RISK SHIELD STATUS`** and **before `NEWS GUARD STATUS`**.
+- Reads **`dd:*`** keys written by **`risk/drawdown_tracker.py`** (daemon: **`python -m risk.drawdown_tracker`**, ~**5 s**) or populated by **`python scripts/test_drawdown_tracker.py`**.
+- Metrics: start-of-day reference (`dd:start_balance`), **`dd:peak_equity`**, **`dd:lowest_equity`**, **`dd:current_daily_dd`**, **`dd:max_daily_dd`**, **`dd:last_reset`** (local wall time via shared timestamp helper), **`dd:tracker_status`**.
+- Colors: **HEALTHY** green, **WARNING** yellow, **DANGER** red, **STALE_DATA** / **ERROR** warning; thresholds come from **`DAILY_DD_WARNING`** / **`DAILY_DD_BLOCK`** in **`core.config`** (applied inside the tracker when publishing).
+
+News Guard Status (Phase 8 — simulated high-impact blackout):
+- Section **`NEWS GUARD STATUS`** appears **after `DRAWDOWN TRACKER STATUS`** and **before `COST GUARD STATUS`**.
+- Reads **`news:*`** from **`risk/news_guard.py`** (daemon **`python -m risk.news_guard`**, ~**5 s**) or **`python scripts/test_news_guard.py`**.
+- **ACTIVE** blackout: red **`st.error`** banner with the text **HIGH IMPACT NEWS ACTIVE** / **NEW TRADING SHOULD BE BLOCKED** (beginner reminder; execution must still read **`news:blackout`** in code later).
+- **INACTIVE**: green **`st.success`** safe box.
+- Shows event label, UTC ISO time, minutes remaining (until window **ends** if ACTIVE, or until next window **starts** when INACTIVE), last publish time, **`news:status`**.
+
+Cost Guard Status (Phase 9 — spread / cost protection):
+- Section **`COST GUARD STATUS`** appears **after `NEWS GUARD STATUS`** and **before `EXECUTION ROUTER STATUS`**.
+- Reads **`cost:{symbol}:*`** from **`risk/cost_guard.py`** (daemon **`python -m risk.cost_guard`**, ~**5 s**) or **`python scripts/test_cost_guard.py`**.
+- Source inputs: **`market:{symbol}:bid`**, **`ask`**, **`spread`** (from **`core/pulse.py`** or tests).
+- Table: symbol, spread, spread_pips, status (**SAFE** / **WARNING** / **BLOCKED**), **`block_trading`**, reason, plus **`cost:last_update`**.
+- **BLOCKED** on any row: strong red banner **TRADE BLOCKED DUE TO HIGH COSTS**; per-symbol chips use **green** / **yellow** / **red** (`st.success` / `st.warning` / `st.error`).
+- Thresholds: **`COST_MAX_SPREAD_PIPS_*`** in **`core.config`** / `.env` (defaults: majors/JPY 2 pips, XAU 30, BTC 500).
+
+Execution Router Status (Phase 11 — centralized trade approval):
+- Section **`EXECUTION ROUTER STATUS`** appears **after `COST GUARD STATUS`** and **before `BROKER BRIDGE STATUS`**.
+- Reads **`router:*`** keys written by **`execution/router.py`** when **`evaluate_trade_request(symbol)`** runs (try **`python scripts/test_router.py`**).
+- Displays **last symbol checked**, **router subsystem status** (`router:status`, usually **READY**), **last update** (local time from **`router:last_update`**), and a color-coded **decision**: **APPROVED** (green) vs **BLOCKED** (red) from **`router:last_decision`**.
+- **BLOCKED** decisions show the **reason** text from **`router:last_reason`** prominently (e.g. *Kill switch active*, *News blackout active*, *Cost guard blocking XAUUSD*).
+- **No MT5 orders** from this section: it is infrastructure-only until a future OMS calls the router and then places trades.
+
+Broker Bridge Status (Phase 12 — MT5 demo execution adapter):
+- Section **`BROKER BRIDGE STATUS`** appears **after `EXECUTION ROUTER STATUS`** and **before `TRADE JOURNAL STATUS`**.
+- Reads **`execution:*`** written by **`execution/broker_bridge.py`** when **`send_market_order`** runs (or idle snapshot from **`run_broker_bridge()`** in **`python run.py`**).
+- Shows **symbol**, **side**, **volume**, **execution:last_status** (**FILLED** green, **REJECTED** red, **BLOCKED** yellow, **IDLE** info), **MT5 ticket**, **rejection/block reason**, **`execution:bridge_status`**, and **last update**.
+- **Phase 12 safety:** **`SYSTEM_MODE=TEST`**, **DEMO** account only, **`router:last_decision=APPROVED`**, **`heartbeat:overall=HEALTHY`**, **`risk:block_trading`** false, **`kill_switch:active`** off — see **`execution/broker_bridge.txt`**.
+
+Trade Journal Status (Phase 13 — SQLite execution history):
+- Section **`TRADE JOURNAL STATUS`** appears **after `BROKER BRIDGE STATUS`** and **before `LIVE ORDER TRACKER`**.
+- **Summary** from Redis: **`journal:total_trades`**, **`journal:last_status`**, **`journal:last_trade`**, **`journal:last_update`** (publishes from **`journal/trade_logger.py`** when **`execution:last_*`** changes).
+- **Recent trades** table reads **`journal/trade_journal.db`** (SQLite table **`trades`**) via **`fetch_recent_trades`** — columns shown: timestamp, symbol, side, status, volume (row coloring: **FILLED** green, **REJECTED** red, **BLOCKED** yellow, other **info**).
+- Start the **`trade_logger`** worker with **`python run.py`** or run **`python scripts/test_trade_logger.py`** locally (no MT5 required for the test script).
+
+Live Order Tracker (Phase 14 — MT5 open positions, DEMO only):
+- Section **`LIVE ORDER TRACKER`** appears **after `TRADE JOURNAL STATUS`** and **before `POSITION SIZER STATUS`**.
+- Reads **`orders:*`** headline keys and **`positions:summary`** (JSON with **`positions`** list) from **`execution/order_tracker.py`** — refresh ~**3 s** with **`python run.py`** or **`python scripts/test_order_tracker.py`**.
+- Shows **active count**, **total floating PnL**, **last ticket/symbol**, **tracker status** (`RUNNING`, `NO_POSITIONS`, `NO_MT5`, `NOT_DEMO`, `ERROR`), and **last publish time**.
+- **OPEN POSITIONS** list: per-row coloring — **positive** floating PnL **green**, **negative** **red**, flat **warning**; aggregate PnL uses **success**/**error** tints.
+- **Read-only:** no position modify / trailing / close from this phase.
+
+Trade Manager Status (Phase 15 — simulated lifecycle intents, DEMO only):
+- Section **`TRADE MANAGER STATUS`** appears **after `LIVE ORDER TRACKER`** and **before `POSITION SIZER STATUS`**.
+- Reads **`trade_manager:last_*`**, **`trade_manager:status`**, **`trade_manager:last_update`**, and event history **`trade_manager:events`** (rolling JSON list) from **`execution/trade_manager.py`** — refresh ~**4 s** with **`python run.py`** or **`python scripts/test_trade_manager.py`** (publishes a snapshot).
+- **Metrics:** last managed ticket, symbol, management **action**, **reason**, manager status, last update (local time).
+- **TRADE MANAGEMENT EVENTS:** rows with ticket, symbol, action, reason, timestamp; row tint — **MOVE_SL_TO_BREAKEVEN** green, **TRAIL_STOP** blue (`st.info`), **PARTIAL_CLOSE** yellow (`st.warning`), **HOLD** neutral text.
+- **Simulation only:** no MT5 **SL/TP** modification and no auto-close; rules use **`TRADE_MANAGER_R_UNIT`** from config as simplified **1R** in account currency.
+
+Position Sizer Status (Phase 5):
+- Section **`POSITION SIZER STATUS`** appears **after TRADE MANAGER STATUS**.
+- Displays the last Redis snapshot from **`risk/position_sizer.publish_position_size`**:
+  **`sizing:last_symbol`**, **`sizing:last_balance`**, **`sizing:last_risk_percent`**, **`sizing:last_sl_pips`**, **`sizing:last_lot_size`**, **`sizing:last_update`**.
+- Lot formatting: **3** decimals for **BTCUSD**, otherwise **2** decimals.
+- Populate keys via **`python scripts/test_position_sizer.py`** or your strategy caller - **no orders** are sent from the dashboard.
+
+ATR Feature Status (Phase 16 — M5 volatility intelligence):
+- Section **`ATR FEATURE STATUS`** appears **after `POSITION SIZER STATUS`** and **before `LIVE MARKET DATA`**.
+- Reads **`features:{symbol}:atr`**, **`features:{symbol}:volatility_state`**, **`features:{symbol}:atr_status`**, and **`features:atr:last_update`** from **`market/features/atr.py`** (daemon **`atr_engine`** in **`python run.py`**, ~**5 s**) or **`python scripts/test_atr.py`**.
+- Supported symbols: **EURUSD**, **GBPUSD**, **USDJPY**, **XAUUSD**, **BTCUSD** — **M5** bars, ATR period **14**.
+- **Per-symbol snapshot** table: symbol, ATR, volatility state, feature status.
+- **`LIVE VOLATILITY FEATURES`**: rows symbol | ATR | volatility — **LOW** blue (`st.info`), **NORMAL** green (`st.success`), **HIGH** red (`st.error`).
+- **No strategy** — thresholds tunable via **``ATR_VOL_*``** keys in **`core.config`** / `.env`.
+
+Live Market Data (Phase 2):
+- The dashboard also reads MT5 market keys written by `core/pulse.py`.
+- It reads the list of symbols from `.env` via `core.config` (variable: `MT5_SYMBOLS`).
+- For each symbol, it reads:
+  - `market:{symbol}:bid`
+  - `market:{symbol}:ask`
+  - `market:{symbol}:spread`
+  - `market:{symbol}:timestamp`
+- It also reads system keys:
+  - `pulse:status`
+  - `mt5:connection`
+
+Market Session Status (Phase 2):
+- The dashboard includes a `MARKET SESSION STATUS` section.
+- It reads live clock values published by `core/clock.py`:
+  - `clock:utc`
+  - `clock:ist`
+  - `clock:session`
+  - `clock:is_weekend`
+  - `clock:london`
+  - `clock:newyork`
+  - `clock:overlap`
+  - `clock:asia`
+  - `clock:status`
+- Session activity is shown with green/red indicators:
+  - green -> active
+  - red -> inactive
+- Missing Redis keys are handled gracefully with warning messages instead of crashes.
+
+How UI gets live updates:
+- The page waits for a short interval (2 seconds).
+- After waiting, Streamlit reruns the app using `st.rerun()`.
+- Each rerun reads system + health + risk + sizing + market + clock keys again from Redis, so updates appear automatically.
+
+How to run Streamlit:
+1) Start Redis:
+   `docker compose -f docker/docker-compose.yml up -d`
+2) Optional — single runner for config registry + pulse + clock + heartbeat + shield (Phase 6.1 + 7):
+   `python run.py`
+   Startup order inside `run.py`: **config_registry** → pulse → clock → heartbeat → shield.
+   (Otherwise start pieces individually as below.)
+3) Publish test status:
+   `python -m scripts.test_bus`
+4) (Phase 2) If not using `run.py`, start pulse engine (writes market keys):
+   `python scripts/test_pulse.py`
+5) (Phase 2) If not using `run.py`, start clock engine (writes session keys):
+   `python scripts/test_clock.py`
+6) (Phase 2) Optional — start heartbeat monitor (writes heartbeat:* keys):
+   `python scripts/test_heartbeat.py`
+7) Optional — risk shield (writes risk:* and reads account:*):
+   `python -m risk.shield`
+   or one-shot demo:
+   `python scripts/test_shield.py`
+8) Optional — drawdown tracker (`dd:*` keys; reads `account:*`):
+   `python -m risk.drawdown_tracker`
+   or one-shot simulation:
+   `python scripts/test_drawdown_tracker.py`
+8c) Optional — news guard (`news:*` simulated blackout):
+   `python -m risk.news_guard`
+   or:
+   `python scripts/test_news_guard.py`
+8d) Optional — cost guard (`cost:*` spread limits; reads `market:*`):
+   `python -m risk.cost_guard`
+   or:
+   `python scripts/test_cost_guard.py`
+9) Optional — position sizer snapshot (`sizing:*` keys):
+   `python scripts/test_position_sizer.py`
+10) Run dashboard:
+   `python -m streamlit run dashboard/dashboard_app.py`

@@ -1,0 +1,47 @@
+How to run test_clock.py
+
+Purpose:
+- Starts the trading clock engine from `core/clock.py`.
+- Publishes clock/session data to Redis every 10 seconds.
+
+Run steps:
+1) Ensure Redis is running.
+2) From project root (`QUANT_ENGINE_2026`), run:
+   `python scripts/test_clock.py`
+
+Expected behavior:
+- Terminal prints startup messages.
+- Clock loop runs continuously until Ctrl+C.
+- Redis keys update every ~10 seconds:
+  - `clock:utc`
+  - `clock:ist`
+  - `clock:session`
+  - `clock:is_weekend`
+  - `clock:london`
+  - `clock:newyork`
+  - `clock:overlap`
+  - `clock:asia`
+  - `clock:status`
+
+Expected session behavior:
+- On Saturday/Sunday (UTC), `clock:is_weekend` should be `true` and session should be `Weekend`.
+- During overlap window (UTC 13:00-17:00), `clock:session` should be `London-New York overlap`.
+- During London-only window, `clock:london=true`.
+- During New York-only window, `clock:newyork=true`.
+- During Asia window, `clock:asia=true`.
+- Outside session windows, `clock:session` may show `Off-session`.
+
+Quick Redis check:
+1) Open Redis CLI:
+   `docker exec -it <redis_container_name> redis-cli`
+2) Read keys:
+   `GET clock:utc`
+   `GET clock:ist`
+   `GET clock:session`
+   `GET clock:is_weekend`
+   `GET clock:london`
+   `GET clock:newyork`
+   `GET clock:overlap`
+   `GET clock:asia`
+   `GET clock:status`
+

@@ -1,0 +1,8 @@
+Purpose of `core/config_helpers.py`:
+
+- **`build_all_config()`** is a thin alias that calls **`get_all_config()`** in `core.config`.
+- Kept so any older snippet that imports `build_all_config` still works.
+
+Primary API:
+
+- Use **`from core.config import get_all_config`** (validation lives in **`core/config.py`** next to **`load_config`**).

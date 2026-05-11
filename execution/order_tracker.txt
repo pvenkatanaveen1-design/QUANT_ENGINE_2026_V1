@@ -1,0 +1,46 @@
+Order tracker — `execution/order_tracker.py` (Phase 14)
+======================================================
+
+Purpose
+-------
+- **Read-only** view of **open MT5 positions** (DEMO accounts only).
+- Publishes **`orders:*`** headline metrics and **`positions:summary`** (full JSON) to Redis for dashboards and future trade-management modules.
+
+MT5 position tracking
+---------------------
+- Uses **`MetaTrader5.positions_get()`** on each tick (default **3 s** in `run_order_tracker`).
+- Each position is normalized to:
+  - **ticket**, **symbol**, **side** (BUY/SELL), **volume**
+  - **entry_price** (`price_open`), **current_price** (`price_current`)
+  - **sl**, **tp**
+  - **floating_profit** (account currency, from `profit`)
+  - **open_time** (Unix seconds; prefers `time_msc` when present)
+
+Floating PnL monitoring
+-----------------------
+- **`calculate_total_floating_pnl`** sums **`floating_profit`** across all open positions.
+- **`build_position_summary`** adds **winning_trades** (profit > 0) and **losing_trades** (profit < 0); flat positions count as neither.
+
+Redis keys (written)
+--------------------
+- **`orders:active_count`**, **`orders:last_symbol`**, **`orders:last_ticket`**, **`orders:last_type`**
+- **`orders:last_volume`**, **`orders:last_profit`**, **`orders:last_status`**, **`orders:last_update`**
+- **`positions:summary`** — dict: `active_count`, `total_floating_pnl`, `winning_trades`, `losing_trades`,
+  `tracker_status` (`RUNNING` / `NO_MT5` / `NOT_DEMO` / `ERROR`), optional `error_message`, `positions` list, `updated_at`
+
+**`orders:last_status`**: **`OPEN`** when at least one position exists; **`NO_POSITIONS`** when flat and healthy; **`ERROR`** when the snapshot is an error/unavailable state.
+
+Future trade management
+-----------------------
+- Downstream code can consume **`positions:summary`** to decide scaling out, break-even moves, or kill-switch overrides (not implemented in Phase 14).
+- Keeping logic **out** of the tracker preserves a clean **sense → plan → act** split later.
+
+Safety
+------
+- **DEMO account only** (`ACCOUNT_TRADE_MODE_DEMO`). Non-demo accounts trigger **`NOT_DEMO`** snapshots and empty position lists.
+- **No** `position_modify`, **no** closing orders, **no** trailing — monitoring only.
+
+Run
+---
+- With stack: **`python run.py`** (`order_tracker` thread).
+- Direct: **`python -m execution.order_tracker`**

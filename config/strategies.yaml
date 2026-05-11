@@ -1,0 +1,28 @@
+# config/strategies.yaml
+# Which strategies are enabled and their individual parameters.
+
+active_strategies:
+  - alpha_breakout
+
+# Set enabled: false to disable a strategy without removing code
+alpha_breakout:
+  enabled: true
+  timeframe: "H1"
+  min_score: 65
+  sl_atr_multiplier: 1.5
+  rr_minimum: 2.0
+  max_trades_per_day: 2
+
+alpha_sweep:
+  enabled: false      # Enable after alpha_breakout is proven
+  timeframe: "H1"
+  min_score: 70
+  sl_atr_multiplier: 1.2
+  rr_minimum: 2.5
+
+alpha_pullback:
+  enabled: false
+  timeframe: "H1"
+  min_score: 65
+  sl_atr_multiplier: 1.5
+  rr_minimum: 2.0

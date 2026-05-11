@@ -1,0 +1,137 @@
+============================================================
+MODULE: execution/profiler.py (S33)
+============================================================
+Purpose: Track fill quality — slippage, latency, spread at fill
+System:  Execution Layer
+Author:  Quanta Phase 2
+
+============================================================
+WHAT IT DOES
+============================================================
+
+ExecutionProfiler monitors the quality of every order fill.
+
+It answers:
+  "When I wanted to buy at $2350.00, did I actually buy at $2350.00?"
+  "How long did the broker take to confirm the fill?"
+  "Was the spread at the time of fill reasonable?"
+
+If quality degrades (slippage too high, latency too slow),
+it activates the kill switch automatically.
+
+============================================================
+METRICS TRACKED
+============================================================
+
+Slippage pips:
+  expected_price = price in SignalEvent (desired entry)
+  actual_price = price in TRADE_FILLED event (broker fill)
+  slippage = (actual - expected) × pip_multiplier
+
+Fill latency (ms):
+  Time from TRADE_SUBMITTED event to TRADE_FILLED event
+
+Spread at fill:
+  (ask - bid) at the moment of fill in pips
+
+Rolling statistics (last 20 fills):
+  avg_slippage_pips: should be < 1.0
+  avg_latency_ms: should be < 500ms
+  avg_spread_pips: should match expected for the symbol
+
+============================================================
+AUTOMATIC ALERTS
+============================================================
+
+If avg_slippage_pips > 2.0 (last 20 trades):
+  → Publishes EXECUTION_PROFILER_UPDATE with alert
+  → Kill switch is NOT automatically activated (warning only)
+  → Dashboard shows yellow/red alert
+
+If avg_latency_ms > 5000 (5 seconds):
+  → Kill switch IS automatically activated
+  → This means broker or internet connection has a serious problem
+  → Risk: SL orders may not reach broker in time
+
+============================================================
+HOW TO INTERPRET SLIPPAGE
+============================================================
+
+Positive slippage (BUY filled above expected):
+  Bad — you paid more than you wanted. Costs reduce.
+  Example: wanted $2350.00, filled at $2350.50 = +0.5 pips slip
+
+Negative slippage (BUY filled below expected):
+  Good — you paid less. Rare.
+  Example: wanted $2350.00, filled at $2349.80 = -0.2 pips slip
+
+Acceptable slippage for gold (XAUUSD):
+  < 0.5 pips during London/NY session
+  < 1.0 pips during Asia session
+  > 2.0 pips sustained = investigate broker or VPS latency
+
+============================================================
+DATA STORAGE
+============================================================
+
+All fills are stored in SQLite:
+  table: execution_fills
+  columns: fill_id, trade_id, expected_price, actual_price,
+           slippage_pips, submit_time, fill_time, latency_ms,
+           spread_at_fill, symbol
+
+============================================================
+PUBLIC API
+============================================================
+
+from execution.profiler import execution_profiler
+
+stats = execution_profiler.get_stats()
+# Returns:
+# {
+#   "fill_count": 47,
+#   "avg_slippage_pips": 0.3,
+#   "avg_latency_ms": 185,
+#   "avg_spread_pips": 0.8,
+#   "worst_slippage": 2.1,
+#   "worst_latency_ms": 4800,
+#   "recent_fills": [ ... last 20 ... ]
+# }
+
+============================================================
+DASHBOARD VISIBILITY
+============================================================
+
+Dashboard → Execution Analytics page shows:
+  - Average slippage chart (last 50 trades)
+  - Latency distribution histogram
+  - Spread at fill timeline
+  - Recent fills table with individual slippage
+  - Warning indicator if slippage is trending up
+
+============================================================
+RUNBOOK: HIGH SLIPPAGE
+============================================================
+
+If dashboard shows avg slippage > 1.5 pips:
+
+1. Check VPS ping to broker server:
+   ping your_broker_mt5_server_ip
+   Should be < 10ms for London VPS to European broker
+
+2. Check if it is news-related:
+   Look at timing of high-slippage fills vs economic calendar
+   High slippage during news = expected and acceptable
+
+3. Check broker's status page:
+   Most brokers have a server status page
+   Maintenance or outage causes slippage
+
+4. If persistent (> 3 days of high slippage):
+   → Consider switching broker server (if multiple available)
+   → Consider VPS location change
+   → Raise a support ticket with your broker
+
+5. If slippage causes kill switch activation:
+   → Fix the latency/connection issue before resetting
+   → Never reset kill switch while latency is still high

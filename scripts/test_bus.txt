@@ -1,0 +1,24 @@
+How to run test:
+1) Start Redis container:
+   `docker compose -f docker/docker-compose.yml up -d`
+2) From project root, run:
+   `python scripts/test_bus.py`
+
+Expected output:
+- A success line confirming publish to channel `system:test`.
+- An info line showing subscriber count (can be `0` if no subscriber is listening).
+- A success line confirming:
+  `system:status = {"status": "RUNNING"}`
+- An info line with Redis set result (usually `True`).
+
+Redis verification:
+1) Open Redis CLI in container:
+   `docker exec -it <redis_container_name> redis-cli`
+2) Read stored key:
+   `GET system:status`
+3) Expected value:
+   `{"status": "RUNNING"}`
+
+Notes:
+- Pub/Sub messages are real-time and not stored automatically.
+- Key-value entries (like `system:status`) are stored until changed or deleted.

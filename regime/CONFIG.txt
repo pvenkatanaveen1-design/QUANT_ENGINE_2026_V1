@@ -1,0 +1,31 @@
+Regime Intelligence Config
+
+Runtime keys (Redis):
+- regime:lookback_years
+- regime:waiting_reason
+- regime:current_label
+- regime:transition_state
+- regime:last_update_ts
+
+Existing config file:
+- config/regimes.yaml
+  - adx thresholds
+  - atr settings
+  - confidence/persistence thresholds
+
+Structured regime config files (UI-editable):
+- config/regime/adx.yaml
+- config/regime/atr.yaml
+- config/regime/structure.yaml
+- config/regime/probability.yaml
+- config/regime/strategy_mapping.yaml
+
+Config lab support:
+- snapshots: config/regime/snapshots/*.yaml
+- audit trail: logs/regime_config_audit.jsonl
+
+Recommended tuning process:
+1. Use historical analysis in Regime Monitor.
+2. Observe distribution + performance until yesterday.
+3. Tune thresholds gradually (no abrupt production jumps).
+

@@ -1,0 +1,157 @@
+============================================================
+MODULE: services/storage_service.py
+============================================================
+Purpose: Centralized database layer for all persistence
+System:  Services / Infrastructure
+Author:  Quanta Phase 2
+
+============================================================
+WHAT IT DOES
+============================================================
+
+StorageService is the single gateway to all databases.
+No other module accesses databases directly.
+All writes and reads go through this service.
+
+TWO DATABASES:
+
+DuckDB (market.duckdb) — Time-series / analytical data:
+  - Ticks (bid, ask, spread, timestamp)
+  - Candles (OHLCV for all timeframes)
+  - Backtest results and equity curves
+  - Regime history
+
+SQLite (journal.db) — Transactional / operational data:
+  - Trades (entry, exit, PnL, status)
+  - Signals (generated and blocked)
+  - State snapshots (equity, DD)
+  - Kill switch history
+  - Execution fills (slippage, latency)
+  - Restart logs
+
+============================================================
+KEY METHODS
+============================================================
+
+# SQLite reads (thread-safe, no lock needed)
+rows = storage.execute_sqlite("SELECT * FROM trades WHERE status='OPEN'")
+
+# SQLite writes (serialized with write lock)
+storage.execute_sqlite_write(
+    "INSERT INTO trades VALUES (?, ?, ?)",
+    params=(trade_id, symbol, status)
+)
+
+# DuckDB reads
+rows = storage.execute_duckdb("SELECT * FROM candles WHERE symbol='XAUUSD'")
+
+# DuckDB writes (single-writer lock)
+storage.execute_duckdb_write("INSERT INTO candles VALUES (?, ?, ?)", params=(...))
+
+# Health and stats
+stats = storage.get_stats()
+# Returns: db sizes, row counts, avg read/write latency
+
+============================================================
+RETRY LOGIC
+============================================================
+
+SQLite writes are retried up to 3 times with exponential backoff:
+  Attempt 1: immediate
+  Attempt 2: wait 0.5 seconds
+  Attempt 3: wait 1.0 seconds
+
+If all retries fail, a StorageError is raised and logged.
+
+This handles the common "database is locked" error from SQLite
+when multiple threads try to write simultaneously.
+
+============================================================
+CONNECTION POOLING
+============================================================
+
+SQLite:
+  - Single shared connection with check_same_thread=False
+  - WAL mode enabled for better read concurrency
+  - Write-lock (RLock) ensures serial writes
+
+DuckDB:
+  - Single connection (DuckDB requirement)
+  - Single write-lock protects concurrent write attempts
+  - Read operations can happen concurrently (DuckDB handles it)
+
+============================================================
+TABLE SCHEMA (SQLite)
+============================================================
+
+trades:
+  trade_id, symbol, direction, lot_size, entry_price,
+  sl, tp, status, strategy, signal_quality_score,
+  open_time, close_time, close_price, close_reason,
+  gross_pnl, net_pnl, slippage_pips, created_at
+
+signals:
+  signal_id, symbol, direction, entry_price, sl, tp,
+  strategy, quality_score, approved, block_reason, timestamp
+
+state_snapshots:
+  snapshot_id, equity, balance, daily_pnl, daily_dd_pct,
+  total_dd_pct, open_trades, created_at
+
+kill_switch_log:
+  id, active, reason, activated_at, deactivated_at
+
+execution_fills:
+  fill_id, trade_id, expected_price, actual_price,
+  slippage_pips, submit_time, fill_time, latency_ms
+
+restart_log:
+  id, timestamp, recovery_status, orphan_count, notes
+
+============================================================
+TABLE SCHEMA (DuckDB)
+============================================================
+
+ticks:
+  symbol, bid, ask, spread_pips, timestamp
+
+candles:
+  symbol, timeframe, open, high, low, close, volume,
+  open_time, close_time
+
+backtest_results:
+  run_id, strategy_name, symbol, timeframe, start_date,
+  end_date, total_trades, profit_factor, sharpe, max_dd_pct,
+  win_rate, net_pnl, parameters_json, created_at
+
+regime_history:
+  symbol, regime, confidence, adx, atr, detected_at
+
+============================================================
+IMPORTANT RULES
+============================================================
+
+1. NEVER import StorageService inside a hot loop.
+   Get a reference once at startup, reuse it.
+
+2. NEVER bypass StorageService to connect to DB directly.
+   All raw DB access creates untestable, fragile code.
+
+3. execute_sqlite and execute_sqlite_write are DIFFERENT:
+   - execute_sqlite: read-only, no lock needed
+   - execute_sqlite_write: acquires write lock, retries on failure
+
+4. DuckDB is NOT suited for high-frequency row-by-row inserts.
+   Batch inserts when possible (use DuckDB's multi-row INSERT).
+
+============================================================
+DASHBOARD VISIBILITY
+============================================================
+
+Dashboard → System Overview shows:
+  - SQLite size in MB
+  - DuckDB size in MB
+  - Average write latency (last 100 writes)
+  - Average read latency
+  - Table row counts
+  - Last write timestamp

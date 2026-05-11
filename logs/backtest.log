@@ -1,0 +1,554 @@
+{"ts": "2026-05-11T07:48:07.295Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:48:07.295Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T07:48:07.296Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2361.51 SL=2354.48 TP=2375.56 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T07:48:07.296Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2375.79 SL=2368.59 TP=2390.19 Lots=0.01 Bar=60"}
+{"ts": "2026-05-11T07:48:07.297Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2393.49 SL=2386.63 TP=2407.20 Lots=0.01 Bar=74"}
+{"ts": "2026-05-11T07:48:07.298Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2414.99 SL=2407.68 TP=2429.59 Lots=0.01 Bar=97"}
+{"ts": "2026-05-11T07:48:07.299Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2430.09 SL=2422.70 TP=2444.81 Lots=0.01 Bar=111"}
+{"ts": "2026-05-11T07:48:07.299Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2423.77 SL=2430.57 TP=2410.23 Lots=0.01 Bar=116"}
+{"ts": "2026-05-11T07:48:07.299Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2434.42 SL=2427.74 TP=2447.73 Lots=0.01 Bar=125"}
+{"ts": "2026-05-11T07:48:07.300Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2434.03 SL=2427.49 TP=2447.08 Lots=0.01 Bar=135"}
+{"ts": "2026-05-11T07:48:07.301Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2458.59 SL=2451.57 TP=2472.62 Lots=0.01 Bar=154"}
+{"ts": "2026-05-11T07:48:07.302Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2475.20 SL=2468.55 TP=2488.49 Lots=0.01 Bar=179"}
+{"ts": "2026-05-11T07:48:07.302Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2488.60 SL=2481.69 TP=2502.40 Lots=0.01 Bar=197"}
+{"ts": "2026-05-11T07:48:07.303Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2513.37 SL=2506.05 TP=2527.94 Lots=0.01 Bar=208"}
+{"ts": "2026-05-11T07:48:07.303Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2532.50 SL=2525.45 TP=2546.57 Lots=0.01 Bar=225"}
+{"ts": "2026-05-11T07:48:07.305Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2545.75 SL=2538.96 TP=2559.23 Lots=0.01 Bar=240"}
+{"ts": "2026-05-11T07:48:07.306Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2565.44 SL=2558.24 TP=2579.79 Lots=0.01 Bar=251"}
+{"ts": "2026-05-11T07:48:07.307Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2582.68 SL=2575.21 TP=2597.55 Lots=0.01 Bar=264"}
+{"ts": "2026-05-11T07:48:07.308Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2604.65 SL=2597.00 TP=2619.86 Lots=0.01 Bar=287"}
+{"ts": "2026-05-11T07:48:07.316Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=8.98 Sharpe=18.80 id=3f807eb8-59b9-4651-a9e5-c8ef30d2e028"}
+{"ts": "2026-05-11T07:48:07.316Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:82.4% PF:8.98 Sharpe:18.80 MaxDD:2.0% PnL:$+1667.36"}
+{"ts": "2026-05-11T07:48:07.321Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:48:07.321Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T07:48:07.321Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2355.39 SL=2348.34 TP=2369.43 Lots=0.01 Bar=50"}
+{"ts": "2026-05-11T07:48:07.322Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2370.39 SL=2363.57 TP=2384.04 Lots=0.01 Bar=61"}
+{"ts": "2026-05-11T07:48:07.322Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2387.06 SL=2380.01 TP=2401.12 Lots=0.01 Bar=88"}
+{"ts": "2026-05-11T07:48:07.322Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2379.70 SL=2386.73 TP=2365.71 Lots=0.01 Bar=94"}
+{"ts": "2026-05-11T07:48:07.323Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2398.71 SL=2391.27 TP=2413.56 Lots=0.01 Bar=109"}
+{"ts": "2026-05-11T07:48:07.324Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2414.14 SL=2406.98 TP=2428.46 Lots=0.01 Bar=124"}
+{"ts": "2026-05-11T07:48:07.324Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2427.54 SL=2420.76 TP=2441.01 Lots=0.01 Bar=151"}
+{"ts": "2026-05-11T07:48:07.325Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2448.11 SL=2440.81 TP=2462.68 Lots=0.01 Bar=164"}
+{"ts": "2026-05-11T07:48:07.327Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2468.06 SL=2475.38 TP=2453.45 Lots=0.01 Bar=182"}
+{"ts": "2026-05-11T07:48:07.327Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2475.91 SL=2468.68 TP=2490.32 Lots=0.01 Bar=192"}
+{"ts": "2026-05-11T07:48:07.327Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2467.53 SL=2474.47 TP=2453.74 Lots=0.01 Bar=205"}
+{"ts": "2026-05-11T07:48:07.327Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2474.61 SL=2467.34 TP=2489.09 Lots=0.01 Bar=207"}
+{"ts": "2026-05-11T07:48:07.328Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2495.56 SL=2488.04 TP=2510.55 Lots=0.01 Bar=219"}
+{"ts": "2026-05-11T07:48:07.329Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2509.95 SL=2502.92 TP=2524.01 Lots=0.01 Bar=229"}
+{"ts": "2026-05-11T07:48:07.329Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2528.13 SL=2520.94 TP=2542.49 Lots=0.01 Bar=238"}
+{"ts": "2026-05-11T07:48:07.331Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2542.20 SL=2548.69 TP=2529.29 Lots=0.01 Bar=266"}
+{"ts": "2026-05-11T07:48:07.332Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2552.93 SL=2545.96 TP=2566.83 Lots=0.01 Bar=272"}
+{"ts": "2026-05-11T07:48:07.332Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=3.72 Sharpe=10.21 id=935fe1d9-da4f-4f10-9396-f7181eb10c50"}
+{"ts": "2026-05-11T07:48:07.333Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:64.7% PF:3.72 Sharpe:10.21 MaxDD:2.0% PnL:$+1145.02"}
+{"ts": "2026-05-11T07:48:07.334Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:48:07.334Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T07:48:07.335Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2343.84 SL=2336.94 TP=2357.64 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T07:48:07.336Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2362.00 SL=2354.39 TP=2377.18 Lots=0.01 Bar=64"}
+{"ts": "2026-05-11T07:48:07.336Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2381.67 SL=2374.02 TP=2396.92 Lots=0.01 Bar=73"}
+{"ts": "2026-05-11T07:48:07.338Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2411.34 SL=2403.47 TP=2427.02 Lots=0.01 Bar=94"}
+{"ts": "2026-05-11T07:48:07.339Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2434.89 SL=2427.33 TP=2450.01 Lots=0.01 Bar=109"}
+{"ts": "2026-05-11T07:48:07.339Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2453.96 SL=2446.75 TP=2468.34 Lots=0.01 Bar=124"}
+{"ts": "2026-05-11T07:48:07.340Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2470.33 SL=2462.91 TP=2485.09 Lots=0.01 Bar=132"}
+{"ts": "2026-05-11T07:48:07.340Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2484.43 SL=2476.99 TP=2499.22 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T07:48:07.340Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2511.28 SL=2503.64 TP=2526.51 Lots=0.01 Bar=152"}
+{"ts": "2026-05-11T07:48:07.342Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2531.67 SL=2524.72 TP=2545.54 Lots=0.01 Bar=170"}
+{"ts": "2026-05-11T07:48:07.342Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2535.94 SL=2542.87 TP=2522.13 Lots=0.01 Bar=185"}
+{"ts": "2026-05-11T07:48:07.343Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2537.37 SL=2544.17 TP=2523.87 Lots=0.01 Bar=195"}
+{"ts": "2026-05-11T07:48:07.343Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2545.42 SL=2538.38 TP=2559.43 Lots=0.01 Bar=202"}
+{"ts": "2026-05-11T07:48:07.343Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2559.85 SL=2552.46 TP=2574.57 Lots=0.01 Bar=211"}
+{"ts": "2026-05-11T07:48:07.344Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2578.71 SL=2571.28 TP=2593.57 Lots=0.01 Bar=219"}
+{"ts": "2026-05-11T07:48:07.344Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2594.00 SL=2586.47 TP=2608.99 Lots=0.01 Bar=249"}
+{"ts": "2026-05-11T07:48:07.345Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2608.82 SL=2601.78 TP=2622.80 Lots=0.01 Bar=266"}
+{"ts": "2026-05-11T07:48:07.345Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2623.78 SL=2617.16 TP=2636.93 Lots=0.01 Bar=287"}
+{"ts": "2026-05-11T07:48:07.345Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=16.53 Sharpe=26.54 id=0f6612cc-c032-4e83-94f8-a65255c1d5a3"}
+{"ts": "2026-05-11T07:48:07.345Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:18 WR:88.9% PF:16.53 Sharpe:26.54 MaxDD:1.2% PnL:$+2133.71"}
+{"ts": "2026-05-11T07:48:07.347Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:48:07.347Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T07:48:07.349Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:48:07.349Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T07:48:07.349Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2343.45 SL=2336.88 TP=2356.49 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T07:48:07.350Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2357.04 SL=2350.75 TP=2369.54 Lots=0.01 Bar=72"}
+{"ts": "2026-05-11T07:48:07.351Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2350.07 SL=2356.57 TP=2337.10 Lots=0.01 Bar=75"}
+{"ts": "2026-05-11T07:48:07.351Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2355.92 SL=2349.55 TP=2368.63 Lots=0.01 Bar=81"}
+{"ts": "2026-05-11T07:48:07.352Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2360.33 SL=2353.59 TP=2373.77 Lots=0.01 Bar=113"}
+{"ts": "2026-05-11T07:48:07.353Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2391.15 SL=2383.12 TP=2407.12 Lots=0.01 Bar=125"}
+{"ts": "2026-05-11T07:48:07.354Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2426.11 SL=2418.70 TP=2440.83 Lots=0.01 Bar=151"}
+{"ts": "2026-05-11T07:48:07.356Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2444.05 SL=2437.12 TP=2457.85 Lots=0.01 Bar=167"}
+{"ts": "2026-05-11T07:48:07.356Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2458.32 SL=2451.28 TP=2472.38 Lots=0.01 Bar=180"}
+{"ts": "2026-05-11T07:48:07.356Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2475.64 SL=2468.79 TP=2489.29 Lots=0.01 Bar=190"}
+{"ts": "2026-05-11T07:48:07.357Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2492.55 SL=2485.28 TP=2507.03 Lots=0.01 Bar=203"}
+{"ts": "2026-05-11T07:48:07.358Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2498.91 SL=2492.10 TP=2512.50 Lots=0.01 Bar=219"}
+{"ts": "2026-05-11T07:48:07.358Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2511.25 SL=2504.49 TP=2524.71 Lots=0.01 Bar=259"}
+{"ts": "2026-05-11T07:48:07.359Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2524.30 SL=2517.07 TP=2538.71 Lots=0.01 Bar=267"}
+{"ts": "2026-05-11T07:48:07.360Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2543.96 SL=2536.53 TP=2558.76 Lots=0.01 Bar=278"}
+{"ts": "2026-05-11T07:48:07.360Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2558.06 SL=2551.00 TP=2572.16 Lots=0.01 Bar=296"}
+{"ts": "2026-05-11T07:48:07.361Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=5.91 Sharpe=13.81 id=b310b6df-adea-485e-8e9b-cdca980dce45"}
+{"ts": "2026-05-11T07:48:07.361Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:16 WR:75.0% PF:5.91 Sharpe:13.81 MaxDD:1.9% PnL:$+1300.36"}
+{"ts": "2026-05-11T07:48:07.367Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T07:48:07.380Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T07:48:07.380Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.4%/3.8% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T07:48:07.382Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T07:48:07.393Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T07:48:07.393Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T07:48:07.394Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T07:48:07.413Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T07:48:07.413Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.6%/2.6% | Final equity P50: $14,800"}
+{"ts": "2026-05-11T07:49:33.326Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T07:49:33.346Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:21:08.999Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:08.999Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:09.000Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2333.40 SL=2340.26 TP=2319.77 Lots=0.01 Bar=53"}
+{"ts": "2026-05-11T08:21:09.000Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2339.96 SL=2333.25 TP=2353.33 Lots=0.01 Bar=58"}
+{"ts": "2026-05-11T08:21:09.001Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2356.22 SL=2363.13 TP=2342.49 Lots=0.01 Bar=70"}
+{"ts": "2026-05-11T08:21:09.001Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2365.86 SL=2358.68 TP=2380.17 Lots=0.01 Bar=73"}
+{"ts": "2026-05-11T08:21:09.001Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2379.39 SL=2372.38 TP=2393.32 Lots=0.01 Bar=80"}
+{"ts": "2026-05-11T08:21:09.003Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2404.72 SL=2398.01 TP=2418.14 Lots=0.01 Bar=108"}
+{"ts": "2026-05-11T08:21:09.003Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2417.37 SL=2410.82 TP=2430.48 Lots=0.01 Bar=118"}
+{"ts": "2026-05-11T08:21:09.005Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2442.72 SL=2436.10 TP=2455.87 Lots=0.01 Bar=145"}
+{"ts": "2026-05-11T08:21:09.006Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2458.94 SL=2451.99 TP=2472.75 Lots=0.01 Bar=153"}
+{"ts": "2026-05-11T08:21:09.006Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2472.97 SL=2465.86 TP=2487.12 Lots=0.01 Bar=164"}
+{"ts": "2026-05-11T08:21:09.008Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2492.44 SL=2485.69 TP=2505.87 Lots=0.01 Bar=182"}
+{"ts": "2026-05-11T08:21:09.008Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2505.03 SL=2498.02 TP=2518.96 Lots=0.01 Bar=198"}
+{"ts": "2026-05-11T08:21:09.009Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2523.14 SL=2515.92 TP=2537.52 Lots=0.01 Bar=207"}
+{"ts": "2026-05-11T08:21:09.009Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2538.07 SL=2531.23 TP=2551.73 Lots=0.01 Bar=219"}
+{"ts": "2026-05-11T08:21:09.009Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2552.70 SL=2545.89 TP=2566.26 Lots=0.01 Bar=237"}
+{"ts": "2026-05-11T08:21:09.011Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2566.61 SL=2559.20 TP=2581.36 Lots=0.01 Bar=256"}
+{"ts": "2026-05-11T08:21:09.012Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2595.06 SL=2587.09 TP=2610.92 Lots=0.01 Bar=266"}
+{"ts": "2026-05-11T08:21:09.013Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2611.17 SL=2603.77 TP=2625.92 Lots=0.01 Bar=279"}
+{"ts": "2026-05-11T08:21:09.208Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=15.84 Sharpe=26.72 id=8f522d28-ac2e-4201-921c-4166042d0631"}
+{"ts": "2026-05-11T08:21:09.208Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:18 WR:88.9% PF:15.84 Sharpe:26.72 MaxDD:0.7% PnL:$+2044.86"}
+{"ts": "2026-05-11T08:21:09.211Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:09.211Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:09.212Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2369.84 SL=2362.48 TP=2384.56 Lots=0.01 Bar=57"}
+{"ts": "2026-05-11T08:21:09.213Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2387.12 SL=2380.72 TP=2399.93 Lots=0.01 Bar=80"}
+{"ts": "2026-05-11T08:21:09.213Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2380.46 SL=2387.19 TP=2366.99 Lots=0.01 Bar=83"}
+{"ts": "2026-05-11T08:21:09.213Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2392.29 SL=2385.02 TP=2406.76 Lots=0.01 Bar=90"}
+{"ts": "2026-05-11T08:21:09.214Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2418.70 SL=2411.09 TP=2433.87 Lots=0.01 Bar=101"}
+{"ts": "2026-05-11T08:21:09.215Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2435.52 SL=2428.15 TP=2450.20 Lots=0.01 Bar=113"}
+{"ts": "2026-05-11T08:21:09.215Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2455.96 SL=2448.56 TP=2470.69 Lots=0.01 Bar=124"}
+{"ts": "2026-05-11T08:21:09.217Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2472.40 SL=2465.49 TP=2486.16 Lots=0.01 Bar=154"}
+{"ts": "2026-05-11T08:21:09.217Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2487.29 SL=2480.71 TP=2500.41 Lots=0.01 Bar=167"}
+{"ts": "2026-05-11T08:21:09.217Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2500.12 SL=2493.13 TP=2514.07 Lots=0.01 Bar=196"}
+{"ts": "2026-05-11T08:21:09.218Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2525.37 SL=2518.13 TP=2539.85 Lots=0.01 Bar=207"}
+{"ts": "2026-05-11T08:21:09.219Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2536.89 SL=2543.44 TP=2523.85 Lots=0.01 Bar=229"}
+{"ts": "2026-05-11T08:21:09.220Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2556.97 SL=2549.26 TP=2572.29 Lots=0.01 Bar=254"}
+{"ts": "2026-05-11T08:21:09.221Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2575.60 SL=2568.56 TP=2589.63 Lots=0.01 Bar=277"}
+{"ts": "2026-05-11T08:21:09.222Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=7.49 Sharpe=16.09 id=9e20b357-00d0-4d51-a308-489ce4c19592"}
+{"ts": "2026-05-11T08:21:09.222Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:14 WR:78.6% PF:7.49 Sharpe:16.09 MaxDD:1.3% PnL:$+1279.91"}
+{"ts": "2026-05-11T08:21:09.224Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:09.224Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:09.225Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2327.25 SL=2320.67 TP=2340.32 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T08:21:09.226Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2349.01 SL=2342.36 TP=2362.28 Lots=0.01 Bar=81"}
+{"ts": "2026-05-11T08:21:09.226Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2363.75 SL=2356.80 TP=2377.59 Lots=0.01 Bar=92"}
+{"ts": "2026-05-11T08:21:09.226Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2357.92 SL=2365.21 TP=2343.44 Lots=0.01 Bar=97"}
+{"ts": "2026-05-11T08:21:09.227Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2370.81 SL=2363.53 TP=2385.31 Lots=0.01 Bar=116"}
+{"ts": "2026-05-11T08:21:09.228Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2383.61 SL=2376.11 TP=2398.59 Lots=0.01 Bar=123"}
+{"ts": "2026-05-11T08:21:09.228Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2400.18 SL=2393.45 TP=2413.58 Lots=0.01 Bar=138"}
+{"ts": "2026-05-11T08:21:09.230Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2410.06 SL=2416.93 TP=2396.41 Lots=0.01 Bar=160"}
+{"ts": "2026-05-11T08:21:09.230Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2420.18 SL=2413.15 TP=2434.21 Lots=0.01 Bar=175"}
+{"ts": "2026-05-11T08:21:09.231Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2431.57 SL=2438.93 TP=2416.89 Lots=0.01 Bar=187"}
+{"ts": "2026-05-11T08:21:09.231Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2439.59 SL=2432.19 TP=2454.35 Lots=0.01 Bar=190"}
+{"ts": "2026-05-11T08:21:09.232Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2450.51 SL=2457.18 TP=2437.26 Lots=0.01 Bar=209"}
+{"ts": "2026-05-11T08:21:09.233Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2455.90 SL=2449.25 TP=2469.17 Lots=0.01 Bar=252"}
+{"ts": "2026-05-11T08:21:09.233Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2470.77 SL=2463.75 TP=2484.82 Lots=0.01 Bar=272"}
+{"ts": "2026-05-11T08:21:09.233Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2484.58 SL=2477.89 TP=2497.91 Lots=0.01 Bar=285"}
+{"ts": "2026-05-11T08:21:09.235Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=3.94 Sharpe=10.72 id=7fd3b8f6-ea4b-4355-9c40-8694c2092816"}
+{"ts": "2026-05-11T08:21:09.236Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:15 WR:66.7% PF:3.94 Sharpe:10.72 MaxDD:1.4% PnL:$+1033.99"}
+{"ts": "2026-05-11T08:21:09.237Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:09.237Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:21:09.239Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:09.239Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:09.239Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2366.71 SL=2359.61 TP=2380.82 Lots=0.01 Bar=53"}
+{"ts": "2026-05-11T08:21:09.239Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2359.61 SL=2366.81 TP=2345.24 Lots=0.01 Bar=59"}
+{"ts": "2026-05-11T08:21:09.240Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2366.61 SL=2359.80 TP=2380.17 Lots=0.01 Bar=76"}
+{"ts": "2026-05-11T08:21:09.240Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2383.98 SL=2376.44 TP=2399.05 Lots=0.01 Bar=107"}
+{"ts": "2026-05-11T08:21:09.241Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2395.95 SL=2402.58 TP=2382.76 Lots=0.01 Bar=151"}
+{"ts": "2026-05-11T08:21:09.242Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2405.77 SL=2399.13 TP=2419.06 Lots=0.01 Bar=155"}
+{"ts": "2026-05-11T08:21:09.242Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2421.87 SL=2415.04 TP=2435.50 Lots=0.01 Bar=171"}
+{"ts": "2026-05-11T08:21:09.244Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2440.14 SL=2446.95 TP=2426.54 Lots=0.01 Bar=196"}
+{"ts": "2026-05-11T08:21:09.245Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2450.55 SL=2443.79 TP=2464.05 Lots=0.01 Bar=211"}
+{"ts": "2026-05-11T08:21:09.245Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2442.92 SL=2449.47 TP=2429.81 Lots=0.01 Bar=215"}
+{"ts": "2026-05-11T08:21:09.247Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2474.57 SL=2467.57 TP=2488.56 Lots=0.01 Bar=232"}
+{"ts": "2026-05-11T08:21:09.248Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2474.99 SL=2467.91 TP=2489.16 Lots=0.01 Bar=240"}
+{"ts": "2026-05-11T08:21:09.249Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2490.70 SL=2483.41 TP=2505.23 Lots=0.01 Bar=254"}
+{"ts": "2026-05-11T08:21:09.250Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2504.80 SL=2497.60 TP=2519.17 Lots=0.01 Bar=264"}
+{"ts": "2026-05-11T08:21:09.250Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2519.21 SL=2512.12 TP=2533.34 Lots=0.01 Bar=273"}
+{"ts": "2026-05-11T08:21:09.250Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=2.27 Sharpe=6.09 id=b82ac0d5-c35c-4dba-bdd2-203829d24b26"}
+{"ts": "2026-05-11T08:21:09.250Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:15 WR:53.3% PF:2.27 Sharpe:6.09 MaxDD:2.6% PnL:$+612.45"}
+{"ts": "2026-05-11T08:21:09.260Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:09.273Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T08:21:09.273Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.5%/3.8% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T08:21:09.275Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:09.286Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T08:21:09.286Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T08:21:09.287Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:09.306Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T08:21:09.306Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.6%/2.5% | Final equity P50: $14,800"}
+{"ts": "2026-05-11T08:21:26.719Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:26.719Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:26.720Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2347.27 SL=2339.65 TP=2362.43 Lots=0.01 Bar=50"}
+{"ts": "2026-05-11T08:21:26.721Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2365.90 SL=2358.09 TP=2381.49 Lots=0.01 Bar=61"}
+{"ts": "2026-05-11T08:21:26.721Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2383.33 SL=2375.99 TP=2397.95 Lots=0.01 Bar=80"}
+{"ts": "2026-05-11T08:21:26.722Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2402.02 SL=2394.53 TP=2416.93 Lots=0.01 Bar=96"}
+{"ts": "2026-05-11T08:21:26.722Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2419.75 SL=2412.97 TP=2433.30 Lots=0.01 Bar=113"}
+{"ts": "2026-05-11T08:21:26.723Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2437.98 SL=2430.85 TP=2452.22 Lots=0.01 Bar=121"}
+{"ts": "2026-05-11T08:21:26.723Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2451.03 SL=2444.21 TP=2464.66 Lots=0.01 Bar=131"}
+{"ts": "2026-05-11T08:21:26.723Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2459.95 SL=2467.09 TP=2445.66 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T08:21:26.724Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2466.19 SL=2459.16 TP=2480.17 Lots=0.01 Bar=149"}
+{"ts": "2026-05-11T08:21:26.724Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2490.26 SL=2483.01 TP=2504.72 Lots=0.01 Bar=161"}
+{"ts": "2026-05-11T08:21:26.725Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2503.62 SL=2497.10 TP=2516.66 Lots=0.01 Bar=183"}
+{"ts": "2026-05-11T08:21:26.726Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2520.11 SL=2513.01 TP=2534.25 Lots=0.01 Bar=199"}
+{"ts": "2026-05-11T08:21:26.726Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2536.10 SL=2529.03 TP=2550.21 Lots=0.01 Bar=213"}
+{"ts": "2026-05-11T08:21:26.727Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2544.43 SL=2551.49 TP=2530.33 Lots=0.01 Bar=229"}
+{"ts": "2026-05-11T08:21:26.727Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2552.08 SL=2545.02 TP=2566.18 Lots=0.01 Bar=234"}
+{"ts": "2026-05-11T08:21:26.728Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.34 SL=2546.22 TP=2567.51 Lots=0.01 Bar=249"}
+{"ts": "2026-05-11T08:21:26.728Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2568.82 SL=2561.61 TP=2583.19 Lots=0.01 Bar=267"}
+{"ts": "2026-05-11T08:21:26.729Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2587.57 SL=2579.84 TP=2602.97 Lots=0.01 Bar=279"}
+{"ts": "2026-05-11T08:21:26.729Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2604.46 SL=2597.16 TP=2619.04 Lots=0.01 Bar=287"}
+{"ts": "2026-05-11T08:21:26.903Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=10.24 Sharpe=19.97 id=b327ac3d-bae2-4144-9c81-1c4710ebb6ba"}
+{"ts": "2026-05-11T08:21:26.903Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:19 WR:84.2% PF:10.24 Sharpe:19.97 MaxDD:1.2% PnL:$+1966.78"}
+{"ts": "2026-05-11T08:21:26.907Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:26.907Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:26.907Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2368.00 SL=2360.72 TP=2382.49 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T08:21:26.908Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2384.31 SL=2377.56 TP=2397.78 Lots=0.01 Bar=71"}
+{"ts": "2026-05-11T08:21:26.910Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2410.22 SL=2403.40 TP=2423.83 Lots=0.01 Bar=90"}
+{"ts": "2026-05-11T08:21:26.911Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2431.91 SL=2424.00 TP=2447.67 Lots=0.01 Bar=102"}
+{"ts": "2026-05-11T08:21:26.911Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2448.75 SL=2441.57 TP=2463.04 Lots=0.01 Bar=111"}
+{"ts": "2026-05-11T08:21:26.911Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2465.35 SL=2458.06 TP=2479.87 Lots=0.01 Bar=120"}
+{"ts": "2026-05-11T08:21:26.911Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2479.90 SL=2473.15 TP=2493.37 Lots=0.01 Bar=154"}
+{"ts": "2026-05-11T08:21:26.913Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2507.23 SL=2499.71 TP=2522.28 Lots=0.01 Bar=168"}
+{"ts": "2026-05-11T08:21:26.913Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2523.45 SL=2516.47 TP=2537.35 Lots=0.01 Bar=193"}
+{"ts": "2026-05-11T08:21:26.913Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2538.69 SL=2531.09 TP=2553.86 Lots=0.01 Bar=199"}
+{"ts": "2026-05-11T08:21:26.913Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.85 SL=2547.14 TP=2567.23 Lots=0.01 Bar=214"}
+{"ts": "2026-05-11T08:21:26.915Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2564.17 SL=2570.54 TP=2551.46 Lots=0.01 Bar=235"}
+{"ts": "2026-05-11T08:21:26.915Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2570.17 SL=2563.53 TP=2583.42 Lots=0.01 Bar=237"}
+{"ts": "2026-05-11T08:21:26.916Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2584.78 SL=2578.01 TP=2598.27 Lots=0.01 Bar=244"}
+{"ts": "2026-05-11T08:21:26.917Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2626.05 SL=2618.43 TP=2641.23 Lots=0.01 Bar=263"}
+{"ts": "2026-05-11T08:21:26.919Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2645.08 SL=2638.10 TP=2659.05 Lots=0.01 Bar=278"}
+{"ts": "2026-05-11T08:21:26.919Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2658.33 SL=2651.71 TP=2671.55 Lots=0.01 Bar=290"}
+{"ts": "2026-05-11T08:21:26.920Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=34.58 Sharpe=38.55 id=60eab31c-3285-47d6-99b2-8ae2dd3965bd"}
+{"ts": "2026-05-11T08:21:26.920Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:94.1% PF:34.58 Sharpe:38.55 MaxDD:0.6% PnL:$+2141.90"}
+{"ts": "2026-05-11T08:21:26.922Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:26.922Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:26.923Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2330.77 SL=2337.32 TP=2317.70 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T08:21:26.923Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2338.99 SL=2332.33 TP=2352.28 Lots=0.01 Bar=58"}
+{"ts": "2026-05-11T08:21:26.923Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2340.41 SL=2333.50 TP=2354.14 Lots=0.01 Bar=65"}
+{"ts": "2026-05-11T08:21:26.923Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2357.73 SL=2350.82 TP=2371.49 Lots=0.01 Bar=80"}
+{"ts": "2026-05-11T08:21:26.924Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2373.38 SL=2366.27 TP=2387.57 Lots=0.01 Bar=100"}
+{"ts": "2026-05-11T08:21:26.925Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2388.94 SL=2381.68 TP=2403.44 Lots=0.01 Bar=109"}
+{"ts": "2026-05-11T08:21:26.925Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2402.75 SL=2396.40 TP=2415.44 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T08:21:26.925Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2416.37 SL=2408.98 TP=2431.09 Lots=0.01 Bar=157"}
+{"ts": "2026-05-11T08:21:26.925Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2432.28 SL=2424.60 TP=2447.57 Lots=0.01 Bar=167"}
+{"ts": "2026-05-11T08:21:26.927Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2439.36 SL=2446.75 TP=2424.62 Lots=0.01 Bar=180"}
+{"ts": "2026-05-11T08:21:26.927Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2450.89 SL=2444.63 TP=2463.33 Lots=0.01 Bar=204"}
+{"ts": "2026-05-11T08:21:26.928Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2464.72 SL=2458.46 TP=2477.17 Lots=0.01 Bar=229"}
+{"ts": "2026-05-11T08:21:26.928Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2476.95 SL=2470.41 TP=2489.98 Lots=0.01 Bar=241"}
+{"ts": "2026-05-11T08:21:26.929Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2487.24 SL=2494.13 TP=2473.48 Lots=0.01 Bar=250"}
+{"ts": "2026-05-11T08:21:26.929Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2496.94 SL=2490.04 TP=2510.65 Lots=0.01 Bar=257"}
+{"ts": "2026-05-11T08:21:26.930Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2511.90 SL=2504.80 TP=2526.01 Lots=0.01 Bar=292"}
+{"ts": "2026-05-11T08:21:26.930Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=5.78 Sharpe=14.31 id=106ae0e1-f36a-4c6d-8824-4149adaf4409"}
+{"ts": "2026-05-11T08:21:26.930Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:16 WR:75.0% PF:5.78 Sharpe:14.31 MaxDD:1.3% PnL:$+1316.39"}
+{"ts": "2026-05-11T08:21:26.932Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:26.932Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:21:26.934Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:21:26.934Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:21:26.935Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2334.11 SL=2327.69 TP=2346.87 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T08:21:26.935Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2346.96 SL=2340.68 TP=2359.49 Lots=0.01 Bar=63"}
+{"ts": "2026-05-11T08:21:26.936Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2362.41 SL=2355.77 TP=2375.64 Lots=0.01 Bar=70"}
+{"ts": "2026-05-11T08:21:26.936Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2380.54 SL=2373.47 TP=2394.62 Lots=0.01 Bar=85"}
+{"ts": "2026-05-11T08:21:26.937Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2395.15 SL=2388.74 TP=2407.98 Lots=0.01 Bar=107"}
+{"ts": "2026-05-11T08:21:26.937Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2407.16 SL=2400.23 TP=2420.97 Lots=0.01 Bar=118"}
+{"ts": "2026-05-11T08:21:26.938Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2420.99 SL=2414.27 TP=2434.34 Lots=0.01 Bar=131"}
+{"ts": "2026-05-11T08:21:26.939Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2432.97 SL=2439.70 TP=2419.53 Lots=0.01 Bar=151"}
+{"ts": "2026-05-11T08:21:26.940Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2437.16 SL=2443.84 TP=2423.84 Lots=0.01 Bar=158"}
+{"ts": "2026-05-11T08:21:26.940Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2445.86 SL=2439.54 TP=2458.46 Lots=0.01 Bar=172"}
+{"ts": "2026-05-11T08:21:26.941Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2457.79 SL=2451.39 TP=2470.60 Lots=0.01 Bar=182"}
+{"ts": "2026-05-11T08:21:26.942Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2477.27 SL=2470.16 TP=2491.46 Lots=0.01 Bar=203"}
+{"ts": "2026-05-11T08:21:26.943Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2503.07 SL=2495.30 TP=2518.56 Lots=0.01 Bar=220"}
+{"ts": "2026-05-11T08:21:26.944Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2523.85 SL=2516.87 TP=2537.78 Lots=0.01 Bar=257"}
+{"ts": "2026-05-11T08:21:26.944Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2538.51 SL=2531.28 TP=2552.92 Lots=0.01 Bar=266"}
+{"ts": "2026-05-11T08:21:26.946Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.87 SL=2546.79 TP=2567.97 Lots=0.01 Bar=288"}
+{"ts": "2026-05-11T08:21:26.947Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2571.37 SL=2564.45 TP=2585.15 Lots=0.01 Bar=298"}
+{"ts": "2026-05-11T08:21:26.947Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=14.34 Sharpe=23.73 id=cb06b5b7-5e04-4053-bbf1-0fc0f30c9679"}
+{"ts": "2026-05-11T08:21:26.947Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:88.2% PF:14.34 Sharpe:23.73 MaxDD:1.2% PnL:$+1792.19"}
+{"ts": "2026-05-11T08:21:26.951Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:26.964Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T08:21:26.965Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.4%/3.7% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T08:21:26.966Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:26.979Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T08:21:26.979Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T08:21:26.980Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:21:27.002Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T08:21:27.002Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.7%/2.6% | Final equity P50: $14,800"}
+{"ts": "2026-05-11T08:22:26.372Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:22:26.373Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:22:26.373Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2354.33 SL=2347.11 TP=2368.78 Lots=0.01 Bar=55"}
+{"ts": "2026-05-11T08:22:26.373Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2344.37 SL=2350.72 TP=2331.73 Lots=0.01 Bar=65"}
+{"ts": "2026-05-11T08:22:26.375Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2351.02 SL=2344.58 TP=2363.84 Lots=0.01 Bar=73"}
+{"ts": "2026-05-11T08:22:26.375Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2368.78 SL=2361.85 TP=2382.57 Lots=0.01 Bar=83"}
+{"ts": "2026-05-11T08:22:26.376Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2384.70 SL=2377.83 TP=2398.38 Lots=0.01 Bar=94"}
+{"ts": "2026-05-11T08:22:26.377Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2413.89 SL=2406.92 TP=2427.84 Lots=0.01 Bar=116"}
+{"ts": "2026-05-11T08:22:26.379Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2451.26 SL=2443.28 TP=2467.19 Lots=0.01 Bar=153"}
+{"ts": "2026-05-11T08:22:26.379Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2466.66 SL=2460.22 TP=2479.50 Lots=0.01 Bar=179"}
+{"ts": "2026-05-11T08:22:26.380Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2485.16 SL=2478.47 TP=2498.52 Lots=0.01 Bar=188"}
+{"ts": "2026-05-11T08:22:26.381Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2509.37 SL=2501.55 TP=2525.02 Lots=0.01 Bar=200"}
+{"ts": "2026-05-11T08:22:26.381Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2525.94 SL=2518.13 TP=2541.53 Lots=0.01 Bar=219"}
+{"ts": "2026-05-11T08:22:26.381Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2541.46 SL=2535.16 TP=2554.02 Lots=0.01 Bar=241"}
+{"ts": "2026-05-11T08:22:26.381Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2556.23 SL=2549.70 TP=2569.29 Lots=0.01 Bar=263"}
+{"ts": "2026-05-11T08:22:26.382Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2572.02 SL=2564.96 TP=2586.09 Lots=0.01 Bar=269"}
+{"ts": "2026-05-11T08:22:26.564Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=12.30 Sharpe=22.89 id=91a5d618-55e0-438b-a120-043b695d8845"}
+{"ts": "2026-05-11T08:22:26.564Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:14 WR:85.7% PF:12.30 Sharpe:22.89 MaxDD:1.4% PnL:$+1535.93"}
+{"ts": "2026-05-11T08:22:26.566Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:22:26.566Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:22:26.568Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2326.34 SL=2319.37 TP=2340.23 Lots=0.01 Bar=53"}
+{"ts": "2026-05-11T08:22:26.568Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2344.02 SL=2336.56 TP=2358.87 Lots=0.01 Bar=61"}
+{"ts": "2026-05-11T08:22:26.568Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2364.18 SL=2356.15 TP=2380.22 Lots=0.01 Bar=71"}
+{"ts": "2026-05-11T08:22:26.568Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2381.51 SL=2374.88 TP=2394.71 Lots=0.01 Bar=96"}
+{"ts": "2026-05-11T08:22:26.570Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2414.13 SL=2406.42 TP=2429.49 Lots=0.01 Bar=113"}
+{"ts": "2026-05-11T08:22:26.572Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2438.60 SL=2431.57 TP=2452.56 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T08:22:26.573Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2462.55 SL=2455.20 TP=2477.25 Lots=0.01 Bar=152"}
+{"ts": "2026-05-11T08:22:26.575Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2475.54 SL=2469.16 TP=2488.21 Lots=0.01 Bar=183"}
+{"ts": "2026-05-11T08:22:26.578Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2503.35 SL=2496.26 TP=2517.50 Lots=0.01 Bar=207"}
+{"ts": "2026-05-11T08:22:26.579Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2490.08 SL=2496.60 TP=2477.07 Lots=0.01 Bar=221"}
+{"ts": "2026-05-11T08:22:26.580Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2501.12 SL=2508.30 TP=2486.82 Lots=0.01 Bar=240"}
+{"ts": "2026-05-11T08:22:26.581Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2508.04 SL=2501.12 TP=2521.83 Lots=0.01 Bar=246"}
+{"ts": "2026-05-11T08:22:26.582Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2524.47 SL=2517.01 TP=2539.32 Lots=0.01 Bar=256"}
+{"ts": "2026-05-11T08:22:26.582Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2539.12 SL=2532.02 TP=2553.33 Lots=0.01 Bar=265"}
+{"ts": "2026-05-11T08:22:26.584Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.51 SL=2546.89 TP=2566.72 Lots=0.01 Bar=288"}
+{"ts": "2026-05-11T08:22:26.585Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=8.19 Sharpe=18.01 id=da454509-6cb5-4b80-a2ff-cc9b8f590dce"}
+{"ts": "2026-05-11T08:22:26.585Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:15 WR:80.0% PF:8.19 Sharpe:18.01 MaxDD:1.9% PnL:$+1498.08"}
+{"ts": "2026-05-11T08:22:26.587Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:22:26.588Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:22:26.589Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2345.74 SL=2338.97 TP=2359.26 Lots=0.01 Bar=65"}
+{"ts": "2026-05-11T08:22:26.589Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2344.83 SL=2337.84 TP=2358.72 Lots=0.01 Bar=71"}
+{"ts": "2026-05-11T08:22:26.589Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2359.69 SL=2352.76 TP=2373.53 Lots=0.01 Bar=94"}
+{"ts": "2026-05-11T08:22:26.590Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2374.86 SL=2367.47 TP=2389.63 Lots=0.01 Bar=116"}
+{"ts": "2026-05-11T08:22:26.590Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2389.17 SL=2382.23 TP=2402.99 Lots=0.01 Bar=131"}
+{"ts": "2026-05-11T08:22:26.592Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2379.44 SL=2385.95 TP=2366.48 Lots=0.01 Bar=147"}
+{"ts": "2026-05-11T08:22:26.592Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2387.57 SL=2380.99 TP=2400.66 Lots=0.01 Bar=153"}
+{"ts": "2026-05-11T08:22:26.592Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2398.76 SL=2391.80 TP=2412.59 Lots=0.01 Bar=159"}
+{"ts": "2026-05-11T08:22:26.594Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2399.08 SL=2392.35 TP=2412.48 Lots=0.01 Bar=172"}
+{"ts": "2026-05-11T08:22:26.594Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2413.65 SL=2419.98 TP=2401.04 Lots=0.01 Bar=185"}
+{"ts": "2026-05-11T08:22:26.595Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2420.44 SL=2413.71 TP=2433.87 Lots=0.01 Bar=189"}
+{"ts": "2026-05-11T08:22:26.595Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2427.71 SL=2434.87 TP=2413.47 Lots=0.01 Bar=202"}
+{"ts": "2026-05-11T08:22:26.597Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2446.94 SL=2439.43 TP=2461.94 Lots=0.01 Bar=212"}
+{"ts": "2026-05-11T08:22:26.598Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2478.60 SL=2471.45 TP=2492.87 Lots=0.01 Bar=235"}
+{"ts": "2026-05-11T08:22:26.599Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2494.66 SL=2487.19 TP=2509.57 Lots=0.01 Bar=244"}
+{"ts": "2026-05-11T08:22:26.599Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2512.78 SL=2506.04 TP=2526.24 Lots=0.01 Bar=264"}
+{"ts": "2026-05-11T08:22:26.600Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2534.31 SL=2527.20 TP=2548.44 Lots=0.01 Bar=282"}
+{"ts": "2026-05-11T08:22:26.602Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.38 SL=2546.10 TP=2567.85 Lots=0.01 Bar=297"}
+{"ts": "2026-05-11T08:22:26.602Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=3.90 Sharpe=10.45 id=597e7544-e555-43c6-a000-0f30e9a5ac11"}
+{"ts": "2026-05-11T08:22:26.602Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:18 WR:66.7% PF:3.90 Sharpe:10.45 MaxDD:1.3% PnL:$+1180.77"}
+{"ts": "2026-05-11T08:22:26.604Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:22:26.604Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:22:26.606Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:22:26.606Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:22:26.606Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2356.86 SL=2349.46 TP=2371.66 Lots=0.01 Bar=50"}
+{"ts": "2026-05-11T08:22:26.607Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2374.00 SL=2367.51 TP=2386.92 Lots=0.01 Bar=69"}
+{"ts": "2026-05-11T08:22:26.608Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2394.12 SL=2387.41 TP=2407.47 Lots=0.01 Bar=81"}
+{"ts": "2026-05-11T08:22:26.609Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2400.99 SL=2407.96 TP=2387.14 Lots=0.01 Bar=92"}
+{"ts": "2026-05-11T08:22:26.609Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2409.65 SL=2402.30 TP=2424.26 Lots=0.01 Bar=95"}
+{"ts": "2026-05-11T08:22:26.609Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2428.57 SL=2421.72 TP=2442.25 Lots=0.01 Bar=123"}
+{"ts": "2026-05-11T08:22:26.611Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2452.34 SL=2445.03 TP=2466.91 Lots=0.01 Bar=145"}
+{"ts": "2026-05-11T08:22:26.611Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2465.40 SL=2458.46 TP=2479.25 Lots=0.01 Bar=167"}
+{"ts": "2026-05-11T08:22:26.612Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2481.57 SL=2474.76 TP=2495.17 Lots=0.01 Bar=179"}
+{"ts": "2026-05-11T08:22:26.612Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2499.39 SL=2492.32 TP=2513.47 Lots=0.01 Bar=200"}
+{"ts": "2026-05-11T08:22:26.613Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2516.75 SL=2509.99 TP=2530.20 Lots=0.01 Bar=224"}
+{"ts": "2026-05-11T08:22:26.614Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2530.18 SL=2523.11 TP=2544.29 Lots=0.01 Bar=237"}
+{"ts": "2026-05-11T08:22:26.614Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2542.97 SL=2535.66 TP=2557.56 Lots=0.01 Bar=247"}
+{"ts": "2026-05-11T08:22:26.615Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2559.20 SL=2552.26 TP=2573.03 Lots=0.01 Bar=259"}
+{"ts": "2026-05-11T08:22:26.616Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2571.96 SL=2565.07 TP=2585.64 Lots=0.01 Bar=282"}
+{"ts": "2026-05-11T08:22:26.616Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=26.75 Sharpe=33.29 id=f91fa418-209e-4583-af64-fc8f80ed6bf9"}
+{"ts": "2026-05-11T08:22:26.616Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:15 WR:93.3% PF:26.75 Sharpe:33.29 MaxDD:0.7% PnL:$+1797.62"}
+{"ts": "2026-05-11T08:22:26.620Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:22:26.633Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T08:22:26.633Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.3%/3.7% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T08:22:26.635Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:22:26.649Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T08:22:26.650Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T08:22:26.652Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:22:26.675Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T08:22:26.676Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.6%/2.3% | Final equity P50: $14,800"}
+{"ts": "2026-05-11T08:28:46.380Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:28:46.380Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:28:46.380Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2316.37 SL=2310.02 TP=2329.05 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T08:28:46.382Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2335.09 SL=2329.32 TP=2346.60 Lots=0.01 Bar=78"}
+{"ts": "2026-05-11T08:28:46.382Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2351.11 SL=2344.82 TP=2363.66 Lots=0.01 Bar=85"}
+{"ts": "2026-05-11T08:28:46.383Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2364.65 SL=2358.39 TP=2377.11 Lots=0.01 Bar=102"}
+{"ts": "2026-05-11T08:28:46.383Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2383.43 SL=2375.90 TP=2398.43 Lots=0.01 Bar=122"}
+{"ts": "2026-05-11T08:28:46.384Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2415.94 SL=2408.57 TP=2430.64 Lots=0.01 Bar=140"}
+{"ts": "2026-05-11T08:28:46.385Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2431.53 SL=2424.46 TP=2445.64 Lots=0.01 Bar=161"}
+{"ts": "2026-05-11T08:28:46.386Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2444.75 SL=2438.03 TP=2458.16 Lots=0.01 Bar=171"}
+{"ts": "2026-05-11T08:28:46.387Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2467.21 SL=2460.05 TP=2481.47 Lots=0.01 Bar=184"}
+{"ts": "2026-05-11T08:28:46.387Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2484.42 SL=2477.35 TP=2498.50 Lots=0.01 Bar=200"}
+{"ts": "2026-05-11T08:28:46.387Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2501.61 SL=2494.40 TP=2515.99 Lots=0.01 Bar=213"}
+{"ts": "2026-05-11T08:28:46.388Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2516.03 SL=2508.72 TP=2530.61 Lots=0.01 Bar=238"}
+{"ts": "2026-05-11T08:28:46.388Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2534.04 SL=2526.92 TP=2548.23 Lots=0.01 Bar=249"}
+{"ts": "2026-05-11T08:28:46.389Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2547.16 SL=2553.24 TP=2535.09 Lots=0.01 Bar=274"}
+{"ts": "2026-05-11T08:28:46.390Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2553.58 SL=2547.09 TP=2566.54 Lots=0.01 Bar=277"}
+{"ts": "2026-05-11T08:28:46.390Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2567.42 SL=2560.25 TP=2581.67 Lots=0.01 Bar=283"}
+{"ts": "2026-05-11T08:28:46.702Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=31.69 Sharpe=32.93 id=64f02ea0-21b3-48db-9afa-569c55eff152"}
+{"ts": "2026-05-11T08:28:46.702Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:16 WR:93.8% PF:31.69 Sharpe:32.93 MaxDD:0.5% PnL:$+1867.56"}
+{"ts": "2026-05-11T08:28:46.705Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:28:46.705Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:28:46.706Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2343.61 SL=2335.42 TP=2359.90 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T08:28:46.706Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2361.28 SL=2353.71 TP=2376.38 Lots=0.01 Bar=69"}
+{"ts": "2026-05-11T08:28:46.707Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2373.40 SL=2366.97 TP=2386.23 Lots=0.01 Bar=103"}
+{"ts": "2026-05-11T08:28:46.708Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2391.36 SL=2384.59 TP=2404.85 Lots=0.01 Bar=114"}
+{"ts": "2026-05-11T08:28:46.709Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2410.31 SL=2403.11 TP=2424.70 Lots=0.01 Bar=124"}
+{"ts": "2026-05-11T08:28:46.709Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2425.41 SL=2419.16 TP=2437.82 Lots=0.01 Bar=140"}
+{"ts": "2026-05-11T08:28:46.712Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2461.21 SL=2453.79 TP=2476.04 Lots=0.01 Bar=170"}
+{"ts": "2026-05-11T08:28:46.712Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2477.52 SL=2470.33 TP=2491.87 Lots=0.01 Bar=188"}
+{"ts": "2026-05-11T08:28:46.713Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2498.31 SL=2490.49 TP=2513.86 Lots=0.01 Bar=202"}
+{"ts": "2026-05-11T08:28:46.713Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2516.90 SL=2509.12 TP=2532.43 Lots=0.01 Bar=211"}
+{"ts": "2026-05-11T08:28:46.714Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2527.00 SL=2534.47 TP=2512.11 Lots=0.01 Bar=230"}
+{"ts": "2026-05-11T08:28:46.714Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2534.47 SL=2541.61 TP=2520.21 Lots=0.01 Bar=237"}
+{"ts": "2026-05-11T08:28:46.715Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2540.90 SL=2534.08 TP=2554.55 Lots=0.01 Bar=242"}
+{"ts": "2026-05-11T08:28:46.716Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2552.51 SL=2545.73 TP=2566.04 Lots=0.01 Bar=294"}
+{"ts": "2026-05-11T08:28:46.716Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=11.09 Sharpe=20.65 id=b69e85f5-332d-41e9-b281-b1a1bed823f1"}
+{"ts": "2026-05-11T08:28:46.717Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:14 WR:85.7% PF:11.09 Sharpe:20.65 MaxDD:1.3% PnL:$+1477.59"}
+{"ts": "2026-05-11T08:28:46.719Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:28:46.719Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:28:46.720Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2367.10 SL=2373.53 TP=2354.27 Lots=0.01 Bar=58"}
+{"ts": "2026-05-11T08:28:46.720Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2376.22 SL=2369.24 TP=2390.12 Lots=0.01 Bar=72"}
+{"ts": "2026-05-11T08:28:46.722Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2420.27 SL=2412.23 TP=2436.27 Lots=0.01 Bar=96"}
+{"ts": "2026-05-11T08:28:46.722Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2437.07 SL=2429.29 TP=2452.54 Lots=0.01 Bar=115"}
+{"ts": "2026-05-11T08:28:46.723Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2457.39 SL=2450.54 TP=2471.03 Lots=0.01 Bar=151"}
+{"ts": "2026-05-11T08:28:46.724Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2480.29 SL=2473.16 TP=2494.52 Lots=0.01 Bar=168"}
+{"ts": "2026-05-11T08:28:46.726Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2505.69 SL=2498.86 TP=2519.33 Lots=0.01 Bar=193"}
+{"ts": "2026-05-11T08:28:46.727Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2526.68 SL=2519.61 TP=2540.80 Lots=0.01 Bar=210"}
+{"ts": "2026-05-11T08:28:46.727Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2542.23 SL=2535.40 TP=2555.89 Lots=0.01 Bar=228"}
+{"ts": "2026-05-11T08:28:46.727Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2557.26 SL=2551.03 TP=2569.69 Lots=0.01 Bar=270"}
+{"ts": "2026-05-11T08:28:46.729Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2567.21 SL=2573.28 TP=2555.14 Lots=0.01 Bar=291"}
+{"ts": "2026-05-11T08:28:46.729Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2571.78 SL=2565.55 TP=2584.17 Lots=0.01 Bar=294"}
+{"ts": "2026-05-11T08:28:46.730Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2565.45 SL=2571.76 TP=2552.86 Lots=0.01 Bar=297"}
+{"ts": "2026-05-11T08:28:46.730Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=6.76 Sharpe=14.35 id=65100357-6960-4cba-bc1d-6b19a5a11cfc"}
+{"ts": "2026-05-11T08:28:46.730Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:13 WR:69.2% PF:6.76 Sharpe:14.35 MaxDD:1.1% PnL:$+1082.19"}
+{"ts": "2026-05-11T08:28:46.732Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:28:46.732Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:28:46.734Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:28:46.734Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:28:46.735Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2353.68 SL=2347.08 TP=2366.82 Lots=0.01 Bar=60"}
+{"ts": "2026-05-11T08:28:46.735Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2366.96 SL=2359.71 TP=2381.40 Lots=0.01 Bar=66"}
+{"ts": "2026-05-11T08:28:46.735Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2380.33 SL=2372.98 TP=2394.98 Lots=0.01 Bar=80"}
+{"ts": "2026-05-11T08:28:46.735Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2397.71 SL=2390.35 TP=2412.39 Lots=0.01 Bar=87"}
+{"ts": "2026-05-11T08:28:46.736Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2418.51 SL=2411.13 TP=2433.20 Lots=0.01 Bar=97"}
+{"ts": "2026-05-11T08:28:46.738Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2437.09 SL=2430.04 TP=2451.12 Lots=0.01 Bar=119"}
+{"ts": "2026-05-11T08:28:46.738Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2449.86 SL=2443.00 TP=2463.49 Lots=0.01 Bar=131"}
+{"ts": "2026-05-11T08:28:46.738Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2464.62 SL=2458.49 TP=2476.85 Lots=0.01 Bar=149"}
+{"ts": "2026-05-11T08:28:46.740Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2485.41 SL=2478.62 TP=2498.95 Lots=0.01 Bar=172"}
+{"ts": "2026-05-11T08:28:46.742Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2504.26 SL=2496.86 TP=2518.96 Lots=0.01 Bar=190"}
+{"ts": "2026-05-11T08:28:46.742Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2518.71 SL=2512.00 TP=2532.10 Lots=0.01 Bar=209"}
+{"ts": "2026-05-11T08:28:46.742Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2538.67 SL=2531.57 TP=2552.81 Lots=0.01 Bar=232"}
+{"ts": "2026-05-11T08:28:46.744Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2552.97 SL=2546.25 TP=2566.38 Lots=0.01 Bar=248"}
+{"ts": "2026-05-11T08:28:46.744Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2567.51 SL=2560.26 TP=2581.98 Lots=0.01 Bar=254"}
+{"ts": "2026-05-11T08:28:46.745Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2581.04 SL=2573.55 TP=2595.98 Lots=0.01 Bar=264"}
+{"ts": "2026-05-11T08:28:46.745Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2594.99 SL=2588.74 TP=2607.40 Lots=0.01 Bar=276"}
+{"ts": "2026-05-11T08:28:46.746Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2612.67 SL=2605.57 TP=2626.84 Lots=0.01 Bar=291"}
+{"ts": "2026-05-11T08:28:46.746Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=0.00 Sharpe=272.04 id=1ab70f2c-c6fe-4caf-97e0-e44bc6ac12db"}
+{"ts": "2026-05-11T08:28:46.746Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:100.0% PF:0.00 Sharpe:272.04 MaxDD:0.0% PnL:$+2365.49"}
+{"ts": "2026-05-11T08:28:46.752Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:28:46.765Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T08:28:46.765Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.3%/3.7% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T08:28:46.767Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:28:46.778Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T08:28:46.778Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T08:28:46.779Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:28:46.798Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T08:28:46.798Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.7%/2.5% | Final equity P50: $14,800"}
+{"ts": "2026-05-11T08:38:13.725Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:38:13.733Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:50:12.978Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:50:12.979Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:50:12.979Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2370.50 SL=2363.65 TP=2384.17 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T08:50:12.980Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2388.10 SL=2380.64 TP=2402.96 Lots=0.01 Bar=59"}
+{"ts": "2026-05-11T08:50:12.980Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2401.90 SL=2394.70 TP=2416.27 Lots=0.01 Bar=74"}
+{"ts": "2026-05-11T08:50:12.981Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2421.67 SL=2413.90 TP=2437.19 Lots=0.01 Bar=89"}
+{"ts": "2026-05-11T08:50:12.982Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2443.72 SL=2435.96 TP=2459.22 Lots=0.01 Bar=107"}
+{"ts": "2026-05-11T08:50:12.983Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2459.95 SL=2452.34 TP=2475.10 Lots=0.01 Bar=119"}
+{"ts": "2026-05-11T08:50:12.984Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2481.04 SL=2474.17 TP=2494.74 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T08:50:12.984Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2492.82 SL=2485.24 TP=2507.95 Lots=0.01 Bar=156"}
+{"ts": "2026-05-11T08:50:12.985Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2510.30 SL=2502.26 TP=2526.28 Lots=0.01 Bar=166"}
+{"ts": "2026-05-11T08:50:12.985Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2529.03 SL=2521.61 TP=2543.80 Lots=0.01 Bar=187"}
+{"ts": "2026-05-11T08:50:12.986Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2544.31 SL=2537.09 TP=2558.68 Lots=0.01 Bar=201"}
+{"ts": "2026-05-11T08:50:12.987Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2582.79 SL=2574.37 TP=2599.59 Lots=0.01 Bar=215"}
+{"ts": "2026-05-11T08:50:12.988Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2601.11 SL=2593.00 TP=2617.27 Lots=0.01 Bar=222"}
+{"ts": "2026-05-11T08:50:12.989Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2618.76 SL=2611.51 TP=2633.23 Lots=0.01 Bar=234"}
+{"ts": "2026-05-11T08:50:12.989Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2639.89 SL=2632.72 TP=2654.18 Lots=0.01 Bar=259"}
+{"ts": "2026-05-11T08:50:12.991Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2639.35 SL=2632.52 TP=2652.97 Lots=0.01 Bar=271"}
+{"ts": "2026-05-11T08:50:12.992Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2661.29 SL=2654.72 TP=2674.39 Lots=0.01 Bar=299"}
+{"ts": "2026-05-11T08:50:13.080Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=31.12 Sharpe=31.90 id=37afa286-3993-442e-8411-6580419a2f20"}
+{"ts": "2026-05-11T08:50:13.080Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:88.2% PF:31.12 Sharpe:31.90 MaxDD:0.6% PnL:$+2167.73"}
+{"ts": "2026-05-11T08:50:13.083Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:50:13.083Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:50:13.083Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2358.93 SL=2352.49 TP=2371.72 Lots=0.01 Bar=50"}
+{"ts": "2026-05-11T08:50:13.083Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2352.38 SL=2358.54 TP=2340.09 Lots=0.01 Bar=54"}
+{"ts": "2026-05-11T08:50:13.084Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2371.86 SL=2364.35 TP=2386.84 Lots=0.01 Bar=69"}
+{"ts": "2026-05-11T08:50:13.085Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2397.58 SL=2390.26 TP=2412.23 Lots=0.01 Bar=86"}
+{"ts": "2026-05-11T08:50:13.085Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2390.79 SL=2397.27 TP=2377.86 Lots=0.01 Bar=97"}
+{"ts": "2026-05-11T08:50:13.086Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2395.80 SL=2389.12 TP=2409.12 Lots=0.01 Bar=99"}
+{"ts": "2026-05-11T08:50:13.086Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2410.96 SL=2404.17 TP=2424.50 Lots=0.01 Bar=116"}
+{"ts": "2026-05-11T08:50:13.086Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2424.42 SL=2417.94 TP=2437.35 Lots=0.01 Bar=125"}
+{"ts": "2026-05-11T08:50:13.088Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2442.18 SL=2435.61 TP=2455.28 Lots=0.01 Bar=147"}
+{"ts": "2026-05-11T08:50:13.088Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2454.79 SL=2461.27 TP=2441.84 Lots=0.01 Bar=170"}
+{"ts": "2026-05-11T08:50:13.088Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2461.99 SL=2454.93 TP=2476.10 Lots=0.01 Bar=184"}
+{"ts": "2026-05-11T08:50:13.089Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2459.99 SL=2453.76 TP=2472.42 Lots=0.01 Bar=197"}
+{"ts": "2026-05-11T08:50:13.090Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2476.74 SL=2470.15 TP=2489.93 Lots=0.01 Bar=208"}
+{"ts": "2026-05-11T08:50:13.090Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2490.80 SL=2484.13 TP=2504.05 Lots=0.01 Bar=223"}
+{"ts": "2026-05-11T08:50:13.092Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2515.58 SL=2508.06 TP=2530.56 Lots=0.01 Bar=252"}
+{"ts": "2026-05-11T08:50:13.093Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2529.00 SL=2521.34 TP=2544.30 Lots=0.01 Bar=262"}
+{"ts": "2026-05-11T08:50:13.094Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2538.33 SL=2545.51 TP=2524.06 Lots=0.01 Bar=276"}
+{"ts": "2026-05-11T08:50:13.095Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2550.08 SL=2543.19 TP=2563.84 Lots=0.01 Bar=283"}
+{"ts": "2026-05-11T08:50:13.095Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2563.65 SL=2557.23 TP=2576.46 Lots=0.01 Bar=296"}
+{"ts": "2026-05-11T08:50:13.098Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=3.35 Sharpe=9.28 id=dac5d8f9-06ad-42fa-bc81-4ac415f24a65"}
+{"ts": "2026-05-11T08:50:13.098Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:19 WR:63.2% PF:3.35 Sharpe:9.28 MaxDD:1.4% PnL:$+1110.51"}
+{"ts": "2026-05-11T08:50:13.100Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:50:13.101Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:50:13.101Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2400.73 SL=2393.47 TP=2415.21 Lots=0.01 Bar=51"}
+{"ts": "2026-05-11T08:50:13.102Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2419.18 SL=2412.36 TP=2432.75 Lots=0.01 Bar=83"}
+{"ts": "2026-05-11T08:50:13.104Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2446.53 SL=2439.34 TP=2460.82 Lots=0.01 Bar=96"}
+{"ts": "2026-05-11T08:50:13.104Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2468.94 SL=2461.68 TP=2483.39 Lots=0.01 Bar=114"}
+{"ts": "2026-05-11T08:50:13.104Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2481.66 SL=2474.96 TP=2495.03 Lots=0.01 Bar=136"}
+{"ts": "2026-05-11T08:50:13.104Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2496.21 SL=2489.06 TP=2510.47 Lots=0.01 Bar=141"}
+{"ts": "2026-05-11T08:50:13.105Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2488.53 SL=2495.49 TP=2474.71 Lots=0.01 Bar=145"}
+{"ts": "2026-05-11T08:50:13.105Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2497.28 SL=2490.26 TP=2511.31 Lots=0.01 Bar=155"}
+{"ts": "2026-05-11T08:50:13.106Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2519.88 SL=2512.64 TP=2534.37 Lots=0.01 Bar=167"}
+{"ts": "2026-05-11T08:50:13.108Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2554.04 SL=2547.15 TP=2567.79 Lots=0.01 Bar=184"}
+{"ts": "2026-05-11T08:50:13.109Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2568.22 SL=2560.87 TP=2582.91 Lots=0.01 Bar=197"}
+{"ts": "2026-05-11T08:50:13.109Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2583.35 SL=2575.91 TP=2598.17 Lots=0.01 Bar=203"}
+{"ts": "2026-05-11T08:50:13.110Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2599.64 SL=2593.66 TP=2611.55 Lots=0.01 Bar=231"}
+{"ts": "2026-05-11T08:50:13.111Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2602.86 SL=2596.45 TP=2615.63 Lots=0.01 Bar=239"}
+{"ts": "2026-05-11T08:50:13.111Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2614.28 SL=2607.82 TP=2627.18 Lots=0.01 Bar=245"}
+{"ts": "2026-05-11T08:50:13.111Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2631.34 SL=2624.94 TP=2644.09 Lots=0.01 Bar=262"}
+{"ts": "2026-05-11T08:50:13.114Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened SELL @ 2662.23 SL=2668.50 TP=2649.71 Lots=0.01 Bar=291"}
+{"ts": "2026-05-11T08:50:13.117Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=9.08 Sharpe=18.34 id=1388071a-fffc-4228-afef-180527fceb8f"}
+{"ts": "2026-05-11T08:50:13.117Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:17 WR:82.4% PF:9.08 Sharpe:18.34 MaxDD:1.3% PnL:$+1624.64"}
+{"ts": "2026-05-11T08:50:13.119Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:50:13.119Z", "lvl": "ERROR", "cat": "backtest", "component": "backtester", "msg": "No candle data available for backtest"}
+{"ts": "2026-05-11T08:50:13.120Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Starting backtest: alpha_breakout on XAUUSD H1"}
+{"ts": "2026-05-11T08:50:13.120Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "Loaded 300 candles from 2025-01-01 00:00:00 to 2025-01-13 11:00:00"}
+{"ts": "2026-05-11T08:50:13.121Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2374.11 SL=2366.92 TP=2388.47 Lots=0.01 Bar=52"}
+{"ts": "2026-05-11T08:50:13.123Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2400.43 SL=2393.18 TP=2414.83 Lots=0.01 Bar=76"}
+{"ts": "2026-05-11T08:50:13.124Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2418.52 SL=2411.16 TP=2433.24 Lots=0.01 Bar=86"}
+{"ts": "2026-05-11T08:50:13.124Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2434.21 SL=2426.72 TP=2449.15 Lots=0.01 Bar=102"}
+{"ts": "2026-05-11T08:50:13.125Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2459.55 SL=2452.41 TP=2473.79 Lots=0.01 Bar=126"}
+{"ts": "2026-05-11T08:50:13.126Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2481.91 SL=2474.78 TP=2496.18 Lots=0.01 Bar=140"}
+{"ts": "2026-05-11T08:50:13.127Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2498.56 SL=2491.59 TP=2512.50 Lots=0.01 Bar=157"}
+{"ts": "2026-05-11T08:50:13.127Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2514.34 SL=2507.59 TP=2527.78 Lots=0.01 Bar=192"}
+{"ts": "2026-05-11T08:50:13.127Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2527.56 SL=2520.50 TP=2541.59 Lots=0.01 Bar=220"}
+{"ts": "2026-05-11T08:50:13.128Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2550.61 SL=2543.20 TP=2565.40 Lots=0.01 Bar=243"}
+{"ts": "2026-05-11T08:50:13.129Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2564.98 SL=2558.13 TP=2578.64 Lots=0.01 Bar=255"}
+{"ts": "2026-05-11T08:50:13.129Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2581.81 SL=2575.08 TP=2595.21 Lots=0.01 Bar=268"}
+{"ts": "2026-05-11T08:50:13.129Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2595.92 SL=2588.82 TP=2610.06 Lots=0.01 Bar=277"}
+{"ts": "2026-05-11T08:50:13.130Z", "lvl": "DEBUG", "cat": "backtest", "component": "backtester", "msg": "Opened BUY @ 2611.81 SL=2604.59 TP=2626.18 Lots=0.01 Bar=289"}
+{"ts": "2026-05-11T08:50:13.133Z", "lvl": "INFO", "cat": "backtest", "component": "backtest_repository", "msg": "Backtest saved: alpha_breakout XAUUSD PF=0.00 Sharpe=65.19 id=b13cf94f-c8ae-4a95-9906-f3696a1469f7"}
+{"ts": "2026-05-11T08:50:13.133Z", "lvl": "INFO", "cat": "backtest", "component": "backtester", "msg": "[FAIL] alpha_breakout | Trades:14 WR:100.0% PF:0.00 Sharpe:65.19 MaxDD:0.0% PnL:$+1863.93"}
+{"ts": "2026-05-11T08:50:13.138Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 100 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:50:13.150Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/100 ruined"}
+{"ts": "2026-05-11T08:50:13.151Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=100 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 2.4%/3.7% | Final equity P50: $13,600"}
+{"ts": "2026-05-11T08:50:13.153Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 500 simulations × 100 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:50:13.164Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 500/500 ruined"}
+{"ts": "2026-05-11T08:50:13.164Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[FAIL] Monte Carlo | N=500 trades=100 | Risk of ruin: 100.0% | Max DD P50/P95: 50.0%/50.0% | Final equity P50: $5,000"}
+{"ts": "2026-05-11T08:50:13.165Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo starting: 200 simulations × 200 trades | equity=$10,000"}
+{"ts": "2026-05-11T08:50:13.184Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "Monte Carlo complete: 0/200 ruined"}
+{"ts": "2026-05-11T08:50:13.184Z", "lvl": "INFO", "cat": "backtest", "component": "monte_carlo", "msg": "[PASS] Monte Carlo | N=200 trades=200 | Risk of ruin: 0.0% | Max DD P50/P95: 1.6%/2.5% | Final equity P50: $14,800"}

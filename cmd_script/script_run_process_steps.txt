@@ -1,0 +1,101 @@
+Purpose:
+- Step-by-step process to run each script/file in this project.
+- Follow in order to avoid path/import/dependency errors.
+
+Step 1: Go to correct project folder
+Command:
+cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+Expected:
+- You should see folders: core, scripts, dashboard, docker.
+
+Step 2: Activate virtual environment (optional but recommended)
+Commands:
+1) python -m venv venv
+2) .\venv\Scripts\Activate.ps1
+If blocked by policy:
+1) Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+2) .\venv\Scripts\Activate.ps1
+
+Step 3: Install required libraries
+Command:
+python -m pip install -r requirements.txt
+Expected:
+- redis, streamlit, loguru, python-dotenv, psycopg2-binary installed.
+
+Step 4: Start required containers
+Commands:
+1) cd docker
+2) docker compose up -d
+3) docker compose ps
+Expected:
+- Redis on 6379 and Postgres on 5432 should be running.
+
+Step 5: Run bus test script
+Commands:
+1) cd ..
+2) python -m scripts.test_bus
+Expected:
+- Success messages for publish and set_value operations.
+- system:status should be set to {"status": "RUNNING"}.
+
+Step 6: Run pulse test script (market data)
+Command:
+python -m scripts.test_pulse
+Expected:
+- Pulse loop starts and publishes market keys.
+- pulse:status should become "running".
+- mt5:connection should show connection state.
+
+Step 7: Run clock test script (market sessions/time)
+Command:
+python -m scripts.test_clock
+Expected:
+- Clock loop starts and publishes every 10 seconds.
+- Keys like clock:utc, clock:session, clock:status are updated.
+
+Step 8 (optional): Run combined supervisor (config registry + workers)
+Command:
+python run.py
+Expected:
+- Threads start in order: config_registry, pulse, clock, heartbeat, shield.
+- Redis keys config:* update about every 30 seconds (config:last_update).
+- system:config_registry:status and related registry keys show RUNNING when healthy.
+
+Step 8b (optional): Drawdown tracker (dd:* keys, reads account:*)
+Command:
+python scripts/test_drawdown_tracker.py
+or continuous:
+python -m risk.drawdown_tracker
+Expected:
+- dd:start_balance, dd:peak_equity, dd:current_daily_dd, dd:tracker_status update in Redis.
+
+Step 8c (optional): News guard (news:* simulated blackout)
+Command:
+python scripts/test_news_guard.py
+or continuous:
+python -m risk.news_guard
+Expected:
+- news:blackout ACTIVE/INACTIVE, news:event, news:last_update update in Redis.
+
+Step 8d (optional): Cost guard (cost:* spread limits; reads market:*)
+Command:
+python scripts/test_cost_guard.py
+or continuous:
+python -m risk.cost_guard
+Expected:
+- cost:EURUSD:status etc. and cost:last_update refresh in Redis.
+
+Step 9: Run Streamlit dashboard
+Command:
+python -m streamlit run dashboard/dashboard_app.py
+Expected:
+- UI opens with title "QUANT ENGINE 2026".
+- Current Redis value for system:status is shown.
+- ACTIVE SYSTEM CONFIGURATION shows config:* when run.py (or publish_config) populated Redis.
+
+Step 10: Common fix checks if anything fails
+- Check current directory: pwd
+- List files: dir
+- Check redis package: python -m pip show redis
+- Check streamlit package: python -m pip show streamlit
+- Check containers: docker ps

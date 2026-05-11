@@ -1,0 +1,105 @@
+============================================================
+MODULE GROUP: systems/data/
+============================================================
+Contains: market_data_hub.py, tick_sanitizer.py, data_quality_monitor.py
+
+============================================================
+market_data_hub.py (S6) — Market Data Hub
+============================================================
+Purpose: Central store and retrieval point for all market data
+
+What it does:
+  - Subscribes to MARKET_DATA events (clean ticks from sanitizer)
+  - Aggregates ticks into OHLCV candles for multiple timeframes
+  - Stores ticks and candles in DuckDB via StorageService
+  - Provides get_candles() and get_latest_tick() for other systems
+  - Detects data gaps (missing candles) after each write
+  - Imports historical Dukascopy CSV files
+
+How regime_detector and strategies get data:
+  from systems.data.market_data_hub import hub
+  candles = hub.get_candles("XAUUSD", "H1", n=50)
+  # Returns dict: {"open": [...], "high": [...], ...}
+
+Data flow:
+  MT5 → pulse → tick_sanitizer → [MARKET_DATA event] → hub → DuckDB
+
+CSV import for backtesting:
+  hub.import_dukascopy_csv("data/raw/XAUUSD_H1_2024.csv", "XAUUSD", "H1")
+  Dukascopy format: Date,Time,Open,High,Low,Close,Volume
+
+Dashboard page: Market Data
+  - Coverage by symbol and timeframe
+  - Gap detection alerts
+  - Import status
+  - Candle viewer
+
+------------------------------------------------------------
+tick_sanitizer.py (S32) — Tick Sanitizer
+------------------------------------------------------------
+Purpose: Filter bad/corrupt tick data before it enters the system
+
+What it rejects:
+  - Duplicate timestamps (same tick twice)
+  - Bid > Ask (negative spread — impossible)
+  - Spread > 50 pips for XAUUSD (spike/error)
+  - Price change > 5% in one tick (glitch)
+  - Future timestamps (system clock issue)
+  - Stale ticks (>30s old during market hours)
+
+What it publishes:
+  - MARKET_DATA: clean tick (passed to market_data_hub)
+  - TICK_REJECTED: bad tick with rejection reason
+
+Quality score:
+  Last 1000 ticks analyzed
+  quality_score = (clean_count / 1000) * 100
+  If quality_score < 90%: DATA_QUALITY_ALERT published
+
+Dashboard page: Market Data → Sanitizer Metrics
+  - Rejection rate
+  - Quality score trend
+  - Rejection reasons breakdown
+  - Live feed cleanliness score
+
+------------------------------------------------------------
+data_quality_monitor.py (S41) — Data Quality Monitor
+------------------------------------------------------------
+Purpose: Periodic background check for data quality issues
+
+Runs every 60 seconds in a background thread.
+
+Checks performed:
+  1. STALE_FEED: no tick received in last 30s during session
+  2. MISSING_CANDLES: gap detected in candle history
+  3. SPREAD_EXPLOSION: spread averaged >20 pips over 5 minutes
+  4. FROZEN_PRICE: bid/ask has not changed in 5 minutes
+
+When a problem is found:
+  → QualityAlert is created with severity and description
+  → DATA_QUALITY_ALERT event is published
+  → Alert is shown on dashboard
+
+Dashboard page: Market Data → Quality Monitor
+  - Live quality score per symbol
+  - Recent alerts (last 50)
+  - Feed latency chart
+  - Missing candle table
+  - Spread anomaly heatmap
+
+============================================================
+IMPORTANT RULES FOR DATA SYSTEMS
+============================================================
+
+1. Only tick_sanitizer should subscribe to RAW market data from pulse
+   All other systems subscribe to MARKET_DATA (already clean)
+
+2. market_data_hub is the single source of truth for candle data
+   Strategies must use hub.get_candles(), not query DuckDB directly
+
+3. Data gaps are acceptable during weekends and holidays
+   data_quality_monitor uses session hours to know when gaps matter
+
+4. Dukascopy CSV is the recommended historical data source
+   Download from: https://www.dukascopy.com/swiss/english/marketwatch/historical/
+   Format: XAUUSD_H1_2024.csv with columns: Date,Time,Open,High,Low,Close,Volume

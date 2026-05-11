@@ -1,0 +1,75 @@
+Trading Clock System (`core/clock.py`)
+
+Purpose
+- This module provides market-time awareness for the trading engine.
+- It publishes current UTC/IST times, session flags, and clock status to Redis every 10 seconds.
+
+Session logic (UTC)
+- Asia: 00:00 to 09:00
+- London: 08:00 to 17:00
+- New York: 13:00 to 22:00
+- London-New York overlap: 13:00 to 17:00
+- Weekend: Saturday and Sunday (UTC)
+
+How current session is selected
+- If weekend -> `Weekend`
+- Else if overlap -> `London-New York overlap`
+- Else if London -> `London`
+- Else if New York -> `New York`
+- Else if Asia -> `Asia`
+- Else -> `Off-session`
+
+Why sessions matter
+- Volatility and liquidity change by session.
+- Spread and execution quality are often better in active sessions.
+- Session-aware systems can avoid weak hours and improve discipline.
+
+Funded-account relevance
+- Funded accounts often enforce strict risk and consistency rules.
+- Session filters can reduce overtrading in low-liquidity periods.
+- Session keys help automate constraints like:
+  - no trading on weekends
+  - prefer London/New York overlap
+  - risk adjustment by session quality
+
+Weekend handling
+- `is_weekend()` checks UTC day (Saturday/Sunday).
+- On weekends, `clock:session` becomes `Weekend`.
+- This can be used to disable entries automatically.
+
+Redis keys written every 10 seconds
+- `clock:utc` -> UTC time string (`YYYY-MM-DD HH:MM:SS`)
+- `clock:ist` -> IST time string (`YYYY-MM-DD HH:MM:SS`)
+- `clock:session` -> selected session label
+- `clock:is_weekend` -> boolean
+- `clock:london` -> boolean
+- `clock:newyork` -> boolean
+- `clock:overlap` -> boolean
+- `clock:asia` -> boolean
+- `clock:status` -> `starting` / `running` / `stopped` / `error`
+
+How to run
+1) Ensure Redis is running.
+2) From project root (`QUANT_ENGINE_2026`), run:
+   `python core/clock.py`
+   or:
+   `python -m scripts.test_clock`
+
+How to test quickly
+1) Start the clock process:
+   `python -m scripts.test_clock`
+2) Open Redis CLI:
+   `docker exec -it <redis_container_name> redis-cli`
+3) Read keys:
+   `GET clock:utc`
+   `GET clock:ist`
+   `GET clock:session`
+   `GET clock:is_weekend`
+   `GET clock:london`
+   `GET clock:newyork`
+   `GET clock:overlap`
+   `GET clock:asia`
+   `GET clock:status`
+4) Wait ~10 seconds and run the same `GET` commands again.
+   Values should refresh on each cycle.
+

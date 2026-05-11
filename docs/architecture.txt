@@ -1,0 +1,41 @@
+QUANT_ENGINE_2026 - Foundation Architecture
+
+Purpose:
+- Define the initial, non-trading project layout.
+
+High-Level Components:
+- core/: shared engine modules and future abstractions.
+- dashboard/: Streamlit user interface layer.
+- scripts/: utility scripts for setup and developer workflows.
+- docker/: environment/container configuration.
+- logs/runtime/: runtime output logs.
+- references/: research and external references.
+
+Foundation Boundaries:
+- No strategy engine, order execution, broker integration, or risk engine yet.
+- Focus only on structure and maintainability.
+
+---
+
+Regime Intelligence Extension (2026-05-11):
+- Existing multi-process architecture is preserved.
+- Engine (`python run.py`) owns regime runtime logic and event subscriptions.
+- Dashboard (`streamlit`) remains monitor/analytics/control layer.
+
+Regime flow (unchanged backbone):
+MT5 -> Pulse -> Tick Sanitizer -> Market Data Hub -> CANDLE_CLOSED(H1)
+-> Regime Detector -> Strategy Selector -> Risk -> Execution
+
+Added components:
+- `regime/classifiers/*`
+- `regime/regime_voter.py`
+- `regime/regime_validator.py`
+- `regime/transition_engine.py`
+- `regime/probability_engine.py`
+- `regime/strategy_mapping.py`
+- `regime/regime_history.py`, `regime/regime_statistics.py`, `regime/regime_performance.py`
+
+Operational safety:
+- No forced/fake regime when history is insufficient.
+- Waiting/degraded states are published to Redis and surfaced in UI.
+- Dashboard analytics use cache and lightweight queries (no full backtest loop per click).

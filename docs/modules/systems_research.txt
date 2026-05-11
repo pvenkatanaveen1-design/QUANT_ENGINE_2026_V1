@@ -1,0 +1,179 @@
+============================================================
+MODULE GROUP: systems/research/
+============================================================
+Contains: backtester.py (S19), walk_forward.py (S20), monte_carlo.py (S21)
+Purpose: Strategy validation before committing to live trading
+
+GOLDEN RULE: Never put a strategy on a funded account without
+passing all three research layers: backtest → walk-forward → Monte Carlo.
+
+============================================================
+backtester.py (S19) — Backtester
+============================================================
+Purpose: Simulate strategy performance on historical data
+
+Design principle: same strategy code runs in BOTH backtest AND live.
+No separate "backtest strategy" vs "live strategy".
+This ensures: "what works in backtest, works live."
+
+Simulation features:
+  - Reads H1 candles from DuckDB via market_data_hub
+  - Applies realistic spread (from config/symbols.yaml)
+  - Applies slippage (configurable, default 0.5 pips)
+  - Applies swap/rollover cost (if holding overnight)
+  - Applies session filter (blocks signals outside valid sessions)
+  - Applies regime filter (blocks signals in non-trending regimes)
+  - Time-exit: closes trade after 4 hours if SL/TP not hit
+
+Output (BacktestResult):
+  - equity_curve: List[float] — equity at each trade
+  - trade_log: List[SimulatedTrade] — each simulated trade
+  - total_trades: int
+  - profit_factor: float
+  - sharpe_ratio: float
+  - max_drawdown_pct: float
+  - win_rate: float
+  - net_pnl: float
+
+Minimum passing criteria:
+  total_trades >= 30
+  profit_factor >= 1.2
+  sharpe_ratio >= 0.8
+  max_drawdown_pct <= 20.0
+
+Usage example:
+  from systems.research.backtester import Backtester
+  from strategies.alpha_breakout import AlphaBreakout
+
+  bt = Backtester()
+  result = bt.run(
+      strategy=AlphaBreakout(),
+      symbol="XAUUSD",
+      timeframe="H1",
+      start_date="2024-01-01",
+      end_date="2024-12-31"
+  )
+  print(f"Profit Factor: {result.profit_factor:.2f}")
+
+Dashboard page: Backtesting
+  - Strategy and timeframe selector
+  - Date range picker
+  - Parameter editor (read from config)
+  - Run Backtest button
+  - Equity curve chart
+  - Drawdown chart
+  - Trade-by-trade table
+  - Metrics summary panel
+  - Export results button
+
+------------------------------------------------------------
+walk_forward.py (S20) — Walk Forward Engine
+------------------------------------------------------------
+Purpose: Validate strategy is not overfitted to in-sample data
+
+What it does:
+  - Splits data into train/test windows (e.g., 6 months train, 2 months test)
+  - Runs backtest on each window
+  - Compares in-sample vs out-of-sample performance
+  - Calculates OOS profit factor and stability score
+
+If a strategy ONLY works on the training data but fails on
+out-of-sample: it is overfitted. Do NOT use it live.
+
+Passing criteria:
+  oos_profit_factor >= 1.0 (breaks even OOS)
+  pass_rate >= 0.60 (at least 60% of windows pass)
+  stability_score >= 0.50 (low variance between windows)
+
+Usage:
+  from systems.research.walk_forward import WalkForwardEngine
+
+  wf = WalkForwardEngine()
+  result = wf.run(
+      strategy=AlphaBreakout(),
+      symbol="XAUUSD",
+      timeframe="H1",
+      start_date="2023-01-01",
+      end_date="2024-12-31",
+      train_months=6,
+      test_months=2
+  )
+
+Dashboard page: Walk Forward
+  - Window-by-window performance chart
+  - OOS vs IS profit factor comparison
+  - Parameter stability view
+  - Pass/fail per window table
+
+------------------------------------------------------------
+monte_carlo.py (S21) — Monte Carlo Engine
+------------------------------------------------------------
+Purpose: Stress-test strategy with randomized trade sequences
+
+What it does:
+  - Takes the historical trade PnL list from a backtest
+  - Shuffles the sequence randomly (N=1000 or 10,000 times)
+  - Simulates equity curve for each sequence
+  - Calculates: risk of ruin, max DD distribution, final equity distribution
+
+Why this matters:
+  A strategy might look good on 200 trades in ORDER.
+  But what if you got all the losing trades first?
+  Monte Carlo shows the worst-case realistic scenario.
+
+Key outputs:
+  risk_of_ruin: probability (0-1) of blowing the account
+  max_dd_p5, max_dd_p50, max_dd_p95: drawdown percentiles
+  final_equity_p5, final_equity_p50, final_equity_p95
+  longest_losing_streak_avg: expected longest bad run
+
+Passing criteria:
+  risk_of_ruin < 0.05 (< 5% chance of ruin)
+  max_dd_p95 < 20.0 (worst 5% case: DD less than 20%)
+
+Usage:
+  from systems.research.monte_carlo import MonteCarlo
+
+  mc = MonteCarlo()
+  result = mc.run(
+      trade_pnls=backtest_result.trade_pnls,  # list of floats
+      initial_equity=10000.0,
+      ruin_threshold=0.80,  # ruin = equity below 80% of start
+      n_simulations=1000
+  )
+  print(f"Risk of ruin: {result.risk_of_ruin:.1%}")
+
+Dashboard page: Monte Carlo
+  - Simulation count selector
+  - Risk of ruin gauge (green < 5%, yellow 5-15%, red > 15%)
+  - Equity curve fan chart (P5, P50, P95)
+  - Max drawdown distribution histogram
+  - Worst-case survivability metrics
+
+============================================================
+IMPORTANT RULES FOR RESEARCH SYSTEMS
+============================================================
+
+1. ALWAYS run research in this order:
+   Step 1: Backtest (200+ trades)
+   Step 2: Walk-forward (validate OOS)
+   Step 3: Monte Carlo (risk of ruin < 5%)
+   Only after ALL three pass → move to demo trading
+
+2. Historical data must be clean.
+   Before running backtest: import your CSV and check for gaps.
+   Dashboard → Market Data → Data Coverage Map
+
+3. Minimum 1 year of data for backtesting.
+   Preferred: 2-3 years covering different market conditions
+   (trending, ranging, news events)
+
+4. Do NOT optimize to fit historical data.
+   Set parameters using market logic:
+   - SL = 1.5 × ATR (not "1.3× because it gives better backtest")
+   - TP = SL × 2.0 (minimum 1:2 RR for positive expectancy)
+
+5. Backtest results are saved to backtest_repository.
+   You can compare multiple runs side by side on the dashboard.
+   Never delete historical backtest results — they show how your
+   edge changed over time.

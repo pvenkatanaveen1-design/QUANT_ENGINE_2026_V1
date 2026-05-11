@@ -1,0 +1,14 @@
+{"ts": "2026-05-11T07:11:51.259Z", "lvl": "INFO", "cat": "execution", "component": "execution", "msg": "Order submitted to MT5", "event_type": "EXECUTION_SUBMITTED", "symbol": "XAUUSD", "order_id": "MT5_12345", "trade_id": null, "result": "SUBMITTED", "expected_price": 2350.0, "actual_price": null, "slippage_pips": null, "latency_ms": 12, "spread_pips": null, "volume": null, "direction": null, "rejection_reason": null, "attempt": null, "strategy": "alpha_breakout", "system_mode": "TEST", "session": "LONDON", "regime": "STRONG_TREND"}
+{"ts": "2026-05-11T07:11:51.259Z", "lvl": "INFO", "cat": "execution", "component": "execution", "msg": "Order filled by broker", "event_type": "EXECUTION_FILLED", "symbol": "XAUUSD", "order_id": "MT5_12345", "trade_id": null, "result": "FILLED", "expected_price": 2350.0, "actual_price": 2350.2, "slippage_pips": 0.2, "latency_ms": 185, "spread_pips": null, "volume": null, "direction": null, "rejection_reason": null, "attempt": null, "strategy": "alpha_breakout", "system_mode": "TEST", "session": "LONDON", "regime": "STRONG_TREND"}
+{"ts": "2026-05-11T08:13:05.349Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:20:00.095Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:28:55.275Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:33:09.040Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:40:50.551Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:49:22.851Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:51:23.820Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:54:19.740Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T08:55:39.903Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T09:31:54.461Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T09:45:22.381Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}
+{"ts": "2026-05-11T09:54:01.937Z", "lvl": "INFO", "cat": "execution", "component": "execution_profiler", "msg": "ExecutionProfiler started"}

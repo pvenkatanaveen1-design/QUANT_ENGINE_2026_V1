@@ -1,0 +1,205 @@
+============================================================
+QUANTA — FUNDED ACCOUNT GUIDE
+============================================================
+For Indian traders targeting FTMO, E8 Funding, or The5ers
+
+============================================================
+WHAT IS A FUNDED ACCOUNT?
+============================================================
+
+A prop firm (proprietary trading firm) gives you a larger account
+to trade with, in exchange for passing their evaluation and sharing
+a portion of profits.
+
+You pay a challenge fee (₹8,000 – ₹12,000).
+You trade their demo account following their rules.
+If you pass → they give you real funded capital ($10K – $200K).
+You keep 70-90% of profits.
+If you lose too much → you fail and lose the challenge fee.
+
+WHY this system is built this way:
+  Every risk rule in Quanta is designed to keep you within prop
+  firm limits so you never accidentally fail a challenge.
+
+============================================================
+WHICH FIRM TO START WITH?
+============================================================
+
+Recommendation for beginners: The5ers Bootcamp ($6,000 account)
+  Why: No time limit, instant funding option, cheaper fee
+  Fee: ~$80 = ~₹6,500
+  Rules: Max daily loss 4%, max total loss 6%
+  Profit target: 8%
+  Payout: weekly, via Wise
+
+Alternative: E8 Funding ($10K account)
+  Fee: ~$120 = ~₹10,000
+  Rules: Max daily loss 5%, max total loss 8%
+  Profit target: 8%
+  Payout: bi-weekly
+
+Advanced (after 1 successful cycle): FTMO ($10K account)
+  Fee: ~$155 = ~₹12,800
+  Rules: Max daily loss 5%, max total loss 10%
+  Profit target: 10% (phase 1), 5% (phase 2)
+  Payout: monthly
+
+============================================================
+QUANTA CONFIG FOR THE5ERS CHALLENGE
+============================================================
+
+In config/funded_rules.yaml:
+  firm: the5ers
+  max_daily_loss_pct: 4.0
+  max_total_loss_pct: 6.0
+  profit_target_pct: 8.0
+  min_trading_days: 0
+  max_positions: 5
+
+Quanta will:
+  1. Kill trading if daily DD approaches 3% (buffer below 4%)
+  2. Alert you if total DD approaches 5% (buffer below 6%)
+  3. Track profit target progress on the dashboard
+  4. Refuse to trade if kill switch is active
+  5. Log every trade for compliance review
+
+============================================================
+QUANTA CONFIG FOR E8 CHALLENGE
+============================================================
+
+In config/funded_rules.yaml:
+  firm: e8
+  max_daily_loss_pct: 5.0
+  max_total_loss_pct: 8.0
+  profit_target_pct: 8.0
+  min_trading_days: 0
+  max_positions: 10
+
+============================================================
+QUANTA CONFIG FOR FTMO CHALLENGE
+============================================================
+
+In config/funded_rules.yaml:
+  firm: ftmo
+  max_daily_loss_pct: 5.0
+  max_total_loss_pct: 10.0
+  profit_target_pct_phase1: 10.0
+  profit_target_pct_phase2: 5.0
+  min_trading_days_phase1: 10
+  min_trading_days_phase2: 10
+  max_positions: 20
+
+============================================================
+BEFORE STARTING A CHALLENGE
+============================================================
+
+Required checks (ALL must pass):
+
+□ Backtest: 200+ trades, PF ≥ 1.2, Sharpe ≥ 0.8
+□ Demo trading: 50+ trades, no DD breach
+□ Kill switch tested from phone (Telegram /kill → /reset)
+□ News filter tested (block zone working)
+□ Lot size calculator verified (check on demo)
+□ Daily DD counter resets at midnight correctly
+□ All systems show GREEN on dashboard
+□ MT5 on VPS is stable (uptime >7 days)
+□ Compliance engine loaded with correct firm rules
+
+============================================================
+DURING THE CHALLENGE
+============================================================
+
+Daily monitoring:
+  Morning: Check last night's closes (Asian session)
+  12:30 IST: Be alert for London open signals
+  After each trade: Check execution quality
+  Evening: Review daily PnL and DD remaining
+
+Warning zones (step back and review):
+  Daily loss > 2.5% (for 4% max limit)
+  Total loss > 4% (for 6% max limit)
+
+Hard stops (system auto-activates kill switch):
+  Daily loss > 3% (buffer before 4% firm limit)
+  Total loss > 5% (buffer before 6% firm limit)
+
+If you reach the warning zone:
+  → Do NOT take any more trades that day
+  → Review what went wrong
+  → Only resume when you have a clear head and fresh day
+
+============================================================
+AFTER PASSING: LIVE FUNDED ACCOUNT
+============================================================
+
+Withdrawal process:
+  1. Meet minimum withdrawal threshold (usually $500)
+  2. Request withdrawal through firm's portal
+  3. They send via bank wire or Wise/PayPal
+  4. Use Wise (wise.com) for best USD → INR conversion
+
+Tax implications (India):
+  Income from prop trading = Business income under ITR-3
+  Keep all records:
+    - Challenge fee paid (deductible as business expense)
+    - VPS costs (deductible)
+    - All trade records (Quanta auto-logs these)
+    - All withdrawal records
+  File under Schedule BP (Business Profession income)
+  Applicable GST: 18% if annual income > ₹20 lakh
+
+IMPORTANT: Consult a CA for your specific tax situation.
+This is general guidance, not tax advice.
+
+============================================================
+SCALING UP
+============================================================
+
+Once you have a funded account and consistent monthly profits:
+
+Month 1-2:  $10K account → aim for $800-1,000/month profit
+Month 3-4:  Scale to $25K (add more capital from the firm)
+Month 5-6:  Scale to $50K or open a second account
+Year 1:     Target ₹1,50,000 – ₹3,00,000/month profit
+
+Scaling rules:
+  NEVER increase lot size during the challenge phase
+  NEVER override the risk rules
+  ALWAYS keep 2+ months of VPS costs in savings as buffer
+  NEVER use rent/emergency money for challenge fees
+
+============================================================
+IF YOU FAIL A CHALLENGE
+============================================================
+
+It happens. Even to professionals. Here is what to do:
+
+1. Download all trade history from the firm's portal
+2. Import into Quanta backtester for post-mortem analysis
+3. Identify: Why did the system fail the rules?
+   a. Did a news event cause a large loss?
+   b. Was the strategy in a losing streak?
+   c. Was risk per trade too high?
+4. Run walk-forward analysis again with the updated data
+5. Paper trade for 2 more weeks before re-challenging
+6. Consider starting with a smaller account size to reduce fee
+
+Typical failure reasons:
+  - Impatience: trading during low quality setups to "make it back"
+  - Overriding the system during losing streaks
+  - News event slippage causing unexpected losses
+  - System not being monitored → crash undetected for hours
+
+Quanta is built to prevent these — but only if you follow the rules.
+
+============================================================
+RESOURCES
+============================================================
+
+The5ers:         https://the5ers.com/
+E8 Funding:      https://e8funding.com/
+FTMO:            https://ftmo.com/
+Prop Firm Match: https://propfirmmatch.com/ (compare firms)
+FTMO Calculators:https://ftmo.com/en/calculators/
+Wise (payouts):  https://wise.com/
+MyFxBook:        https://www.myfxbook.com/ (performance tracking)

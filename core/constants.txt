@@ -1,0 +1,91 @@
+CORE CONSTANTS — core/constants.py
+===================================
+
+PURPOSE
+-------
+Every number and string constant used across the 45 systems lives here.
+Change one value → takes effect everywhere that imports it.
+These are DEFAULT values only.  config/*.yaml files override them at runtime.
+
+HOW IT WORKS
+------------
+1. Constants are Python module-level variables (ALL_CAPS).
+2. Systems import what they need:
+       from core.constants import ATR_SL_MULTIPLIER, DEFAULT_RISK_PCT
+3. If you need to change a threshold:
+       A. For permanent change: edit constants.py here.
+       B. For per-account/per-firm change: edit config/risk_rules.yaml
+          (config_manager.py loads YAML and the system uses that value).
+   YAML always wins over constants if the system checks YAML first.
+
+WHAT IS DEFINED
+---------------
+SYMBOLS         — Which symbols to trade.  XAUUSD only to start.
+PRIMARY_SYMBOL  — The main symbol (used in tests, dashboard defaults).
+TF_M1..TF_D1   — Timeframe string constants for MT5 + DuckDB.
+SESSION TIMES   — London, NY, Asia open/close in IST (UTC+5:30).
+RISK DEFAULTS   — Per-trade risk %, max DD %, max trades per day.
+PROP FIRM RULES — FTMO, E8, The5ers drawdown limits (2026 values).
+TECHNICAL DEFS  — ATR period, SL multiplier, RR minimum, ADX thresholds.
+XAUUSD SPECS    — Pip value, lot step, contract size.
+PATHS           — DuckDB, SQLite, log directory, raw data directory.
+TIMING          — Update intervals for each system daemon.
+
+SPREAD GUIDE FOR XAUUSD (ECN BROKER, 2026)
+-------------------------------------------
+Session         Typical Spread      Max Allowed (constants.py)
+London          0.15 - 0.30 pips    DEFAULT_MAX_SPREAD = 1.5 pips
+NY              0.20 - 0.50 pips    (same limit)
+Overlap         0.15 - 0.25 pips    (same limit)
+Asia            0.40 - 1.50 pips    May need separate ASIA_MAX_SPREAD
+Off hours       1.00 - 5.00 pips    Do not trade off hours
+Near news       5.00 - 50.00 pips   Blocked by news_guard.py
+
+If your demo fills are getting blocked by spread checks during London,
+your broker may have a wider spread product.  Consider switching ECN brokers.
+Many funded traders use Pepperstone Raw / IC Markets Raw for XAUUSD.
+
+RISK CALCULATION EXAMPLE
+-------------------------
+$10,000 account, DEFAULT_RISK_PCT = 0.005 (0.5%)
+Max loss per trade = $10,000 × 0.005 = $50
+
+XAUUSD: SL = 20 pips, pip value = $1 per 0.01 lot
+Lot size = $50 / (20 × $1/0.01 × 100 oz) → calculated by position_sizer.py
+
+Daily DD limit (DEFAULT_MAX_DAILY_DD = 0.04 = 4%):
+$10,000 × 0.04 = $400 max daily loss
+After losing $400 in a day → shield.py blocks all further trades.
+
+PROP FIRM NOTES (2026)
+-----------------------
+FTMO (most popular):
+  Daily DD: 5% from *start-of-day balance* (not peak equity)
+  Max DD:   10% from *initial deposit* (not peak)
+  Verify current rules at ftmo.com before buying a challenge.
+
+E8 Funding:
+  Daily DD: 5%, Max DD: 8%
+  Slightly easier max DD rule than FTMO.
+
+The5ers:
+  Various plans — verify carefully.  Some use peak balance rule (harder).
+
+This engine uses FTMO-style defaults.  Change DD_FROM_PEAK in constants.py
+or override in config/funded_rules.yaml for other firms.
+
+ADX THRESHOLDS (REALITY CHECK)
+-------------------------------
+ADX > 25 is commonly cited as "trending" in textbooks.
+In live trading with XAUUSD, a cleaner standard is:
+  ADX > 30 = STRONG_TREND (breakout strategies)
+  ADX 25-30 = WEAK_TREND (pullback strategies)
+  ADX < 20 = RANGE (mean-reversion only)
+  ADX 20-25 = AMBIGUOUS — skip or require other confirmation
+
+ADDING NEW CONSTANTS
+--------------------
+1. Add at the bottom of the relevant section in constants.py.
+2. Use ALL_CAPS naming.
+3. Add a comment explaining the value and where it comes from.
+4. If the constant is symbol-specific (not just XAUUSD), add to symbols.yaml instead.

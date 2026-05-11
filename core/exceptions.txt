@@ -1,0 +1,87 @@
+CORE EXCEPTIONS — core/exceptions.py
+======================================
+
+PURPOSE
+-------
+Custom exceptions replace generic `Exception` catches throughout the engine.
+Instead of "something went wrong", the system says exactly WHAT went wrong
+and WHY.  This makes post-trade analysis and debugging dramatically faster.
+
+EXCEPTION HIERARCHY
+-------------------
+QuantaBaseError (all engine errors inherit from this)
+    │
+    ├── DataLoadError           Data file or feed failed
+    ├── BadTickError            Malformed price data
+    ├── StaleDataError          Feed stopped updating
+    │
+    ├── BrokerConnectionError   MT5 offline or disconnected
+    ├── OrderRejectedError      Broker refused the order
+    ├── OrderTimeoutError       Order sent but no fill confirmation
+    │
+    ├── RiskLimitExceeded       DD or trade count breach
+    ├── KillSwitchActive        Manual or automatic kill switch on
+    ├── FundedRuleViolation     Would break prop firm rules
+    ├── NewsBlackoutActive      ±30 min around HIGH news
+    ├── SpreadTooWide           Spread beyond max threshold
+    ├── CorrelationLimitExceeded Too much USD exposure from open trades
+    │
+    ├── ScoreTooLow             Confluence score below minimum
+    ├── RegimeNotAllowed        Wrong regime for this strategy
+    ├── SessionNotAllowed       Outside allowed trading window
+    │
+    ├── ConfigLoadError         YAML or .env file missing/broken
+    └── MissingConfigKey        Required config key not found
+
+HOW TO USE
+----------
+Raising:
+    raise SpreadTooWide(f"Spread {spread:.1f} pips > max {max_spread:.1f}")
+    raise RiskLimitExceeded(f"Daily DD {dd_pct:.1%} reached limit {limit:.1%}")
+
+Catching (specific first, broad last):
+    try:
+        router.send_order(signal)
+    except KillSwitchActive:
+        logger.critical("Kill switch blocked order — no retry")
+    except NewsBlackoutActive as e:
+        logger.info(f"News block: {e}")
+    except SpreadTooWide as e:
+        logger.warning(f"Spread block: {e}")
+    except OrderRejectedError as e:
+        logger.error(f"Broker rejected: {e}")
+    except QuantaBaseError as e:
+        logger.error(f"Engine error: {e}")
+
+Never catch Exception broadly in trading code.  One uncaught exception must not
+silently swallow a risk breach or a fill confirmation failure.
+
+WHICH SYSTEM RAISES WHAT
+-------------------------
+core/sanitizer.py       → BadTickError, StaleDataError
+core/heartbeat.py       → StaleDataError
+execution/broker_bridge → BrokerConnectionError, OrderRejectedError, OrderTimeoutError
+execution/router.py     → KillSwitchActive, (re-raises risk exceptions)
+risk/shield.py          → RiskLimitExceeded
+risk/news_guard.py      → NewsBlackoutActive
+risk/cost_guard.py      → SpreadTooWide
+risk/correlation.py     → CorrelationLimitExceeded
+risk/compliance.py      → FundedRuleViolation
+strategy/scoring.py     → ScoreTooLow
+regime/detector.py      → (does not raise — returns Regime.UNKNOWN)
+risk engine             → RegimeNotAllowed, SessionNotAllowed, ScoreTooLow
+core/config_manager.py  → ConfigLoadError, MissingConfigKey
+
+FUNDED ACCOUNT CRITICAL RULES (2026)
+-------------------------------------
+FundedRuleViolation: If this ever fires in a live account, STOP and review.
+    - Check if your system has a bug that would repeatedly violate a rule.
+    - Common cause: stale news data (forex calendar not updating) causing
+      trades during news blackout window.
+
+KillSwitchActive: Once set, it survives restarts (SQLite-persisted).
+    - To reset: use dashboard Kill Switch panel or Telegram /reset command.
+    - Never add auto-deactivation logic — this defeats the purpose.
+
+RiskLimitExceeded for total DD: This should immediately close ALL open trades.
+    - executor.py listens for this and closes positions before blocking orders.

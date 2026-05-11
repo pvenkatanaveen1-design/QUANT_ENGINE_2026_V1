@@ -1,0 +1,28 @@
+# Redis client for status bus communication and shared state storage.
+redis
+
+# Streamlit for building the minimum foundation dashboard UI.
+streamlit
+
+# Loguru for simple, structured, production-friendly logging.
+loguru
+
+# python-dotenv for loading environment variables from .env files.
+python-dotenv
+
+# PostgreSQL driver for foundation database connectivity and tests.
+psycopg2-binary
+
+# MetaTrader5 Python package to interface with the MetaTrader 5 terminal.
+MetaTrader5
+
+# DataFrames + numerics for market feature engineering Phase 16 (ATR).
+pandas
+numpy
+
+# Dashboard export (Word / PDF snapshots).
+python-docx
+fpdf2
+
+# pytz for timezone-aware UTC/IST clock and session calculations.
+pytz

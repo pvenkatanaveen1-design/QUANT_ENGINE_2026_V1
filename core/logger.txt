@@ -1,0 +1,29 @@
+Logging system purpose:
+- `core/logger.py` provides one shared logger for the entire foundation project.
+- It uses `loguru` for simple, readable logs with timestamp, level, and message.
+
+Log file location:
+- Log directory: `logs/runtime/`
+- Log file: `logs/runtime/app.log`
+- The folder is created automatically if it does not exist.
+
+Console logging:
+- Every log message is also printed in the terminal.
+- This helps beginners see system behavior in real time while running scripts.
+
+Time in logs:
+- Both console and file logs include time in this format:
+  `YYYY-MM-DD HH:mm:ss`
+- Example line:
+  `2026-05-06 16:00:00 | INFO | Redis connected`
+
+How to use logger:
+1) Import and create logger:
+   `from core.logger import get_logger`
+   `log = get_logger()`
+2) Write messages:
+   `log.info("System started")`
+   `log.error("Connection failed")`
+3) Verify output:
+   - Check terminal output
+   - Check `logs/runtime/app.log`

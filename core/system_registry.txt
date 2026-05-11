@@ -1,0 +1,109 @@
+SYSTEM REGISTRY — PHASE 6.1
+
+==========================
+
+Purpose
+
+-------
+
+`core/system_registry.py` gives **one consistent place** to record:
+
+- Which subsystems **pulse**, **clock**, **heartbeat**, and **shield** think they are in.
+
+- Which **phases** (foundation → market_data → risk) have reached milestones such as **COMPLETE**.
+
+- **Errors** when a worker crashes, so the Streamlit dashboard can show them without tailing four terminals.
+
+
+
+Why Redis?
+
+----------
+
+The dashboard already reads live state through `core.bus.get_value`. By writing registry keys through `core.bus.set_value`, **operators see failures immediately** after `python run.py` updates Redis — no new databases required.
+
+
+
+Redis keys written
+
+------------------
+
+Subsystem rows (`TRACKED_SYSTEMS`):
+
+- **`system:{name}:status`** — `STARTING` | `RUNNING` | `WARNING` | `FAILED` | `STOPPED`
+
+- **`system:{name}:error`** — human-readable message or JSON **null** when healthy / cleared
+
+- **`system:{name}:last_update`** — Unix timestamp (seconds, UTC) of the last publish
+
+
+
+Phase rows (`TRACKED_PHASES`):
+
+- **`phase:{phase}:status`** — `STARTING` | `RUNNING` | `COMPLETE` | `WARNING` | `FAILED` | `STOPPED`
+
+
+
+Preflight (runner only):
+
+- **`system:runner:preflight`** — timestamp ping proving Redis accepts writes before threads spawn.
+
+
+
+Public helpers
+
+--------------
+
+1. **`ping_redis()`** — fail fast before threading when Redis is down.
+
+2. **`register_system(name)`** — set subsystem **STARTING** (clear error, bump **last_update**).
+
+3. **`update_system_status(name, status, error=None)`** — publish normalized subsystem status.
+
+4. **`mark_system_failed(name, error_message)`** — force **FAILED** + persist message.
+
+5. **`update_phase_status(phase, status)`** — publish phase status (includes **COMPLETE**).
+
+6. **`mark_phase_complete(phase)`** — convenience wrapper → **COMPLETE**.
+
+7. **`get_system_status(name=None)`** — read one subsystem or all four as nested dicts.
+
+8. **`get_phase_status(phase=None)`** — read one phase or all tracked phases.
+
+
+
+Failure reporting
+
+-----------------
+
+- Worker threads wrap `run_pulse`, `run_clock`, `run_heartbeat`, `run_shield`.
+
+- Uncaught exceptions call **`mark_system_failed`** so **`system:{name}:error`** fills in.
+
+- If **`run_pulse()` returns early** (e.g. MT5 unavailable), the runner still marks **FAILED** with an explanatory message.
+
+- **`ping_redis()`** bubbles Redis failures before anything starts — fix infra first.
+
+
+
+Central runner (`run.py`)
+
+-------------------------
+
+From **`QUANT_ENGINE_2026`**:
+
+    python run.py
+
+
+
+Starts **four non-daemon threads**, publishes startup summaries, and joins until Ctrl+C.
+
+There is **no auto-restart** yet — restart manually after fixing the root cause.
+
+
+
+Modularity rule
+
+---------------
+
+Future components should **reuse these helpers** instead of inventing parallel status keys unless there is a strong reason.

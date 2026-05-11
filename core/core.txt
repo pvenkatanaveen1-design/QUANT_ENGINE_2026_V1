@@ -1,0 +1,9 @@
+Purpose:
+- Contains reusable engine-level Python modules in future phases.
+
+Foundation Scope:
+- Keep this folder minimal during foundation phase.
+- Add only shared utilities and interfaces later.
+
+Notes:
+- No trading strategies or execution logic should be added yet.

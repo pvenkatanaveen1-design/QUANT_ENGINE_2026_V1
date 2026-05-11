@@ -1,0 +1,14 @@
+QUANT_ENGINE_2026 - Run Guide (Foundation)
+
+Current Status:
+- This is a foundation-only scaffold.
+- There is no runnable trading workflow yet.
+
+What You Can Run Now:
+- Open and inspect folder structure.
+- Add starter modules/scripts incrementally.
+
+Future Run Commands (placeholder):
+- Streamlit dashboard launch command.
+- Script-based health checks.
+- Docker-based local environment startup.

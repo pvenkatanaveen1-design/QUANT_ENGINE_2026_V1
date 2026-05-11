@@ -1,0 +1,8 @@
+Purpose:
+- Stores reference material, sample links, and research notes.
+
+Foundation Scope:
+- Keep architecture references and external documentation pointers.
+
+Notes:
+- Avoid mixing operational code with reference material.

@@ -1,0 +1,1 @@
+"""Risk controls: shield, drawdown tracker, news guard, cost guard, position sizer."""

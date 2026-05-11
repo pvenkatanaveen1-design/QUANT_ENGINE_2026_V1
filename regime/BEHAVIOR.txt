@@ -1,0 +1,22 @@
+Behavior Contract
+
+1) Triggering:
+- Regime computation runs only on CANDLE_CLOSED event.
+- Non-H1 candles are ignored by detector runtime path.
+
+2) Safety:
+- No fake regime is forced when data is insufficient.
+- Waiting states are explicitly published to Redis/UI.
+- Validator rejects unstable low-confidence/persistence states.
+
+3) Outputs:
+- Coarse regime enum (backward compatibility)
+- 12-state regime label
+- Probabilities per 12-state regime
+- Transition state
+- Strategy mapping guidance (enable/disable + risk mode)
+
+4) Performance:
+- Event-driven, no polling loops.
+- Dashboard analytics use cached queries.
+

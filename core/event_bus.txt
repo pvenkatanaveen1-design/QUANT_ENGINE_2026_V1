@@ -1,0 +1,108 @@
+EVENT BUS — core/event_bus.py
+==============================
+
+PURPOSE
+-------
+The event bus is the ONLY way systems communicate.
+Systems do NOT import each other.  They only know about event type strings.
+
+Without event bus:
+  regime_detector → imports → strategy_selector → imports → risk_engine
+  Change one → might break all → untestable spaghetti.
+
+With event bus:
+  regime_detector publishes REGIME_CHANGED
+  strategy_selector subscribes to REGIME_CHANGED
+  They never import each other.  Only core/event_bus is shared.
+
+HOW IT WORKS
+------------
+1. At startup, each system subscribes its handler:
+       bus.subscribe(EventType.REGIME_CHANGED, my_handler_function)
+
+2. When a system has output, it publishes:
+       bus.publish(EventType.REGIME_CHANGED, regime_state, source="detector")
+
+3. The bus calls every subscribed handler in order.
+
+4. If one handler crashes, others still run (critical for KILL_SWITCH).
+
+EVENT TYPES (full list in event_bus.py EventType class)
+---------------------------------------------------------
+Data flow:
+  MARKET_DATA         New tick or candle received from MT5
+  CANDLE_CLOSED       New H1 candle completed (triggers regime + strategy check)
+
+Intelligence:
+  REGIME_CHANGED      regime/detector.py output (RegimeState object)
+  NEWS_ALERT          Upcoming HIGH impact news event
+
+Signals:
+  SIGNAL_GENERATED    Alpha strategy output (SignalEvent object)
+  SIGNAL_APPROVED     Risk engine approved it
+  SIGNAL_BLOCKED      Risk engine blocked it (with reason)
+
+Execution:
+  TRADE_SUBMITTED     Order sent to MT5
+  TRADE_FILLED        Broker confirmed fill (TradeEvent object)
+  TRADE_CLOSED        Position closed with PnL
+  TRADE_REJECTED      Broker refused the order
+
+Risk:
+  DRAWDOWN_WARNING    Approaching DD limit
+  DRAWDOWN_LIMIT      DD limit breached — no more trades
+  KILL_SWITCH         Emergency stop triggered
+
+System:
+  HEARTBEAT           System alive signal (every 5 seconds)
+  SYSTEM_ERROR        Any unexpected error
+  SYSTEM_STARTED/STOPPED  Component came online / went offline
+
+WHO PUBLISHES / WHO SUBSCRIBES
+--------------------------------
+Event                 Publisher                   Subscribers
+MARKET_DATA           core/pulse.py               regime/detector, strategy
+REGIME_CHANGED        regime/detector.py          strategy/selector, risk engine, dashboard
+SIGNAL_GENERATED      strategy/alpha_*.py         risk engine
+SIGNAL_APPROVED       risk engine                 execution/executor
+TRADE_FILLED          execution/broker_bridge.py  journal/trade_logger, dashboard
+TRADE_CLOSED          execution/fill_manager.py   journal, dashboard, decay monitor
+DRAWDOWN_LIMIT        risk/shield.py              executor (close all), dashboard
+KILL_SWITCH           risk/kill_switch.py         executor, dashboard, Telegram
+HEARTBEAT             core/heartbeat.py           dashboard
+
+UPGRADING TO REDIS PUB/SUB (Phase 4+)
+---------------------------------------
+Phase 1 (current): synchronous Python bus — handlers run in same thread.
+Phase 4 upgrade: replace bus = EventBus() with bus = RedisBus() at the bottom.
+All 45 systems that call bus.publish() and bus.subscribe() stay unchanged.
+Only this file changes.
+
+This enables multi-process architecture:
+  guardian.py (risk)   → Redis channel → executor.py (orders)
+  brain.py (signals)   → Redis channel → executor.py (orders)
+
+HOW TO USE
+----------
+Subscribe (in your system's __init__ or setup function):
+    from core.event_bus import bus, EventType
+
+    def on_regime_changed(event):
+        regime = event.payload  # This is a RegimeState object
+        if regime.regime == Regime.STRONG_TREND:
+            # ... act on regime change
+
+    bus.subscribe(EventType.REGIME_CHANGED, on_regime_changed)
+
+Publish:
+    from core.event_bus import bus, EventType
+
+    regime_state = RegimeState(...)
+    bus.publish(EventType.REGIME_CHANGED, regime_state, source="detector")
+
+THREAD SAFETY
+-------------
+subscribe() and unsubscribe() are locked.
+publish() is NOT locked during handler dispatch — this allows handlers to
+publish their own events without deadlock.
+Multiple threads can safely call publish() concurrently.

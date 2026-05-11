@@ -1,0 +1,66 @@
+Trade manager — `execution/trade_manager.py` (Phase 15)
+======================================================
+
+Purpose
+-------
+- **Monitor** open positions (DEMO MT5) and **simulate** what a trade-management layer *would* do.
+- Publishes the latest **simulated** decision to Redis so dashboards and future automation share one vocabulary.
+- **No** `order_send`, **no** `position_modify`, **no** partial closes — infrastructure only.
+
+Why simulation first?
+---------------------
+- Lets you **see** breakeven / trail / scale-out signals alongside live PnL before any broker API calls exist.
+- When you are ready, the same Redis keys can drive **real** `position_modify` flows guarded by extra checks.
+
+Breakeven concept (simulated)
+-----------------------------
+- **MOVE_SL_TO_BREAKEVEN** means: “floating profit is large enough that we would move stop loss to entry (or entry + buffer) to remove downside risk.”
+- Here it fires when **floating_profit > 1 × R_unit** (see `.env` **`TRADE_MANAGER_R_UNIT`**).
+- **`R_unit`** is a **stand-in for 1R in account currency** (simplified for Phase 15 — not tied to your original stop distance yet).
+
+Trailing concept (simulated)
+----------------------------
+- **TRAIL_STOP** means: “we would tighten the stop to follow price as the trade works.”
+- Simulated rule: **floating_profit > 2 × R_unit** (tier above breakeven, below partial).
+
+Partial close concept (simulated)
+---------------------------------
+- **PARTIAL_CLOSE** means: “we would lock in profit on part of the position.”
+- Simulated rule: **floating_profit > 3 × R_unit** (highest tier wins).
+
+Tier order
+----------
+Evaluated on the **lead position** (highest **ticket**, same idea as **`orders:last_*`**):
+
+1. **PARTIAL_CLOSE** if profit **> 3R**
+2. else **TRAIL_STOP** if **> 2R**
+3. else **MOVE_SL_TO_BREAKEVEN** if **> 1R**
+4. else **HOLD_POSITION**
+
+Redis keys (read)
+-----------------
+- **`positions:summary`** — JSON from **`execution/order_tracker.py`** (coherence/logging).
+- **`orders:active_count`** — compared to MT5 position count; mismatches are **warned** in logs.
+
+Redis keys (write)
+------------------
+- **`trade_manager:last_ticket`**, **`trade_manager:last_symbol`**, **`trade_manager:last_action`**
+- **`trade_manager:last_reason`**, **`trade_manager:last_update`**, **`trade_manager:status`**
+- **`trade_manager:events`** — rolling list (newest first, cap 50) for the dashboard **events** table.
+  Appends when **(ticket, action, reason)** changes vs the previous publish (avoids spam on every tick).
+
+**`trade_manager:status`**: **`RUNNING`** with open positions, **`NO_POSITIONS`** when flat,
+**`NO_MT5`**, **`NOT_DEMO`**, **`ERROR`** on faults.
+
+Future MT5 modifications
+------------------------
+- Replace simulation with **`MetaTrader5.order_send`** / **`position_modify`** only after:
+  - Explicit **LIVE** policy review
+  - Router + risk + journal hooks
+  - Idempotency (don’t re-send the same modify every 4 seconds)
+- Trailing implementations often need **minimum stop distance** and **freeze level** checks from **`symbol_info`** — not in this phase.
+
+Run
+---
+- With stack: **`python run.py`** (`trade_manager` thread).
+- Direct: **`python -m execution.trade_manager`**

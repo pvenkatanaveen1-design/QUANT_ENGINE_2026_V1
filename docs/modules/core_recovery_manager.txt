@@ -1,0 +1,140 @@
+============================================================
+MODULE: core/recovery_manager.py
+============================================================
+Purpose: Crash detection and state restoration at startup
+System:  Core Foundation — CRITICAL FOR LIVE TRADING
+Author:  Quanta Phase 2
+
+============================================================
+WHAT IT DOES
+============================================================
+
+RecoveryManager runs ONCE at startup, before anything else.
+It restores the system to a known good state after a crash.
+
+Recovery steps (in order):
+  1. Record restart event in SQLite
+  2. Load last state snapshot (equity, balance, daily DD)
+  3. Restore kill switch if it was active before crash
+  4. Rebuild daily drawdown from today's trade records
+  5. [LIVE only] Reconcile local trades with MT5 positions
+  6. [LIVE only] Detect orphan trades
+  7. Save recovery report to logs/recovery_log.json
+  8. Publish RECOVERY_COMPLETE event
+
+============================================================
+RECOVERY REPORT STRUCTURE
+============================================================
+
+{
+  "recovered_at": "2026-05-11T12:30:00",
+  "restart_count_today": 1,
+  "state_loaded": true,
+  "equity_restored": 10000.0,
+  "kill_switch_restored": false,
+  "daily_dd_rebuilt": true,
+  "daily_pnl_rebuilt": -150.0,
+  "reconciliation_run": true,
+  "orphan_trades": ["ticket_12345"],
+  "reconciliation_issues": []
+}
+
+============================================================
+ORPHAN TRADE DETECTION
+============================================================
+
+An orphan trade = a trade that exists in local SQLite as OPEN,
+but does NOT exist in MT5 as an active position.
+
+This means:
+  - The trade was closed by MT5 (SL/TP triggered while offline)
+  - The local database was not updated before the crash
+
+Quanta does NOT automatically close these records.
+It marks them in the recovery report and alerts you.
+YOU must manually verify and update them.
+
+Location: Dashboard → Recovery Dashboard → Orphan Trades
+
+============================================================
+MT5 RECONCILIATION (LIVE mode only)
+============================================================
+
+In TEST mode: reconciliation is SKIPPED.
+In LIVE mode:
+  1. Get all open positions from MT5
+  2. Get all OPEN trades from SQLite
+  3. Compare by ticket/order number
+  4. Identify: positions in MT5 but not locally (unexpected)
+  5. Identify: positions locally but not in MT5 (orphans)
+
+Reconciliation issues are logged and shown on dashboard.
+They do NOT auto-fix — you must review them manually.
+
+============================================================
+KILL SWITCH RESTORATION
+============================================================
+
+If kill switch was ACTIVE before the crash:
+  → RecoveryManager re-activates it immediately
+  → Trading is BLOCKED until you manually reset it
+
+This prevents the dangerous scenario:
+  "Kill switch was active → system crashed → system restarted
+   → kill switch forgotten → system starts trading again"
+
+============================================================
+HOW TO USE
+============================================================
+
+In your startup script (run.py):
+
+  from core.recovery_manager import RecoveryManager
+  from repositories.state_repository import StateRepository
+  from repositories.trade_repository import TradeRepository
+  from services.storage_service import StorageService
+
+  storage = StorageService()
+  state_repo = StateRepository(storage)
+  trade_repo = TradeRepository(storage)
+
+  recovery = RecoveryManager(
+      state_repo=state_repo,
+      trade_repo=trade_repo
+  )
+  report = recovery.run()
+
+  # Check report before starting other systems
+  if report.kill_switch_restored:
+      print("KILL SWITCH ACTIVE — check recovery before trading")
+
+============================================================
+DASHBOARD VISIBILITY
+============================================================
+
+Dashboard → Recovery Dashboard shows:
+  - Last recovery timestamp
+  - Recovery report details
+  - Restart count (today and total)
+  - Orphan trades list
+  - Reconciliation issues
+  - Kill switch restoration history
+  - Sync health status
+
+============================================================
+RUNBOOK: WHAT TO CHECK AFTER RECOVERY
+============================================================
+
+1. Open dashboard → Recovery Dashboard
+2. Read the recovery report
+3. If kill_switch_restored: check WHY it was active, reset if safe
+4. If orphan_trades is not empty:
+   → Log into MT5 and find those trades in Closed Positions
+   → Note close price and reason
+   → Update local records via SQLite or dashboard tool
+5. If reconciliation_issues is not empty:
+   → Review each issue (unexpected MT5 position)
+   → Decide if you need to close the position or record it locally
+6. Verify equity matches your broker portal
+7. Verify daily DD counter is correct
+8. Only THEN allow trading to resume

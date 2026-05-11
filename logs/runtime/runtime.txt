@@ -1,0 +1,8 @@
+Purpose:
+- Dedicated location for runtime-generated logs.
+
+Foundation Scope:
+- Keep this directory available so logging can be enabled without refactoring.
+
+Notes:
+- Application log files will be created here during execution.

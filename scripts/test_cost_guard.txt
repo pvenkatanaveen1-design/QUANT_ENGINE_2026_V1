@@ -1,0 +1,23 @@
+Purpose of `scripts/test_cost_guard.py`
+
+- Exercises **`risk/cost_guard.py`** by writing fake **`market:{symbol}:*`** snapshots to Redis (no MT5 orders).
+
+Scenarios
+
+1. **EURUSD ~0.8 pips** — bid/ask gap = `0.8 × 0.0001` → expect **SAFE** (limit 2 pips).
+2. **XAUUSD ~45 pips** — gap `4.5` with pip size `0.1` → **BLOCKED** (limit 30 pips).
+3. **BTCUSD ~650 pips** — gap `650` with pip size `1` → **BLOCKED** (limit 500 pips).
+4. **Missing data** — clear keys for `EURUSD`; expect **WARNING** for that row.
+
+Background symbols
+
+- The script sets **tight** spreads on the other monitored symbols so they stay **SAFE** while each scenario runs.
+
+How to run
+
+```text
+cd QUANT_ENGINE_2026
+python scripts/test_cost_guard.py
+```
+
+Requires **Redis**. After running, check the dashboard **COST GUARD STATUS** or `redis-cli` keys `cost:*`.

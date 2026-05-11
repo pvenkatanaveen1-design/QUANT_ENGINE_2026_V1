@@ -1,0 +1,27 @@
+Redis pub/sub explanation:
+- Pub/Sub means "publish and subscribe".
+- One system publishes a message to a channel.
+- Any system subscribed to that channel receives the message immediately.
+- In `core/bus.py`, `publish(channel, data)` sends JSON messages to a channel.
+
+Key-value storage explanation:
+- Redis can also store values by key.
+- `set_value(key, value)` stores JSON data at a key.
+- `get_value(key)` reads the key and converts JSON back to Python data.
+- This is useful for shared state like latest system status.
+
+How systems communicate:
+- Producer system sends event data using `publish(...)`.
+- Consumer systems subscribe (in their own logic) to the same channel.
+- Shared state can be stored/retrieved using `set_value(...)` and `get_value(...)`.
+- All actions are logged by `core.logger` for easy debugging.
+
+How to test `bus.py`:
+1) Start Redis container:
+   `docker compose -f docker/docker-compose.yml up -d`
+2) Run quick test command:
+   `python -c "from core.bus import publish,set_value,get_value; publish('demo:channel', {'event':'hello'}); set_value('demo:key', {'ok': True}); print(get_value('demo:key'))"`
+3) Expected:
+   - Console logs for publish/set/get actions
+   - Output: `{'ok': True}`
+   - File logs in `logs/runtime/app.log`

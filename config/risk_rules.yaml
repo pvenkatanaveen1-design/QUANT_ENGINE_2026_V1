@@ -1,0 +1,27 @@
+# config/risk_rules.yaml
+# Per-trade and per-day risk limits.
+# These override constants.py defaults at runtime.
+# Edit here → takes effect on next process restart (or config.reload()).
+# DO NOT exceed prop firm limits. Always set 1% below the firm's limit.
+
+# ─── PER TRADE ──────────────────────────────────────────────────────────────
+risk_per_trade_pct: 0.005       # 0.5% of equity per trade
+max_spread_pips: 1.5            # Block if spread > this (XAUUSD London ECN)
+min_rr_ratio: 2.0               # Minimum risk/reward ratio
+min_score: 60                   # Minimum confluence score (0-100)
+max_slippage_pips: 1.0          # Block if expected slippage > this
+
+# ─── PER DAY ────────────────────────────────────────────────────────────────
+max_daily_dd_pct: 0.04          # 4% daily DD → hard stop (FTMO limit is 5%, buffer 1%)
+max_total_dd_pct: 0.09          # 9% total DD → kill switch (FTMO limit is 10%)
+max_trades_per_day: 3           # Stop trading after 3 trades regardless of outcome
+max_consecutive_losses: 2       # After 2 consecutive losses → stop for the day
+
+# ─── DRAWDOWN CALCULATION METHOD ────────────────────────────────────────────
+# FTMO: Daily DD measured from start-of-day balance (not peak equity)
+# The5ers: Measured from peak balance (harder rule)
+dd_from_peak_balance: false     # false = FTMO style, true = The5ers style
+daily_dd_reset_hour_utc: 0      # Hour (UTC) when daily DD counter resets
+
+# ─── CORRELATION ────────────────────────────────────────────────────────────
+max_correlated_exposure_pct: 0.01  # Max 1% total in correlated pairs at once

@@ -1,0 +1,23 @@
+probability:
+  probability_threshold: 0.55
+  uncertainty_threshold: 0.5
+  weight_adx: 1.0
+  weight_atr: 1.0
+  weight_structure: 1.0
+  weight_session: 1.0
+  weight_volume: 1.0
+  weight_momentum: 1.0
+validator:
+  min_persistence_candles: 3
+  confidence_threshold: 0.7
+  regime_flip_cooldown: 1
+rsi:
+  overbought: 70.0
+  oversold: 30.0
+  neutral_low: 45.0
+  neutral_high: 55.0
+volume:
+  spike_multiplier: 1.8
+  dry_multiplier: 0.6
+_meta:
+  source: default

@@ -1,0 +1,45 @@
+Purpose of `core/config_registry.py` (Phase 7 — centralized configuration visibility)
+
+- Collects **non-secret** runtime settings (via `get_all_config()` / `collect_config()`).
+- Publishes them to Redis under the `config:*` key namespace so **any** consumer (Streamlit, future services) reads the **same snapshot**.
+- Runs on a **30-second** interval when started from `python run.py` (thread: `config_registry`).
+
+Why this exists
+
+- **Single visibility plane:** Operators see what the engine believes is active (mode, symbols, DD gates, Redis endpoint) without opening `.env` on disk.
+- **Future editable UI:** A later phase can add Streamlit widgets that propose changes, validate them, and write through a **dedicated API** — the registry keys become the contract for “what is live.” This phase is **read-only** only (no UI → `.env` writes).
+- **Modular:** Registry depends only on `core.config`, `core.bus`, and `core.logger` — no MT5, no shield logic.
+
+Redis keys written (JSON values via `set_value`)
+
+- `config:system_mode` — `TEST` or `LIVE`
+- `config:symbols` — list of symbol strings (e.g. from `MT5_SYMBOLS`)
+- `config:account_size` — reference account size (number)
+- `config:daily_dd_warning` — daily DD warning threshold (%)
+- `config:daily_dd_block` — daily DD block threshold (%)
+- `config:max_dd_block` — max DD block (%)
+- `config:default_risk_per_trade` — default risk per trade (%)
+- `config:prop_firm` — prop firm label string
+- `config:redis_host` / `config:redis_port` — bus connection (visibility only)
+- `config:last_update` — UTC ISO-8601 timestamp of the publish
+
+Secrets **not** published
+
+- Example: `MT5_PASSWORD` never goes to Redis — only safe, operator-facing fields.
+
+Main functions
+
+1. `collect_config()` — build the flat key → value dict for one publish cycle.
+2. `publish_config()` — `set_value` each key; logs summary; skips individual keys on error so the loop keeps running.
+3. `run_config_registry()` — infinite loop: publish then `sleep(30)`.
+
+How to run
+
+- Preferred: `python run.py` — starts `config_registry` **first**, then pulse, clock, heartbeat, shield.
+- One-shot test (from project root):  
+  `python -c "from core.config_registry import publish_config; publish_config()"`
+
+How to verify
+
+- In Redis: keys `config:*` appear and `config:last_update` advances about every 30s when `run.py` is active.
+- In Streamlit: section **ACTIVE SYSTEM CONFIGURATION** shows the same values (reads Redis with fallback to `get_all_config()` if keys are missing).

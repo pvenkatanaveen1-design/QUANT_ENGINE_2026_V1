@@ -1,0 +1,54 @@
+Purpose of `risk/news_guard.py` (Phase 8 — news blackout infrastructure)
+
+- **Protects funded-style workflows** from entering new risk around **high-impact macro prints**.
+- This phase is **simulation only**: no Forex Factory scrape, no paid news API, no MT5 orders.
+- Future **execution** and **router** code should treat **`news:blackout == "ACTIVE"`** as a hard **no-new-trades** gate (same idea as prop “news trading” bans).
+
+Why news risk matters
+
+- Spreads widen, liquidity thins, and models misfire in the seconds around CPI / NFP / FOMC.
+- Many prop firms **forbid news trading**; even when allowed, discretionary pause is common.
+
+Blackout logic (simulated)
+
+- Each event has a **UTC** `event_time` (full datetime).
+- Blackout is **ACTIVE** when current UTC time is in  
+  **`[event_time - 15 minutes, event_time + 15 minutes]`**.
+- Otherwise blackout is **INACTIVE**.
+
+Simulated schedule (default)
+
+- **`load_test_news_events()`** builds three **rolling** UTC slots (next future occurrence per day):
+  - **13:30** — US NFP (label simulated)
+  - **15:00** — US CPI (label simulated)
+  - **19:00** — FOMC (label simulated)
+- Times roll to **tomorrow** automatically after they pass — good for local demos without editing code.
+
+Redis keys (written every ~**5 s** when the daemon runs)
+
+- `news:event` — human-readable event name tied to the current snapshot
+- `news:event_time` — ISO-8601 UTC string for that event
+- `news:blackout` — **`ACTIVE`** or **`INACTIVE`**
+- `news:blackout_reason` — short beginner-friendly explanation
+- `news:minutes_remaining` — when **ACTIVE**, minutes until the **end** of the blackout window; when **INACTIVE**, minutes until the **next** blackout **starts** (if applicable)
+- `news:last_update` — Unix timestamp (seconds) of last publish
+- `news:status` — **`RUNNING`** in normal simulation; **`ERROR`** if the event list is empty
+
+Main functions
+
+1. **`load_test_news_events()`** — builds the default simulated calendar for `now`.
+2. **`calculate_minutes_to_event()`** — signed minutes until an event (helper / tests).
+3. **`is_blackout_active()`** — window check for one event.
+4. **`publish_news_status()`** — writes all `news:*` keys.
+5. **`evaluate_news_guard_once()`** — single tick (used by tests and internally).
+6. **`run_news_guard()`** — infinite **5-second** loop.
+
+Run
+
+- Daemon: `python -m risk.news_guard`
+- Demo: `python scripts/test_news_guard.py`
+
+Future integration
+
+- Replace **`load_test_news_events`** with a fetcher (Forex Factory HTML, broker calendar JSON, or vendor API).
+- Keep **Redis as the contract** so `brain` / `executor` never import scraping code directly.

@@ -1,0 +1,71 @@
+{"ts": "2026-05-11T07:08:52.339Z", "lvl": "WARNING", "cat": "risk", "component": "risk", "msg": "Risk log test", "reason": "TEST"}
+{"ts": "2026-05-11T07:11:51.258Z", "lvl": "INFO", "cat": "risk", "component": "risk", "msg": "Daily DD check", "event_type": "RISK_CHECK", "check_name": "DAILY_DD", "result": "PASS", "value": 1.5, "threshold": 4.0, "symbol": "XAUUSD", "trade_id": null, "strategy": "alpha_breakout", "system_mode": "TEST", "session": "LONDON", "regime": "STRONG_TREND"}
+{"ts": "2026-05-11T07:11:51.259Z", "lvl": "WARNING", "cat": "risk", "component": "risk", "msg": "Signal blocked - spread too wide", "event_type": "SIGNAL_BLOCKED", "reason": "SPREAD_TOO_WIDE", "symbol": "XAUUSD", "direction": null, "strategy": "alpha_breakout", "correlation_id": null, "blocked_by": "cost_guard", "value": 3.2, "threshold": 2.0, "system_mode": "TEST", "session": "LONDON", "regime": "STRONG_TREND"}
+{"ts": "2026-05-11T07:26:18.622Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T07:26:18.626Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T07:26:45.894Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T07:32:27.063Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T07:32:27.068Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T07:38:21.555Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T07:38:21.559Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T07:49:19.177Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:10:56.251Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:10:56.255Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:12:55.427Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:12:55.431Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:13:05.335Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:13:05.336Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:13:05.341Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:13:05.342Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:14:51.929Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:14:51.934Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:17:57.673Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:17:57.678Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:20:00.078Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:20:00.079Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:20:00.088Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:20:00.088Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:20:02.359Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:20:02.361Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:28:55.259Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:28:55.259Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:28:55.266Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:28:55.266Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:33:09.023Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:33:09.023Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:33:09.032Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:33:09.032Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:40:50.530Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:40:50.530Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:40:50.541Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:40:50.541Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:49:22.833Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:49:22.833Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:49:22.840Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:49:22.840Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:51:23.808Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:51:23.808Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:51:23.812Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:51:23.814Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:54:19.721Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:54:19.722Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:54:19.730Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:54:19.731Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:55:39.884Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:55:39.885Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T08:55:39.894Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T08:55:39.894Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T08:55:49.037Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T08:55:49.042Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T09:31:54.384Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T09:31:54.385Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T09:31:54.418Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T09:31:54.423Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T09:45:22.254Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T09:45:22.257Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T09:45:22.308Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T09:45:22.319Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}
+{"ts": "2026-05-11T09:54:01.858Z", "lvl": "INFO", "cat": "risk", "component": "kill_switch", "msg": "KillSwitch initialized — Telegram=disabled (no token)"}
+{"ts": "2026-05-11T09:54:01.860Z", "lvl": "WARNING", "cat": "risk", "component": "kill_switch", "msg": "Telegram not configured.  /kill command unavailable. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env to enable."}
+{"ts": "2026-05-11T09:54:01.892Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard initialized — max_xau_lots=0.2 max_same_dir=1 hedge_detect=True"}
+{"ts": "2026-05-11T09:54:01.898Z", "lvl": "INFO", "cat": "risk", "component": "correlation_guard", "msg": "CorrelationGuard started"}

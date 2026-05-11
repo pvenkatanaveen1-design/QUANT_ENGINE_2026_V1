@@ -1,0 +1,7 @@
+strategy_mapping:
+  trend_size_multiplier: 1.0
+  range_size_multiplier: 0.8
+  high_vol_size_multiplier: 0.6
+  chaos_size_multiplier: 0.0
+_meta:
+  source: default

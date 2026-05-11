@@ -1,0 +1,55 @@
+Purpose:
+- Quick mapping for "what to run" based on common questions/issues.
+
+Question: "requirements.txt not found"
+Run:
+1) pwd
+2) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+3) python -m pip install -r requirements.txt
+
+Question: "No module named scripts or core"
+Run:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+2) python -m scripts.test_bus
+
+Question: "No module named redis"
+Run:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+2) python -m pip install -r requirements.txt
+3) python -m pip show redis
+
+Question: "streamlit command not found"
+Run:
+1) python -m pip install -r requirements.txt
+2) python -m streamlit run dashboard/dashboard_app.py
+
+Question: "docker path not found"
+Run:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026\docker"
+2) docker compose up -d
+
+Question: "Redis connection failed"
+Run:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026\docker"
+2) docker compose up -d
+3) docker compose ps
+4) cd ..
+5) python -m scripts.test_bus
+
+Question: "How do I run the trading clock?"
+Run:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+2) python -m scripts.test_clock
+
+Question: "How do I verify clock Redis keys?"
+Run:
+1) docker exec -it <redis_container_name> redis-cli
+2) GET clock:utc
+3) GET clock:ist
+4) GET clock:session
+5) GET clock:is_weekend
+6) GET clock:london
+7) GET clock:newyork
+8) GET clock:overlap
+9) GET clock:asia
+10) GET clock:status

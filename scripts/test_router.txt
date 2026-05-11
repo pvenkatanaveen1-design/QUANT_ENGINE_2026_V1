@@ -1,0 +1,41 @@
+`scripts/test_router.py` — what it simulates
+===========================================
+
+Purpose
+-------
+- Seeds Redis with **fake but realistic** safety snapshots (heartbeat, shield, clock, news, costs).
+- Calls `evaluate_trade_request(symbol)` from `execution/router.py`.
+- Prints **APPROVED** / **BLOCKED** plus the **reason** and **failed_check** (which gate stopped the trade).
+
+Scenarios (in order)
+--------------------
+
+1. **Healthy environment -> EURUSD APPROVED**
+   - `heartbeat:overall = HEALTHY`
+   - `risk:block_trading = false`
+   - `kill_switch:active = false`
+   - `news:blackout = INACTIVE`
+   - `clock:session = London-New York overlap`
+   - `SYSTEM_MODE = TEST`
+   - Tight synthetic `market:*` + `evaluate_cost_guard_once()` so `cost:EURUSD:block_trading` is **false**
+   - **Expected:** `EURUSD -> APPROVED` with reason like *All safety checks passed*.
+
+2. **XAUUSD wide spread -> BLOCKED (cost guard)**
+   - Same baseline as (1), but a **wide** XAUUSD book (many pips).
+   - After `evaluate_cost_guard_once()`, `cost:XAUUSD:block_trading` should be **true**.
+   - **Expected:** `XAUUSD -> BLOCKED`, `failed_check: cost`, reason mentions **cost guard** / spread.
+
+3. **News blackout -> BTCUSD BLOCKED (news)**
+   - Baseline + cost guard tick with tight markets (BTC not blocked on spread).
+   - `evaluate_news_guard_once(...)` with an event **at the current UTC minute** so blackout is **ACTIVE**.
+   - **Expected:** `BTCUSD -> BLOCKED`, `failed_check: news`, reason mentions **News blackout**.
+
+4. **Kill switch -> EURUSD BLOCKED**
+   - Baseline restored, news forced **INACTIVE** (far-future event), costs SAFE.
+   - `kill_switch:active = true`
+   - **Expected:** `EURUSD -> BLOCKED`, `failed_check: kill_switch`, reason **Kill switch active**.
+
+After running
+-------------
+- Inspect Redis keys `router:*` for the **last** scenario’s snapshot.
+- Open the dashboard section **EXECUTION ROUTER STATUS** to see the same fields.

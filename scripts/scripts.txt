@@ -1,0 +1,8 @@
+Purpose:
+- Stores helper scripts for setup, checks, and local automation.
+
+Foundation Scope:
+- Add only non-business-critical scripts (bootstrap, lint, sanity checks).
+
+Notes:
+- Do not place production trading logic in this folder.

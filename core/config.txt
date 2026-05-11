@@ -1,0 +1,172 @@
+Purpose of the config system:
+
+- `core/config.py` provides one central place to read application settings.
+
+- This avoids hardcoding values across multiple files.
+
+- It reads values from environment variables (loaded from `.env`) and returns a dictionary of settings.
+
+
+
+Why env-based config matters:
+
+- Different funded firms apply different daily/max drawdown rules and account references.
+
+- Changing `.env` lets you switch labels and thresholds without editing Python logic.
+
+- Secrets stay out of source control when `.env` is gitignored (keep passwords private).
+
+
+
+How `.env` is used:
+
+- The module uses `python-dotenv` (`load_dotenv()`) to automatically load values from `.env`.
+
+- When `core/config.py` is imported, `.env` values become available through `os.getenv(...)`.
+
+- This makes setup easy for beginners because no extra loading step is needed in each file.
+
+- **`get_all_config()`** returns a **validated copy** of all keys from `load_config()` (safe `REDIS_PORT` int, cleaned `MT5_SYMBOLS` list, normalized `SYSTEM_MODE`). Validation helpers **`_validate_config_dict`** and **`get_all_config`** live in **`core/config.py`**. Use **`load_config()`** anywhere that already depended on the original dict shape.
+
+
+
+SYSTEM MODE (Phase 5.1 — TEST vs LIVE)
+
+--------------------------------------
+
+- **`SYSTEM_MODE`** tells the whole stack whether you are in **sandbox-style wiring** or **production-facing wiring**.
+
+- **Allowed values:** `TEST` or `LIVE` (any casing is normalized to uppercase).
+
+- **Default behaviour:** missing, blank, or invalid values fall back to **`TEST`** so you never silently assume LIVE behaviour.
+
+- **`TEST`** — use simulated Redis account snapshots, demos, and dashboards without implying real broker execution. Future modules should treat this as “no real orders / simulated paths OK”.
+
+- **`LIVE`** — you intend real broker/account integrations later; dashboards and logs show stronger warnings. **This repo still does not place trades from mode alone** — it is infrastructure awareness only until execution is wired.
+
+- **Read it in code:** `from core.system_mode import get_system_mode` returns `"TEST"` or `"LIVE"` (`core.config.load_config()` also exposes **`SYSTEM_MODE`**).
+
+- **`load_config()`** also includes **`SYSTEM_MODE`** in its dictionary so batch callers see the same value.
+
+
+
+How to modify values:
+
+1) Open project root `.env` file.
+
+2) Update any of these lines:
+
+   - `APP_NAME=...`
+
+   - `REDIS_HOST=...`
+
+   - `REDIS_PORT=...`
+
+   - `MT5_LOGIN=...`
+
+   - `MT5_PASSWORD=...`
+
+   - `MT5_SERVER=...`
+
+   - `MT5_SYMBOLS=...`
+
+   - **Risk / funded (Phase 4.1)**
+
+   - `ACCOUNT_SIZE=...` — reference balance for sizing labels (shield math uses live Redis equity).
+
+   - `DAILY_DD_WARNING=...` — daily DD % where shield enters WARNING.
+
+   - `DAILY_DD_BLOCK=...` — daily DD % where shield BLOCKS trading.
+
+   - `MAX_DD_BLOCK=...` — session max DD % where shield BLOCKS trading.
+
+   - `MAX_DD_APPROACH=...` — optional; soft WARNING band before max block (defaults to `MAX_DD_BLOCK - 2`).
+
+   - `DEFAULT_RISK_PER_TRADE=...` — default % risk per trade for future execution modules.
+
+   - `PROP_FIRM_NAME=...` — label for logs and dashboard (e.g. FTMO).
+
+   - **`SYSTEM_MODE=...`** — `TEST` (default, simulated-friendly) or `LIVE` (production-facing warnings).
+
+   - **Cost guard / spread (Phase 9)** — max spread in *pips* (`risk/cost_guard.py`):
+
+   - `COST_MAX_SPREAD_PIPS_MAJOR=...` — EUR/GBP majors (default **2**).
+
+   - `COST_MAX_SPREAD_PIPS_JPY=...` — JPY pairs (default **2**).
+
+   - `COST_MAX_SPREAD_PIPS_XAU=...` — XAUUSD (default **30**).
+
+   - `COST_MAX_SPREAD_PIPS_BTC=...` — BTCUSD (default **500**).
+
+3) Save the file.
+
+4) **Restart** scripts that already ran (`risk.shield`, Streamlit dashboard, etc.) so new env values load.
+
+
+
+Configuring different funded firms:
+
+- Copy `.env` patterns per evaluation: stricter daily caps lower `DAILY_DD_BLOCK`; tighter overall rule lowers `MAX_DD_BLOCK`.
+
+- Set `PROP_FIRM_NAME` so dashboards/logs show which rule-set is active.
+
+- Keep `MAX_DD_APPROACH` unset unless you need a custom yellow band; otherwise it tracks `MAX_DD_BLOCK - 2`.
+
+
+
+MT5 settings (Phase 2):
+
+- `MT5_LOGIN` is converted to an integer.
+
+- `MT5_PASSWORD` is read as a string.
+
+- `MT5_SERVER` is read as a string.
+
+- `MT5_SYMBOLS` is converted from a comma-separated string into a Python list.
+
+  Example:
+
+  `XAUUSD,EURUSD,GBPUSD,USDJPY,BTCUSD`
+
+  becomes:
+
+  `["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "BTCUSD"]`
+
+
+
+Risk shield integration:
+
+- `risk/shield.py` calls `load_config()` each evaluation cycle and uses:
+
+  `DAILY_DD_WARNING`, `DAILY_DD_BLOCK`, `MAX_DD_BLOCK`, `MAX_DD_APPROACH`,
+
+  plus `ACCOUNT_SIZE`, `DEFAULT_RISK_PER_TRADE`, `PROP_FIRM_NAME` for startup logging.
+
+- Do **not** hardcode drawdown limits in shield code — always extend `config.py` + `.env` instead.
+
+
+
+How to test:
+
+- From project root `QUANT_ENGINE_2026`, run:
+
+  `python -c "from core.config import load_config; print(load_config())"`
+
+- Full validated export:
+
+  `python -c "from core.config import get_all_config; print(get_all_config())"`
+
+- Expected output is a dictionary containing:
+
+  `APP_NAME`, `REDIS_HOST`, `REDIS_PORT`,
+
+  MT5 fields when present,
+
+  and risk keys: `ACCOUNT_SIZE`, `DAILY_DD_WARNING`, `DAILY_DD_BLOCK`, `MAX_DD_BLOCK`,
+
+  `MAX_DD_APPROACH`, `DEFAULT_RISK_PER_TRADE`, `PROP_FIRM_NAME`,
+
+  `COST_MAX_SPREAD_PIPS_MAJOR`, `COST_MAX_SPREAD_PIPS_JPY`, `COST_MAX_SPREAD_PIPS_XAU`,
+
+  `COST_MAX_SPREAD_PIPS_BTC`, `SYSTEM_MODE`.
+

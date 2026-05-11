@@ -1,0 +1,25 @@
+# config/regimes.yaml
+# Thresholds used by regime/detector.py.
+# These are conservative values based on XAUUSD H1 backtesting.
+
+# ─── ADX THRESHOLDS ─────────────────────────────────────────────────────────
+adx_strong_trend: 30    # ADX > 30 = STRONG_TREND
+adx_weak_trend: 25      # ADX 25-30 = WEAK_TREND
+adx_range: 20           # ADX < 20 = RANGE
+adx_period: 14          # Standard Wilder ADX period
+
+# ─── ATR THRESHOLDS ──────────────────────────────────────────────────────────
+atr_period: 14              # Standard ATR period
+atr_lookback: 20            # Bars for ATR percentile calculation
+atr_high_vol_percentile: 80 # ATR percentile > 80 = HIGH_VOL regime
+
+# ─── EMA TREND DIRECTION ─────────────────────────────────────────────────────
+ema_fast_period: 20
+ema_slow_period: 50
+# BULLISH: price > ema_fast > ema_slow
+# BEARISH: price < ema_fast < ema_slow
+# NEUTRAL: anything else
+
+# ─── REGIME CONFIDENCE ───────────────────────────────────────────────────────
+min_bars_in_regime: 3   # Require 3+ bars in same regime before trading
+min_confidence: 0.70    # Minimum confidence to allow trading

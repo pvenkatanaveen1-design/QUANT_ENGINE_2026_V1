@@ -1,0 +1,136 @@
+============================================================
+QUANTA — RECOVERY PROCEDURES
+============================================================
+Use this document when the system crashes or behaves unexpectedly.
+
+============================================================
+SCENARIO 1: SYSTEM CRASH / UNEXPECTED RESTART
+============================================================
+
+What happens automatically:
+  1. recovery_manager.py runs at startup (before anything else)
+  2. It reads the last state from SQLite (data/journal.db)
+  3. If kill switch was active before crash → it stays active
+  4. Daily DD counter is rebuilt from trade records
+  5. Orphan trades (open locally but not in MT5) are detected
+  6. A recovery report is written to logs/recovery_log.json
+
+What YOU must do:
+  1. Check dashboard → Recovery Dashboard page
+  2. Read the recovery report
+  3. Check "Orphan Trades" section
+     - If any found: log into MT5 terminal and verify manually
+     - Either close the orphan position or update the local DB
+  4. If kill switch was re-activated:
+     - Read the reason
+     - Verify equity is above daily DD limit
+     - Then manually reset: dashboard → Risk Center → Reset Kill Switch
+
+IMPORTANT: The kill switch is NEVER auto-reset after a crash.
+You MUST manually verify it is safe to trade before resetting.
+
+============================================================
+SCENARIO 2: KILL SWITCH ACTIVE (Trading Blocked)
+============================================================
+
+WHY it may be active:
+  a. Daily drawdown limit breached (e.g. -4% in one day)
+  b. Manual activation from dashboard
+  c. Manual activation from Telegram /kill
+  d. Spread explosion (>50 pips)
+  e. Fill latency >5000ms
+  f. System crash (kill switch was active before restart)
+
+TO RESET:
+  Method 1: Dashboard → Risk Center page → "Manual Reset Kill Switch" button
+  Method 2: Telegram → send /reset to your bot
+  Method 3: (emergency) Edit data/journal.db:
+    sqlite3 data/journal.db
+    UPDATE kill_switch_log SET active=0, deactivated_at=CURRENT_TIMESTAMP;
+
+BEFORE RESETTING:
+  - Check today's P&L: are you within daily DD limit?
+  - Check the reason the kill switch was activated
+  - Only reset if you are confident it is safe to trade again
+  - Never reset within 15 minutes of a HIGH impact news event
+
+============================================================
+SCENARIO 3: ORPHAN TRADES DETECTED
+============================================================
+
+An "orphan trade" means:
+  Local database says: "I have a BUY XAUUSD 0.10 lots open at ticket #12345"
+  MT5 terminal says: "No such position exists"
+
+This can happen when:
+  - Trade was closed by SL/TP while system was offline
+  - MT5 manually closed by accident
+  - Broker closed due to margin call
+
+TO RESOLVE:
+  1. Open MT5 terminal
+  2. Check Closed Positions tab for the ticket number
+  3. Note the close price and reason
+  4. Update local database:
+     - Open data/journal.db in SQLite browser
+     - Find the trade by correlation_id
+     - Update status='CLOSED', close_price, close_reason, net_pnl
+
+  Or use the Dashboard → Recovery page → "Mark Orphan as Closed" (if built)
+
+============================================================
+SCENARIO 4: MT5 DISCONNECTION
+============================================================
+
+If MT5 disconnects:
+  1. core/heartbeat.py sends HEARTBEAT_FAILED event
+  2. kill_switch.py activates automatically
+  3. All new signals are blocked
+  4. Open positions remain open (MT5 internal stops still active)
+
+To reconnect:
+  1. Fix MT5 connection (restart terminal if needed)
+  2. Verify all open positions are correct
+  3. Reset kill switch (see Scenario 2)
+  4. Verify core/pulse.py is receiving ticks before allowing trading
+
+============================================================
+SCENARIO 5: DATA GAP IN DUCKDB
+============================================================
+
+If regime_detector is seeing "gaps in data" warnings:
+
+  For TEST mode (historical data):
+    - Re-import your CSV file with the missing period
+    - Use Dashboard → Market Data → Import Historical Data
+    - Or: hub.import_dukascopy_csv("data/raw/xauusd_h1_2024.csv", "XAUUSD", "H1")
+
+  For LIVE mode:
+    - Check MT5 connection in core/pulse.py logs
+    - Check if broker was in maintenance (weekend, holiday)
+    - If gap is >4 candles: consider pausing trading until caught up
+
+============================================================
+RECOVERY LOG LOCATION
+============================================================
+
+  logs/recovery_log.json   — Most recent recovery report
+  logs/restart_log.json    — History of all restarts
+  data/journal.db          — Full trade, state, kill switch history
+  logs/runtime/            — Application logs (rotating)
+
+============================================================
+EMERGENCY CONTACTS AND RESOURCES
+============================================================
+
+FTMO Support:    support@ftmo.com  (if funded challenge fails)
+E8 Support:      support@e8funding.com
+The5ers Support: support@the5ers.com
+
+MT5 Forums: https://www.mql5.com/en/forum
+Python docs: https://docs.python.org/3/
+DuckDB docs: https://duckdb.org/docs/
+
+For withdrawal questions (India):
+  Wise.com — best for USD → INR transfers
+  Required: PAN card, bank account, Wise account verification

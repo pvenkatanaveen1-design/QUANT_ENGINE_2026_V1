@@ -1,0 +1,256 @@
+---
+description: Core development standards for QUANT_ENGINE_2026
+alwaysApply: true
+---
+
+# QUANT_ENGINE_2026 Development Standards
+
+- Keep Python code beginner friendly: clear names, simple flow, readable structure.
+- Add comments that explain important decisions/logic (not obvious lines).
+
+## Python-to-Text Pairing (Mandatory)
+
+- Every Python file must have a matching `.txt` explanation file.
+- Naming example: `bus.py` -> `bus.txt`.
+- The `.txt` file should explain purpose, flow, inputs/outputs, and run/test steps.
+
+## System Visibility and Status
+
+- Every system must publish status to Redis.
+- Every system must be visible in the dashboard UI.
+- If a system is not visible in UI and not reporting to Redis, treat it as incomplete.
+
+## Required Development Flow (in order)
+
+1. Create one system.
+2. Test that system.
+3. Show that system in UI.
+4. Move to the next system only after step 3 is done.
+
+## Single-System Focus Rule
+
+- Do not build multiple systems at once.
+- Only one active system is allowed during development and validation.
+
+## Command Docs Update Rule (Mandatory)
+
+- Any script/command flow/run-process change must update related files in `cmd_script/`.
+- At minimum, review/update:
+  - `cmd_script/run_types_and_conditions.txt`
+  - `cmd_script/script_run_process_steps.txt`
+  - `cmd_script/question_to_command_map.txt`
+- If code changes but command docs are not updated, consider the task incomplete.
+
+## IMPORTANT CONDITIONS — ALWAYS CONSIDER BEFORE ANY CHANGE
+
+This project is a **real** forex trading platform for:
+
+- Local research/backtesting
+- Windows VPS live execution
+- MT5 broker integration
+- Funded forex account protection
+
+Before **any** code, architecture, logic, folder, database, event, threading, execution, UI, or system change: **always** consider these conditions automatically. Do **not** ignore them even if not explicitly mentioned again.
+
+### 1. Preserve Working Systems
+
+Do **not** break or rewrite already working:
+
+- MT5 execution
+- Router flow
+- Risk systems
+- Journal
+- Redis communication
+- Dashboard flow
+- Trade tracking
+- Funded protections
+
+Prefer:
+
+- Additive improvements
+- Isolated modules
+- Backward compatibility
+- Gradual migration
+
+### 2. If Any Change Modifies Behavior or Architecture
+
+**Always:**
+
+- Clearly mention what changed
+- Explain runtime impact
+- Explain architecture impact
+- Explain behavior impact
+- Explain migration impact
+- Explain latency impact
+- Explain funded-account impact
+- Explain rollback risk
+
+Before applying major changes:
+
+- Compare old flow vs new flow
+- Preserve compatibility whenever possible
+
+Never silently change:
+
+- Execution order
+- Event flow
+- MT5 interaction
+- Risk logic
+- State ownership
+- Redis behavior
+- Threading model
+- Startup sequence
+
+### 3. VPS + Live Trading Conditions
+
+System runs on:
+
+- Windows VPS
+- Low-resource environment
+- 24/7 runtime
+- Latency-sensitive execution
+
+Always optimize for:
+
+- Stability
+- Low latency
+- Low CPU usage
+- Low memory usage
+- Fast execution
+- Safe recovery
+
+Avoid:
+
+- Blocking operations
+- Unnecessary loops
+- Heavy background tasks
+- Memory leaks
+- Slow synchronous processing
+
+### 4. Funded Account Safety
+
+Funded account protection is highest priority.
+
+Risk systems must **always** override:
+
+- Strategies
+- Dashboard actions
+- Optimization logic
+
+If uncertainty exists:
+
+- Reject trade
+- Activate protection
+- Fail safe
+
+Never fail open.
+
+### 5. Execution Safety
+
+Always consider:
+
+- MT5 disconnects
+- VPS restart
+- Internet failure
+- Spread spikes
+- Slippage
+- Duplicate trades
+- Broker latency
+- Event delays
+
+System must recover safely.
+
+### 6. Event + State Safety
+
+Do **not** create:
+
+- Race conditions
+- Circular imports
+- Duplicated state
+- Conflicting sources of truth
+
+Data roles:
+
+- **Redis** = IPC only
+- **SQLite** = operational state
+- **DuckDB** = analytics/backtesting
+
+### 7. Backtest/Live Compatibility
+
+Strategies must work consistently in:
+
+- TEST
+- BACKTEST
+- DEMO
+- LIVE
+
+Do **not** duplicate strategy logic.
+
+### 8. Dashboard Rules
+
+Everything should be manageable from UI.
+
+Dashboard must remain:
+
+- Simple
+- Clean
+- Operational
+- Beginner-friendly
+
+Dashboard must **never** block live execution.
+
+### 9. Documentation Rule
+
+Every new module/system/change must automatically update:
+
+- `README` (project root when present)
+- `BEHAVIOR` (behavior docs when present)
+- `RUNBOOK` (e.g. `docs/run_guide.txt` / operational runbook when present)
+- `CHANGELOG` (when present)
+
+Do **not** wait for manual instruction.
+
+### 10. Before Any Architecture Change
+
+Always consider:
+
+- Latency impact
+- Runtime stability
+- Funded account safety
+- Recovery behavior
+- Startup order
+- MT5 execution impact
+- Event timing impact
+
+Avoid unnecessary refactors.
+
+### 11. Change Visibility Rule
+
+Whenever any change is made, **always** explicitly mention:
+
+- What changed
+- Why it changed
+- What files changed
+- Whether behavior changed
+- Whether architecture changed
+- Whether runtime changed
+- Whether migration is needed
+- Whether restart is needed
+- Whether rollback is possible
+
+Never hide major changes.
+
+### 12. Main Priority Order (Highest First)
+
+1. Funded account safety
+2. Execution stability
+3. Recovery safety
+4. Risk protection
+5. Low latency
+6. Maintainability
+7. UI simplicity
+8. Optimization
+9. Advanced AI/features
+
+Always follow these conditions automatically for all future changes.
+

@@ -1,0 +1,11 @@
+structure:
+  breakout_sensitivity: 1.0
+  consolidation_length: 20
+  swing_lookback: 6
+session:
+  asia_start_hour_ist: 5.5
+  london_start_hour_ist: 12.5
+  newyork_start_hour_ist: 18.5
+  dst_offset_hours: 0.0
+_meta:
+  source: default

@@ -1,0 +1,108 @@
+HEARTBEAT TEST SCRIPT (test_heartbeat.py)
+
+==========================================
+
+
+
+How to run
+
+----------
+
+1. Start Redis (same host/port as in your project `.env`, usually REDIS_HOST / REDIS_PORT).
+
+
+
+2. From the QUANT_ENGINE_2026 project root (where `core` is importable), run:
+
+
+
+   python scripts/test_heartbeat.py
+
+
+
+   Alternative (also from project root):
+
+
+
+   python -m scripts.test_heartbeat
+
+
+
+3. Stop the process with Ctrl+C when you are done. Logs also go to logs/runtime/app.log
+
+   via core.logger.
+
+
+
+Expected health behavior
+
+------------------------
+
+- Every 5 seconds the engine reads Redis keys:
+
+  pulse:status, mt5:connection, market:XAUUSD:timestamp, clock:status
+
+
+
+- It writes:
+
+  heartbeat:status       -> "running"
+
+  heartbeat:last_check   -> Unix time of that cycle
+
+  heartbeat:market_fresh -> True if market timestamp is not older than 15 seconds
+
+  heartbeat:clock_fresh  -> True if clock lifecycle + clock age checks pass
+
+  heartbeat:mt5_healthy  -> True when mt5:connection normalizes to connected
+
+  heartbeat:overall      -> "HEALTHY" | "DEGRADED" | "UNHEALTHY" (see rollup rules below)
+
+
+
+- Logs include raw Redis readings and normalized tokens from `core/status_normalize.py`
+
+  (`normalize_status(value, aspect=...)` — use the matching aspect for booleans).
+
+
+
+- Missing monitored keys are handled gracefully (warnings in logs); heartbeat keeps running.
+
+  Critical gaps roll up to **UNHEALTHY**.
+
+
+
+Stale detection logic
+
+---------------------
+
+- Market (XAUUSD timestamp): compared to current UTC time; older than 15s → not fresh
+
+  (severity **critical** for rollup).
+
+
+
+- Clock: combines lifecycle on `clock:status` (e.g. string `"running"` from core.clock)
+
+  with optional age from an embedded timestamp or parsed `clock:utc`. Older than 20s → not fresh
+
+  (**critical**). Dict `healthy: false` forces failure.
+
+
+
+- Pulse: `running` → ok; `starting` → **warn** (rollup **DEGRADED** if nothing else critical);
+
+  missing or error-like states → **critical**.
+
+
+
+- MT5: normalized as **connected** / **disconnected**; disconnected or missing → **critical**.
+
+
+
+- Rollup: any **critical** → UNHEALTHY; else any **warn** → DEGRADED; else HEALTHY.
+
+
+
+For hands-on scenarios (missing keys, stale timestamps), see core/heartbeat.txt.
+

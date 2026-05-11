@@ -1,0 +1,25 @@
+`scripts/test_trade_logger.py` — trade journal tests
+===================================================
+
+Purpose
+-------
+- Seeds **Redis** with fake **`execution:*`** (and router/session context).
+- Calls **`tick_trade_logger()`** so **`journal/trade_logger.py`** inserts into **`journal/trade_journal.db`**.
+- Prints **`fetch_recent_trades()`** so you see rows in insertion order (newest first in the function; script may reverse for readability).
+
+Scenarios
+---------
+1. **FILLED** — simulates a winning path: EURUSD BUY 0.01, ticket present, `router:last_decision=APPROVED`.
+2. **REJECTED** — MT5/broker style refusal (new fingerprint = new `execution:last_update`).
+3. **BLOCKED** — safety gate blocked before send.
+4. **APPROVED** — execution status APPROVED (rare in Phase 12 bridge; included so the category exists for audits).
+5. **Duplicate guard** — same fingerprint twice; **second tick must not add a row** (total count unchanged).
+
+Requirements
+------------
+- **Redis** running.
+- Writes under **`QUANT_ENGINE_2026/journal/trade_journal.db`** (created automatically).
+
+Run
+---
+    python scripts/test_trade_logger.py

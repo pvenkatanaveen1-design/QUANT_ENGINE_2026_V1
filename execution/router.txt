@@ -1,0 +1,62 @@
+Execution router (Phase 11) — `execution/router.py`
+======================================================
+
+What it does
+------------
+- **Centralized execution gating** — one place that answers *“may we open or add to a trade?”*
+- **Redis only** — reads safety keys, writes `router:*` snapshots. **No MT5**, no order placement, no strategy logic.
+- **Mandatory in future design** — any live or test execution path should call `evaluate_trade_request(symbol)` and stop if the decision is **BLOCKED**.
+
+Why a router is required
+------------------------
+- Spreads rules, news blackouts, drawdown shields, and heartbeats each live in their own module.
+- Without a router, a new feature might forget one check and accidentally trade during a blackout or through a massive spread.
+- The router defines a single **ordered** checklist and a single **reason string** for operators and logs.
+
+Safety hierarchy (first failure wins)
+------------------------------------
+The order inside `evaluate_trade_request` is:
+
+1. `heartbeat:overall` must be **HEALTHY** (“system health” / pulse freshness rollup).
+2. `risk:block_trading` must be **false** (shield / funded DD block).
+3. `kill_switch:active` must be **off** (or key absent = off for local dev).
+4. `news:blackout` must not be **ACTIVE**.
+5. `cost:{symbol}:block_trading` must be **false** (spread / slippage guard).
+6. `clock:session` must be one of: *Asia*, *London*, *New York*, *London-New York overlap*  
+   (Weekend / Off-session / missing → **BLOCKED** — thin liquidity / gap risk).
+7. **SYSTEM_MODE** must be **TEST** or **LIVE** (Redis key `SYSTEM_MODE`, else `load_config()`).
+
+Redis keys read
+---------------
+- `heartbeat:overall`
+- `risk:block_trading`
+- `kill_switch:active`
+- `news:blackout` (+ optional `news:blackout_reason` for messages)
+- `cost:{symbol}:block_trading` (+ optional `cost:{symbol}:reason`)
+- `clock:session`
+- `SYSTEM_MODE` (fallback: `core.config.load_config()`)
+
+Redis keys written
+------------------
+- `router:last_symbol`
+- `router:last_decision` — **APPROVED** or **BLOCKED**
+- `router:last_reason` — human-readable first failure (or “All safety checks passed”)
+- `router:last_update` — Unix timestamp (seconds)
+- `router:status` — **READY** after a normal publish; **ERROR** if publishing failed
+
+Public functions
+----------------
+- `check_heartbeat()` … `check_session()` — reusable building blocks and for unit-style tests.
+- `check_cost_guard(symbol)`
+- `evaluate_trade_request(symbol)` — **main entry** for future OMS / strategies.
+- `publish_router_decision(...)` — usually called by `evaluate_trade_request`, not by hand.
+- `run_router_test()` — small smoke loop (`python -m execution.router`).
+
+Future execution flow
+---------------------
+1. Signal / strategy proposes a trade (symbol, side, size — later phases).
+2. Call **`evaluate_trade_request(symbol)`** (and any future per-order flags).
+3. If **BLOCKED**, log reason and **do not** send anything to MT5.
+4. If **APPROVED**, continue to sizing (`risk/position_sizer.py`) and then broker I/O (future).
+
+Beginner note: the router approves **whether it is safe to proceed**; it does not calculate lots or stops.

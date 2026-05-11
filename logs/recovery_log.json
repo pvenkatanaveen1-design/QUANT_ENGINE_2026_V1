@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-05-11T09:54:01.499941",
+  "mode": "TEST",
+  "kill_switch_was_active": false,
+  "kill_switch_reason": "",
+  "last_equity": 0.0,
+  "last_snapshot_time": "",
+  "daily_dd_pct_restored": 0.0,
+  "mt5_open_positions": 0,
+  "local_open_trades": 0,
+  "orphan_trade_ids": [],
+  "reconciliation_status": "SIMULATED (TEST mode)",
+  "actions_taken": [
+    "Restart recorded in logs/restart_log.json",
+    "Kill switch: OK (was not active)",
+    "Daily trades found: 0 (open=0, closed=0) today_pnl=+0.00",
+    "MT5 reconciliation skipped \u2014 TEST mode"
+  ],
+  "warnings": [
+    "No state snapshots found \u2014 starting fresh"
+  ]
+}

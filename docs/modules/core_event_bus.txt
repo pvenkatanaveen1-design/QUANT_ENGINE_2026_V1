@@ -1,0 +1,117 @@
+============================================================
+MODULE: core/event_bus.py
+============================================================
+Purpose: Thread-safe in-process pub/sub event bus
+System:  Core Foundation
+Author:  Quanta Phase 2
+
+============================================================
+WHAT IT DOES
+============================================================
+
+The event_bus is the central nervous system of Quanta.
+Every module communicates by publishing events.
+Every module listens by subscribing to event types.
+
+Key design:
+  - Most events dispatched asynchronously (ThreadPoolExecutor)
+  - CRITICAL events (KILL_SWITCH, DRAWDOWN_LIMIT) run synchronously
+  - Failed handlers never crash other handlers
+  - Every event and timing metric is recorded
+
+============================================================
+EVENT TYPES (most important ones)
+============================================================
+
+MARKET_DATA         — New tick received from MT5
+CANDLE_CLOSED       — Timeframe candle completed
+TICK_REJECTED       — Sanitizer rejected a bad tick
+DATA_QUALITY_ALERT  — Data quality issue detected
+DATA_GAP_DETECTED   — Missing candle in DuckDB
+
+REGIME_CHANGED      — Market regime classification updated
+SESSION_CHANGED     — Trading session switched
+
+SIGNAL_GENERATED    — Strategy generated a trade idea
+SIGNAL_BLOCKED      — Risk or scoring blocked a signal
+SIGNAL_APPROVED     — Signal passed all checks
+
+TRADE_SUBMITTED     — Order sent to MT5
+TRADE_FILLED        — Order confirmed as filled
+TRADE_CLOSED        — Position closed (SL/TP/manual)
+
+KILL_SWITCH         — Emergency stop activated (SYNCHRONOUS)
+DRAWDOWN_LIMIT      — DD limit approached (SYNCHRONOUS)
+HEARTBEAT_FAILED    — MT5 connection lost
+
+RECOVERY_COMPLETE   — System recovered from restart
+SYSTEM_STARTED      — System is ready to trade
+
+HANDLER_FAILED      — A subscriber threw an exception
+SYSTEM_ERROR        — Internal bus error
+
+============================================================
+HOW TO SUBSCRIBE
+============================================================
+
+from core import bus
+from core.event_bus import EventType
+
+def my_handler(event_data):
+    print(f"Got tick: {event_data}")
+
+bus.subscribe(EventType.MARKET_DATA, my_handler)
+
+============================================================
+HOW TO PUBLISH
+============================================================
+
+from core import bus
+from core.event_bus import EventType
+
+bus.publish(EventType.REGIME_CHANGED, regime_state, source="regime_detector")
+
+# For critical events (synchronous):
+bus.publish(EventType.KILL_SWITCH, {"reason": "DD limit breach"})
+
+============================================================
+DIAGNOSTICS
+============================================================
+
+diagnostics = bus.get_diagnostics()
+# Returns:
+# {
+#   "total_events": 15420,
+#   "subscribers": { "MARKET_DATA": 3, "REGIME_CHANGED": 2, ... },
+#   "handler_metrics": { "handler_name": { "count": 100, "avg_ms": 1.2, "failures": 0 } },
+#   "recent_events": [ ... last 100 events ... ],
+#   "failed_handler_total": 0
+# }
+
+============================================================
+IMPORTANT RULES
+============================================================
+
+1. NEVER import from systems/strategies/risk within event_bus
+   (event_bus must have zero dependencies on other modules)
+
+2. KILL_SWITCH events are ALWAYS synchronous — they block all
+   threads until the handler finishes. Do NOT do slow work in
+   KILL_SWITCH handlers.
+
+3. If a handler throws an exception, it is caught and logged.
+   A HANDLER_FAILED event is published. Other handlers continue.
+
+4. Do NOT publish from within a handler for the same event type
+   (infinite loop risk). The bus logs a recursion warning.
+
+============================================================
+DASHBOARD VISIBILITY
+============================================================
+
+Dashboard → Event Bus Monitor shows:
+  - Total events per type (last hour)
+  - Failed handlers
+  - Handler latency histogram
+  - Active subscribers
+  - Recent event log

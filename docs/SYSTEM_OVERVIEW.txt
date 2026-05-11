@@ -1,0 +1,344 @@
+============================================================
+QUANTA FOREX CONTROL CENTER — SYSTEM OVERVIEW
+============================================================
+Version: Phase 2 (May 2026)
+Author:  Solo trader system — local research + VPS execution + funded accounts
+Target:  XAUUSD (Gold), FTMO / E8 / The5ers funded challenges
+
+============================================================
+WHAT THIS SYSTEM IS
+============================================================
+
+Quanta is a professional modular forex trading operating system.
+It is designed for ONE solo trader to:
+  1. Research and validate strategies using historical data
+  2. Run risk-first live execution on a funded account
+  3. Monitor everything from a single Streamlit dashboard
+  4. Protect capital with multiple safety layers
+
+This is NOT a "robot" that you run and forget.
+You monitor it daily.  You understand every decision it makes.
+The dashboard shows you everything.  You have kill switch on your phone.
+
+============================================================
+ARCHITECTURE OVERVIEW
+============================================================
+
+Layer 1 — Core Foundation (core/):
+  event_bus.py     — Thread-safe pub/sub for in-process communication
+  state_store.py   — Live account state (equity, DD, kill switch)
+  config_manager.py — YAML + .env config loading
+  logger.py        — Structured JSON logs by category + common/all.log
+  recovery_manager.py — Crash detection and state restoration
+  models/          — Typed dataclasses (SignalEvent, TradeEvent, RegimeState)
+  enums.py         — All enums (Direction, Regime, Session, TradeStatus)
+  constants.py     — All defaults and thresholds
+
+Layer 2 — Orchestrator (orchestrator/):
+  runtime_controller.py — Startup order, recovery-first boot, event subscribers,
+                          worker lifecycle, fail-closed startup behaviour
+
+Layer 3 — Services (services/):
+  storage_service.py — DuckDB (time-series) + SQLite (transactional) layer
+    DuckDB: ticks, candles, backtest results, regime history
+    SQLite: trades, signals, state snapshots, kill switch log
+
+Layer 4 — Repositories (repositories/):
+  trade_repository.py   — All trade CRUD operations
+  signal_repository.py  — Signal history + blocking analysis
+  regime_repository.py  — Regime history (DuckDB)
+  state_repository.py   — Snapshots + kill switch persistence
+  backtest_repository.py — Backtest results + walk-forward windows
+
+Layer 5 — Systems (systems/):
+  data/market_data_hub.py    (S6)  — Central candle/tick store
+  data/tick_sanitizer.py     (S32) — Clean bad ticks before storage
+  data/data_quality_monitor.py(S41) — Detect feed issues
+  intelligence/regime_detector.py (S8) — multi-factor regime intelligence (12-state live + probabilities)
+  intelligence/session_filter.py (S10) — London/NY/Asia session detection
+  research/backtester.py     (S19) — Event-driven backtest engine
+  research/walk_forward.py   (S20) — OOS validation
+  research/monte_carlo.py    (S21) — Risk of ruin analysis
+
+Layer 6 — Strategies (strategies/):
+  base.py           — Abstract BaseStrategy class
+  alpha_breakout.py — London session breakout strategy
+  alpha_sweep.py    — Liquidity sweep strategy (coming)
+  alpha_pullback.py — Trend pullback strategy (coming)
+
+Layer 7 — Risk (risk/):
+  shield.py          — Hard equity drawdown kill switch
+  kill_switch.py     (S37) — Telegram /kill + automatic triggers
+  correlation_guard.py (S9)  — Currency exposure limits
+  news_guard.py      — Block trading near HIGH impact news
+  cost_guard.py      — Spread/slippage/swap filter
+  position_sizer.py  — Equity × risk% / SL distance lot calculation
+  compliance.py      — FTMO/E8/The5ers rule enforcement
+
+Layer 8 — Execution (execution/):
+  broker_bridge.py   — All MT5 API calls
+  router.py          — Gate checks → order send
+  profiler.py        (S33) — Slippage and latency tracking
+
+Layer 9 — Dashboard (dashboard/):
+  dashboard_app.py   (S27) — 18-page Streamlit control center
+  log_viewer.py      — Structured JSON log viewer
+
+Layer 10 — Tests (tests/):
+  pytest suite covering all new systems
+
+============================================================
+DATA FLOW (LIVE TRADING)
+============================================================
+
+MT5 terminal
+  → core/pulse.py          (publishes RAW_MARKET_DATA events)
+  → tick_sanitizer          (validates, rejects bad ticks, re-publishes clean MARKET_DATA)
+  → market_data_hub         (stores in DuckDB)
+  → [every H1 close] regime_detector (multi-factor vote/validation/transition → RegimeState)
+  → [REGIME_CHANGED + REGIME_PROBABILITY + REGIME_TRANSITION] orchestrator/scoring context
+  → strategies              (pure SignalEvent generation from candles + injected context)
+  → [SIGNAL_GENERATED] scoring_engine (quality score 0-100)
+  → [score ≥ 60] risk/shield  (DD check, kill switch check)
+  → [approved] execution/router  (gate checks → MT5 order)
+  → [TRADE_FILLED] execution/profiler (slippage tracking)
+  → [TRADE_FILLED] repositories/trade_repository (SQLite)
+
+IMPORTANT DATA BOUNDARY:
+  RAW_MARKET_DATA is raw broker input and must only be consumed by tick_sanitizer.
+  MARKET_DATA is clean broker input and must contain sanitized=True.
+  market_data_hub rejects unsanitized MARKET_DATA payloads.
+  No strategy, regime detector, backtest, or repository may consume raw ticks.
+
+REGIME ENGINE NOTES (V2+):
+  - H1 requirement remains strict for live classification.
+  - Insufficient history produces WAITING/DEGRADED status (no forced regime).
+  - Strategy mapping is advisory to strategy selection; indicators never place trades.
+  - Research taxonomy supports 52 analytical regimes grouped into 10 categories.
+  - Live risk/execution uses 12 operational regime labels and 4 operating quadrants.
+
+============================================================
+STARTUP ORDER (LIVE / VPS)
+============================================================
+
+The system must boot in this exact order:
+
+  1. Load .env and YAML config.
+  2. Verify Redis/system registry is reachable.
+  3. Run RecoveryManager before starting live workers:
+       - record restart
+       - restore last SQLite state snapshot
+       - restore kill switch if it was active
+       - rebuild daily DD
+       - reconcile MT5 in LIVE mode
+       - detect orphan trades
+  4. Start in-process event subscribers:
+       - tick_sanitizer first
+       - market_data_hub second
+       - data_quality_monitor
+       - session_filter
+       - regime_detector
+       - kill_switch
+       - correlation_guard
+       - execution_profiler
+  5. Start long-running workers:
+       - config_registry
+       - clock
+       - heartbeat
+       - shield
+       - ATR engine
+       - pulse (raw MT5 ticks) only after sanitizer and hub are subscribed
+       - broker_bridge
+       - trade_logger
+       - order_tracker
+       - trade_manager
+  6. Mark safe_to_trade only if:
+       - recovery succeeded
+       - kill switch is not active
+       - critical subscribers are running
+       - broker state is reconciled or TEST mode explicitly skipped reconciliation
+
+If any critical startup step is uncertain, the system must fail closed:
+  activate kill switch, block trading, show the reason on dashboard.
+
+============================================================
+DEPENDENCY AND IMPORT RULES
+============================================================
+
+Allowed direction:
+  core/          → must not import systems/risk/execution/dashboard
+  services/      → may import core only
+  repositories/  → may import core + services
+  systems/       → may import core + services + repositories
+  strategies/    → may import core models/enums/constants and feature helpers only
+  risk/          → may import core + repositories
+  execution/     → may import core + repositories + risk decisions, not strategies
+  dashboard/     → may import read APIs and safe control APIs only
+  orchestrator/  → may import all runtime modules because it owns startup control
+
+Strict rules:
+  - No broker/MT5 logic inside strategies.
+  - No risk approval logic inside execution.
+  - No dashboard shortcut may bypass risk/router/kill-switch checks.
+  - No raw SQL outside repositories and storage_service.
+  - No raw broker tick may bypass tick_sanitizer.
+  - Strategies should stay pure: same candles + context must produce same signals.
+
+============================================================
+FAIL-SAFE RULES
+============================================================
+
+Default policy: uncertainty blocks trading.
+
+Reject trade and require manual review when:
+  - kill switch is active or kill switch state is unknown
+  - recovery report has orphan trades
+  - broker/local state reconciliation fails
+  - MT5 is disconnected or account type is unexpected
+  - data feed is stale or unsanitized
+  - spread/slippage/latency thresholds are exceeded
+  - funded rule state cannot be calculated
+  - config file is missing, invalid, or cannot be reloaded
+
+The system must never fail open.
+When unsure: publish an alert, log to audit/error, keep capital protected.
+
+============================================================
+RUNTIME MODES
+============================================================
+
+Current environment parser:
+  core/system_mode.py supports TEST and LIVE from .env.
+
+Operational modes used by runtime state:
+  RESEARCH   — offline data analysis only
+  BACKTEST   — historical simulation only
+  DEMO       — broker demo account, no real/funded money
+  LIVE       — funded/real account, strict controls
+  EMERGENCY  — kill switch active; all new order submission blocked
+
+Required next alignment:
+  system_mode.py should be expanded to support DEMO/RESEARCH/BACKTEST/EMERGENCY
+  or documented as environment mode only while state_store owns runtime mode.
+
+============================================================
+LATENCY AND EXECUTION TARGETS
+============================================================
+
+Execution quality must be measurable and visible.
+
+Targets:
+  Internal event handler normal latency: < 50 ms
+  Slow event handler warning:          > 200 ms
+  MT5 order submit → broker ack target: < 500 ms
+  Execution profiler latency alert:    > 2000 ms average
+  Kill switch latency threshold:       > 5000 ms average
+  XAUUSD normal slippage target:       < 0.5 pips
+  Slippage warning:                    > 1.0 pip average
+  Hard review threshold:               > 2.0 pips average
+
+All routing/fill events must log:
+  correlation_id, order_id, trade_id, symbol, direction, requested price,
+  fill price, slippage_pips, latency_ms, spread_at_fill, broker response.
+
+============================================================
+DASHBOARD BOUNDARY
+============================================================
+
+Dashboard is an operator control surface, not a trading shortcut.
+
+Allowed:
+  - view system health
+  - view trades, logs, recovery, regime, data quality
+  - edit YAML config after validation
+  - manually activate/reset kill switch
+  - run local research tools (backtest, walk-forward, Monte Carlo)
+
+Not allowed:
+  - bypass router/risk checks
+  - send broker orders directly
+  - silently reset kill switch after crash
+  - edit persisted trade history without audit logging
+  - promote DEMO to LIVE without explicit operator confirmation
+
+============================================================
+RECOVERY FLOW
+============================================================
+
+RecoveryManager runs once at startup before ticks or execution workers.
+
+Recovery steps:
+  1. Record restart in logs/restart_log.json.
+  2. Load latest SQLite state snapshot.
+  3. Restore kill switch state. If active before crash, keep it active.
+  4. Rebuild daily DD from local trade records.
+  5. In LIVE mode, query MT5 open positions.
+  6. Compare MT5 positions vs local open trades.
+  7. Mark orphan trades for manual review.
+  8. Write logs/recovery_log.json.
+  9. Publish RECOVERY_COMPLETE event.
+
+Operator rule:
+  If orphan trades or reconciliation issues exist, trading stays blocked until
+  the operator verifies broker state manually.
+
+============================================================
+MINIMUM SYSTEMS FOR LIVE TRADING
+============================================================
+
+Before going live, ALL of these must be running and tested:
+
+  S1  core/pulse.py          — MT5 tick feed
+  S2  risk/shield.py         — Hard equity kill
+  S3  core/heartbeat.py      — Disconnect alert
+  S4  execution/router.py    — Order submission
+  S5  risk/news_guard.py     — News blackout
+  S6  systems/data/market_data_hub.py — Data storage
+  S7  risk/cost_guard.py     — Spread/swap filter
+  S8  systems/intelligence/regime_detector.py — Regime
+  S9  risk/correlation_guard.py — Exposure limit
+  S10 systems/intelligence/session_filter.py — Session
+  S14 strategies/alpha_breakout.py — Signal
+  S15 systems/strategy/scoring_engine.py — Quality gate
+  S16 risk/position_sizer.py — Lot calculation
+  S18 risk/exit_manager.py   — SL/TP management
+  S22 journal/trade_logger.py — Trade logging
+  S37 risk/kill_switch.py    — Emergency stop
+  S38 risk/compliance.py     — Prop firm rules
+
+============================================================
+PASS CRITERIA BEFORE FUNDED ACCOUNT
+============================================================
+
+Backtest:
+  ✓ 200+ trades minimum
+  ✓ Profit factor ≥ 1.2
+  ✓ Sharpe ratio ≥ 0.8
+  ✓ Win rate 40-60%
+  ✓ Max drawdown < 15%
+  ✓ Walk-forward passed (3 OOS blocks)
+  ✓ Monte Carlo: risk of ruin < 5%
+
+Demo (50+ trades over 14 days):
+  ✓ Profit factor ≥ 1.2
+  ✓ Win rate ≥ 40%
+  ✓ Kill switch tested and fires
+  ✓ Telegram /kill tested from phone
+  ✓ News blackout tested
+  ✓ Zero daily DD breach in 14 days
+  ✓ All 17 minimum systems running
+
+============================================================
+IMPORTANT FILES
+============================================================
+
+.env                        — Secrets (NEVER commit to git)
+config/risk_rules.yaml      — Risk thresholds (edit from dashboard)
+config/funded_rules.yaml    — Prop firm DD rules
+config/regimes.yaml         — ADX/ATR regime thresholds
+config/strategies.yaml      — Strategy parameters
+config/symbols.yaml         — Symbol-specific settings (spreads, pip values)
+data/market.duckdb          — Historical tick/candle database
+data/journal.db             — Trade journal database
+logs/                       — Application logs
+docs/                       — This documentation folder

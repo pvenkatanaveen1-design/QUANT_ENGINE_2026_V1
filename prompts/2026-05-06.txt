@@ -1,0 +1,34 @@
+Date: 2026-05-06
+Project: QUANT_ENGINE_2026
+
+Prompts Used Today:
+1) Create foundation project structure (core, dashboard, scripts, docker, logs/runtime, docs, references).
+2) Create strict development rules in docs/development_rules.txt.
+3) Create and update foundation files:
+   - requirements.txt
+   - .env
+   - core/config.py + core/config.txt
+   - core/logger.py + core/logger.txt
+   - core/bus.py + core/bus.txt
+   - scripts/test_bus.py + scripts/test_bus.txt
+   - dashboard/dashboard_app.py + dashboard/dashboard.txt
+   - docker/docker-compose.yml + docker/docker.txt
+
+Today Changes (Summary):
+- Foundation folder structure created and cleaned.
+- Documentation baseline created under docs/.
+- requirements.txt limited to foundation dependencies only.
+- .env simplified for foundation variables.
+- Config system added using python-dotenv with load_config().
+- Logging system added using loguru with console + logs/runtime/app.log.
+- Redis bus layer added with:
+  - publish(channel, data)
+  - set_value(key, value)
+  - get_value(key)
+- Test script created to publish test message and set system:status.
+- Streamlit dashboard created to show system:status with auto-refresh.
+- Docker compose created with Redis (6379) and Postgres (5432).
+
+Notes:
+- Scope remains foundation phase only.
+- No ML/trading system implementation added.

@@ -1,0 +1,60 @@
+Purpose of `risk/drawdown_tracker.py`:
+
+- **Infrastructure-only** funded-style **daily drawdown** tracking published to Redis.
+- No MT5, no SQLite, no order execution — reads **`account:balance`** and **`account:equity`** that another module (or test script) writes.
+
+Why it exists
+
+- Prop firms care about **how far equity has fallen from the day’s reference** and about **intraday high/low watermarks**.
+- This module keeps a **UTC calendar-day bucket**, updates **peak/low equity**, and exposes metrics so the shield/UI/strategy can stay aligned later.
+
+Daily reset logic (UTC)
+
+- At **00:00 UTC** (detected by comparing `dd:last_reset`’s UTC date with “today”), **`reset_daily_tracking()`** runs.
+- **Start-of-day reference** (`dd:start_balance`): prefers **`account:balance`** at reset; if missing, uses **`account:equity`** so simulations still work.
+- **Peak** and **low** are initialised to the current equity at reset.
+- **`dd:max_daily_dd`** resets to **0** at the new day.
+
+Intraday math
+
+- **`dd:peak_equity`**: max equity seen today.
+- **`dd:lowest_equity`**: min equity seen today.
+- **`dd:current_daily_dd`**: drawdown vs **start-of-day reference**:  
+  `max(0, (start_balance - equity) / start_balance * 100)` — profits above the reference show as **0%** DD here.
+- **`dd:max_daily_dd`**: worst (highest) **`dd:current_daily_dd`** seen today.
+
+Redis keys
+
+**Read**
+
+- `account:balance`
+- `account:equity`
+
+**Write**
+
+- `dd:start_balance` — reference at day open (float)
+- `dd:peak_equity` — intraday high (float)
+- `dd:lowest_equity` — intraday low (float)
+- `dd:current_daily_dd` — current daily DD % (float or `null` if unusable)
+- `dd:max_daily_dd` — max daily DD % so far today (float)
+- `dd:last_reset` — Unix timestamp (seconds, UTC) when the current bucket opened
+- `dd:tracker_status` — `HEALTHY` | `WARNING` | `DANGER` | `STALE_DATA` | `ERROR` (uses **`DAILY_DD_WARNING`** / **`DAILY_DD_BLOCK`** from `core.config` / `.env`)
+
+Main functions
+
+1. **`initialize_daily_tracking()`** — cold start seed (calls reset).
+2. **`update_peak_equity()`** / **`update_lowest_equity()`** — pure helpers for peak/low.
+3. **`calculate_current_daily_dd()`** / **`calculate_max_daily_dd()`** — pure helpers for %.
+4. **`reset_daily_tracking()`** — new UTC day bucket.
+5. **`publish_drawdown_status()`** — writes all `dd:*` keys.
+6. **`evaluate_drawdown_once()`** — one tick (used by tests).
+7. **`run_drawdown_tracker()`** — daemon loop, **~5 s** cadence.
+
+How to run
+
+- Continuous: `python -m risk.drawdown_tracker` (if you add a `if __name__` entry) — prefer calling **`run_drawdown_tracker()`** from your supervisor when you wire it.
+- Demo: `python scripts/test_drawdown_tracker.py`
+
+How to verify
+
+- Watch Redis `dd:*` after pushing `account:*` snapshots; dashboard **DRAWDOWN TRACKER STATUS** reads the same keys.

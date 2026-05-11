@@ -1,0 +1,3 @@
+2026-05-11 11:54:58 | INFO     | state_store               | StateStore initialized | mode=DEMO | db=data/journal.db
+2026-05-11 11:54:58 | CRITICAL | state_store               | KILL SWITCH ACTIVATED | reason=Test reason
+2026-05-11 11:54:58 | WARNING  | state_store               | Kill switch DEACTIVATED manually — resuming DEMO mode

@@ -1,0 +1,17 @@
+Docker purpose:
+- Docker runs foundation services in isolated containers.
+- This project uses Docker to start Redis and Postgres quickly and consistently.
+
+What containers are started:
+- Redis on port `6379` (for status communication).
+- Postgres on port `5432` (for foundation database setup).
+
+How to start containers:
+1) Open terminal in `QUANT_ENGINE_2026/docker`.
+2) Run:
+   `docker compose up -d`
+
+How to verify containers:
+- Run:
+  `docker compose ps`
+- You should see both `redis` and `postgres` services in running state.

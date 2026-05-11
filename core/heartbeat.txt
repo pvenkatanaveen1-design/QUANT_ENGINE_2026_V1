@@ -1,0 +1,74 @@
+HEARTBEAT ENGINE GUIDE
+======================
+
+Purpose
+-------
+The heartbeat engine is a small safety monitor for the trading system.
+It checks if critical services are alive and if incoming data is fresh.
+Every 5 seconds, it writes health keys into Redis so other modules can
+quickly know whether trading conditions are safe.
+
+
+Why stale data is risky
+-----------------------
+If market data becomes stale, decisions may use outdated prices.
+If clock updates are stale, time-based strategy logic can drift.
+If MT5 connection is unhealthy, orders can fail or execute late.
+These conditions can cause bad entries, missed exits, and unnecessary risk.
+
+
+Why this matters for funded accounts
+------------------------------------
+Funded accounts have strict risk controls and often strict drawdown rules.
+A short technical failure can still create large real losses.
+Heartbeat monitoring helps pause or block unsafe trading conditions early.
+This protects consistency, capital, and account compliance.
+
+
+Redis health keys
+-----------------
+Monitored input keys:
+- pulse:status
+- mt5:connection
+- market:XAUUSD:timestamp
+- clock:status
+
+Published output keys:
+- heartbeat:status        -> "running" when heartbeat loop is active
+- heartbeat:last_check    -> Unix timestamp of latest check cycle
+- heartbeat:market_fresh  -> True/False (stale if older than 15s)
+- heartbeat:clock_fresh   -> True/False (stale if older than 20s)
+- heartbeat:mt5_healthy   -> True/False (derived from mt5:connection)
+- heartbeat:overall       -> "HEALTHY" | "DEGRADED" | "UNHEALTHY" (legacy booleans still readable)
+
+Normalization uses `core/status_normalize.py`: same helpers drive logs and the Streamlit dashboard
+(`normalize_status` with keyword `aspect`, plus rollup helpers for overall).
+
+
+How to test
+-----------
+1) Start Redis and run the heartbeat module:
+   python -m core.heartbeat
+
+2) Write healthy sample input keys using your Redis CLI or helper scripts:
+   - pulse:status -> "running" (see pulse engine); "starting" yields DEGRADED rollup while warmup
+   - mt5:connection -> "connected" (or a dict with status/connected)
+   - market:XAUUSD:timestamp -> current Unix timestamp
+   - clock:status -> "running" from clock engine (strings are valid); timestamps optional
+
+3) Confirm output keys update every 5 seconds:
+   - heartbeat:last_check should keep changing
+   - heartbeat:overall should read HEALTHY when pulse running + mt5 connected + fresh market + fresh clock
+
+4) Simulate stale market data:
+   - set market:XAUUSD:timestamp to a value older than 15 seconds
+   - expect heartbeat:market_fresh=False and heartbeat:overall=UNHEALTHY
+
+5) Simulate stale clock data:
+   - stop clock updates so clock:utc age exceeds 20 seconds (with lifecycle still running)
+   - expect heartbeat:clock_fresh=False and heartbeat:overall=UNHEALTHY
+
+6) Simulate missing keys:
+   - delete pulse:status or mt5:connection
+   - heartbeat should continue running without crashing
+   - logs should show warnings and heartbeat:overall should become UNHEALTHY

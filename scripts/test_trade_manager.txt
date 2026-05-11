@@ -1,0 +1,29 @@
+`scripts/test_trade_manager.py` — Phase 15 smoke tests
+======================================================
+
+What it does
+------------
+Runs **offline** scenarios against **`evaluate_trade_management`** using **fake position dicts**
+(same keys as **`execution/order_tracker.fetch_open_positions`**).
+
+You **do not** need MT5 for the printed scenarios. The script optionally calls
+**`publish_trade_management_status`** after the multi-position case so **`trade_manager:*`**
+keys update when Redis is running.
+
+Scenarios
+---------
+1. **Losing trade** (negative floating PnL) → **HOLD_POSITION** (no breakeven / trail / partial tier).
+2. **Small winner** (profit below **1R**) → **HOLD_POSITION**.
+3. **Breakeven tier** — profit **> 1 × R_unit** → **MOVE_SL_TO_BREAKEVEN** (simulation only).
+4. **Trailing tier** — profit **> 2R** → **TRAIL_STOP**.
+5. **Partial tier** — profit **> 3R** → **PARTIAL_CLOSE**.
+6. **Flat account** (empty list) → **HOLD_POSITION** with **`NO_OPEN_POSITIONS`** reason.
+7. **Multiple positions** — verifies the **lead** row is the **highest ticket**; expects **PARTIAL_CLOSE**
+   when that lead’s PnL crosses the top tier.
+
+**R_unit** in the script defaults to **10.0**; align with **`.env`** **`TRADE_MANAGER_R_UNIT`** for realism.
+
+Run
+---
+
+    python scripts/test_trade_manager.py

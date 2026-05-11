@@ -1,0 +1,53 @@
+Trade journal — `journal/trade_logger.py` (Phase 13)
+====================================================
+
+What it does
+------------
+- **Persists** every meaningful **`execution:*`** outcome into **SQLite** (`journal/trade_journal.db`, table **`trades`**).
+- **Dedupes** polls so the same Redis snapshot is not inserted twice (fingerprints `execution:last_update` + `execution:last_status`).
+- Publishes **`journal:*`** keys for quick dashboard metrics without opening the DB.
+
+Why persistent logging matters
+------------------------------
+- **Audit trail** — proof of what the engine *thought* it did on each attempt (approved / blocked / rejected / filled).
+- **Dataset foundation** — future analytics (win rate, slippage, session quality) can read this table instead of ad-hoc logs.
+- **Funded / prop relevance** — many evaluations require a **verifiable journal** of entries, even on demo, before scaling size.
+
+What gets stored (per row)
+-------------------------
+Pulled when a new execution fingerprint appears:
+
+| Field | Typical source |
+|--------|----------------|
+| `timestamp` | `execution:last_update` (fallback: now UTC) |
+| `symbol`, `side`, `volume` | `execution:last_*` |
+| `execution_status` | `execution:last_status` (**FILLED**, **REJECTED**, **BLOCKED**, **APPROVED**) |
+| `mt5_ticket` | `execution:last_ticket` |
+| `execution_reason` | `execution:last_reason` |
+| `router_decision` | `router:last_decision` |
+| `session` | `clock:session` |
+| `system_mode` | `load_config()` (**TEST** / **LIVE**) |
+| `entry_price`, `stop_loss`, `take_profit` | `NULL` for now (extend when OMS writes them) |
+
+**IDLE** bridge heartbeats are **not** logged (noise only).
+
+Redis keys written
+------------------
+- `journal:last_trade` — last row dict (JSON in Redis via `core.bus`)
+- `journal:last_status` — last `execution_status`
+- `journal:total_trades` — `COUNT(*)` from SQLite
+- `journal:last_update` — unix seconds when journal summary was refreshed
+
+Daemon
+------
+- **`run_trade_logger()`** — background loop (~2s) from **`python run.py`** (`trade_logger` thread).
+- On startup, **`sync_dedup_from_redis()`** prevents **re-inserting** the same snapshot after a restart.
+
+Public helpers
+--------------
+- `initialize_database`, `create_trades_table`, `build_trade_record`, `insert_trade_record`
+- `fetch_recent_trades`, `publish_journal_status`, `tick_trade_logger`, `run_trade_logger`
+
+Beginner note
+-------------
+The journal is **append-only** in spirit: do not hand-edit the DB in production; add tooling if you need corrections later.

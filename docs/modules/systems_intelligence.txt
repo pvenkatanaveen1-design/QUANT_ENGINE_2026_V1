@@ -1,0 +1,114 @@
+============================================================
+MODULE GROUP: systems/intelligence/
+============================================================
+Contains: regime_detector.py, session_filter.py, ../regime/* intelligence modules
+
+============================================================
+regime_detector.py (S8) — Regime Detector
+============================================================
+Purpose: Multi-factor regime intelligence for live + historical operation
+
+What it does:
+  - Listens to CANDLE_CLOSED events (H1 timeframe, required)
+  - Loads candle history (DuckDB preferred, hub fallback)
+  - Runs classifiers: ADX, ATR, structure, session, volume, momentum
+  - Uses voter + validator + transition + probability engines
+  - Produces 12-state regime label + probabilities + transition state
+  - Keeps backward-compatible coarse Regime enum for existing systems
+  - Publishes REGIME_CHANGED + REGIME_PROBABILITY + REGIME_TRANSITION
+  - Saves regime history to regime_repository (DuckDB)
+
+12-state live regime labels:
+  TREND_LOW_VOL, TREND_HIGH_VOL, RANGE_LOW_VOL, RANGE_HIGH_VOL,
+  BREAKOUT_EXPANSION, NEWS_CHAOS, ASIA_COMPRESSION, NY_REVERSAL,
+  LIQUIDITY_SWEEP, PULLBACK_CONTINUATION, EXHAUSTION, TRANSITION
+
+Research taxonomy:
+  52 regimes across 10 categories (Trend, Mean Reversion, Wyckoff, Macro,
+  Sentiment, News/Event, ICT/Order Flow, Microstructure, Quantitative, Intermarket)
+
+Confidence score (0-100):
+  100 = strongly in the classified regime
+  50 = borderline (e.g., ADX exactly at threshold)
+  0 = regime is unclear
+
+Configuration (config/regimes.yaml):
+  adx_strong_trend_threshold: 30
+  adx_weak_trend_threshold: 20
+  atr_high_vol_multiplier: 2.0
+  news_chaos_pct_threshold: 1.5
+  min_candles_required: 20
+
+Public API:
+  from systems.intelligence.regime_detector import regime_detector
+  state = regime_detector.get_current_regime()
+  # Returns RegimeState(regime=Regime.STRONG_TREND, confidence=78.5, ...)
+  tradeable = regime_detector.is_tradeable()
+  # Returns True if regime allows trading (not UNKNOWN or NEWS_CHAOS)
+
+Dashboard page: Regime Monitor
+  - Current 12-state regime + confidence + probabilities
+  - ADX/ATR/RSI/structure/session/transition visibility
+  - Strategy mapping (enabled/blocked)
+  - Lookback selector (1 day .. 10 years + custom date range)
+  - Historical distribution + transition frequencies
+  - Performance till yesterday (from closed trades by regime_at_entry)
+
+------------------------------------------------------------
+session_filter.py (S10) — Session Filter
+------------------------------------------------------------
+Purpose: Identify current trading session with DST support
+
+Sessions detected:
+  ASIA:     00:30 - 06:30 IST  (Tokyo session)
+  LONDON:   12:30 - 20:30 IST  (London session, adjusted for DST)
+  NEW_YORK: 17:30 - 01:30 IST  (NY session, adjusted for DST)
+  OVERLAP:  17:30 - 20:30 IST  (London-NY overlap, highest volume)
+  OFF:      All other times
+
+Session scores (used by scoring engine):
+  OVERLAP: 1.0   (best — highest liquidity)
+  LONDON:  0.95  (very good)
+  NEW_YORK: 0.85 (good)
+  ASIA:    0.40  (weak — gold less liquid)
+  OFF:     0.0   (no trading)
+
+DST handling:
+  US DST (March-November): NY session shifts 1 hour
+  UK DST (March-October):  London session shifts 1 hour
+  India has NO daylight saving time
+  The filter uses pytz for accurate timezone conversion
+
+Publishes SESSION_CHANGED when session transitions.
+
+Public API:
+  from systems.intelligence.session_filter import session_filter
+  session = session_filter.get_current_session()
+  score = session_filter.get_session_score()
+  tradeable = session_filter.is_tradeable()
+
+Dashboard page: Regime Monitor → Session Info
+  - Current session with color indicator
+  - Session score
+  - Next session transition time
+  - Session quality for trading
+
+============================================================
+IMPORTANT RULES FOR INTELLIGENCE SYSTEMS
+============================================================
+
+1. Regime is calculated per symbol, per timeframe.
+   Default: XAUUSD on H1 candles.
+
+2. Regime must be STRONG_TREND for alpha_breakout to generate signals.
+   Strategies check regime_detector.is_tradeable() before signaling.
+
+3. Session score is combined with signal quality score:
+   final_score = base_signal_score × session_score
+   If session is ASIA (0.4): even a 90-score signal becomes 36 (below threshold)
+
+4. Do NOT make trading decisions based on only ADX or only ATR.
+   The combined regime classification is more reliable.
+
+5. NEWS_CHAOS and HIGH_VOL regimes mean: stay out.
+   These are not trend or range — they are danger zones.

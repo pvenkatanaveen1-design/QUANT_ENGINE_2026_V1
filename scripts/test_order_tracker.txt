@@ -1,0 +1,24 @@
+`scripts/test_order_tracker.py` — Phase 14 checks
+=============================================
+
+What it does
+------------
+1. Publishes an **empty** book via **`build_position_summary([])`** + **`publish_position_updates`** (simulates flat / no-position state without MT5).
+2. If **`initialize_mt5()`** succeeds **and** **`ensure_demo_account()`** passes:
+   - Calls **`fetch_open_positions()`** on your **DEMO** login.
+   - Prints each normalized row and the **summary** dict.
+   - Publishes the live snapshot to Redis.
+
+Requirements
+------------
+- **Redis** (same host as rest of QUANT_ENGINE_2026).
+- **MT5** terminal + Python package for the live path (optional if you only want the empty snapshot).
+
+Run
+---
+    python scripts/test_order_tracker.py
+
+Notes
+-----
+- If MT5 is closed, step (1) still proves Redis + publishing work.
+- Open positions must exist on the **demo** account to see non-zero **`active_count`**.

@@ -1,0 +1,14 @@
+QUANT_ENGINE_2026 - Setup (Foundation)
+
+Goal:
+- Prepare a clean workspace for incremental development.
+
+Current Foundation Setup:
+1) Project folders are created.
+2) Documentation placeholders are prepared.
+3) Runtime log directory is reserved.
+
+Next Setup Steps (later phase):
+- Add Python virtual environment instructions.
+- Add dependency management (requirements or pyproject).
+- Add environment variable template (.env.example).

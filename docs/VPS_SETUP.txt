@@ -1,0 +1,210 @@
+============================================================
+QUANTA — VPS SETUP GUIDE
+============================================================
+Recommended VPS: Contabo VPS S (4 cores, 8GB RAM, SSD)
+Cost: ~₹1,200/month (€12/month)
+Location: Frankfurt or Amsterdam (lowest MT5 latency)
+
+============================================================
+STEP 1: ORDER AND ACCESS YOUR VPS
+============================================================
+
+1. Go to contabo.com → VPS S plan
+2. Choose location: Frankfurt (lowest latency to most brokers)
+3. Choose OS: Ubuntu 22.04 LTS
+4. Payment: monthly, pay with credit card or PayPal
+
+After ordering, you receive:
+  IP: xxx.xxx.xxx.xxx
+  Username: root
+  Password: (from email)
+
+SSH from your PC (Windows PowerShell):
+  ssh root@xxx.xxx.xxx.xxx
+
+============================================================
+STEP 2: INITIAL SERVER SETUP
+============================================================
+
+# Update system
+apt update && apt upgrade -y
+
+# Install Python 3.11
+apt install -y python3.11 python3.11-venv python3-pip
+
+# Install system utilities
+apt install -y git htop screen sqlite3
+
+# Create a non-root user for safety
+adduser quanta
+usermod -aG sudo quanta
+su - quanta
+
+============================================================
+STEP 3: INSTALL METATRADER 5
+============================================================
+
+MT5 on Linux requires Wine:
+
+# Install Wine
+dpkg --add-architecture i386
+apt update
+apt install -y wine winetricks
+
+# Download MT5 installer
+wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe
+
+# Run installer in Wine
+wine mt5setup.exe
+
+# Configure your broker's server in MT5
+# Add your login credentials
+# Test: File → Open Account → Login
+
+============================================================
+STEP 4: INSTALL QUANTA DEPENDENCIES
+============================================================
+
+cd /home/quanta
+git clone <your-repo-url> Quant_Forex_V3
+cd Quant_Forex_V3/QUANT_ENGINE_2026
+
+# Create virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# Install all packages
+pip install -r requirements.txt
+
+# Install DuckDB (if not in requirements)
+pip install duckdb
+
+============================================================
+STEP 5: CONFIGURE .env FILE
+============================================================
+
+Create /home/quanta/Quant_Forex_V3/QUANT_ENGINE_2026/.env:
+
+  SYSTEM_MODE=LIVE          # Change from TEST to LIVE
+  TELEGRAM_BOT_TOKEN=xxxx   # From @BotFather on Telegram
+  TELEGRAM_CHAT_ID=xxxx     # Your Telegram user ID
+
+  # Redis (if using cross-process bus)
+  REDIS_HOST=localhost
+  REDIS_PORT=6379
+
+  # Broker (if needed for API authentication)
+  MT5_LOGIN=12345678
+  MT5_PASSWORD=your_password
+  MT5_SERVER=your_broker_server
+
+IMPORTANT: chmod 600 .env   (prevent others reading secrets)
+
+============================================================
+STEP 6: CONFIGURE PROCESS AUTO-RESTART (Supervisor)
+============================================================
+
+apt install -y supervisor
+
+Create /etc/supervisor/conf.d/quanta.conf:
+
+[program:quanta_guardian]
+command=/home/quanta/Quant_Forex_V3/QUANT_ENGINE_2026/.venv/bin/python guardian.py
+directory=/home/quanta/Quant_Forex_V3/QUANT_ENGINE_2026
+user=quanta
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/quanta_guardian.err
+stdout_logfile=/var/log/quanta_guardian.out
+
+[program:quanta_brain]
+command=/home/quanta/.../python brain.py
+... (similar)
+
+[program:quanta_dashboard]
+command=/home/quanta/.../streamlit run dashboard/dashboard_app.py --server.port=8501
+... (similar)
+
+supervisorctl reread
+supervisorctl update
+supervisorctl start all
+
+============================================================
+STEP 7: SECURE YOUR VPS
+============================================================
+
+# Change root password
+passwd root
+
+# Set up SSH key authentication (more secure than password)
+# On your PC: ssh-keygen -t ed25519
+# Copy public key to VPS: ssh-copy-id quanta@xxx.xxx.xxx.xxx
+
+# Disable password SSH login
+nano /etc/ssh/sshd_config
+# Set: PasswordAuthentication no
+service ssh restart
+
+# Install fail2ban (auto-blocks brute force attempts)
+apt install -y fail2ban
+
+# Configure firewall
+ufw enable
+ufw allow 22    # SSH
+ufw allow 8501  # Streamlit dashboard (only if you trust the IP)
+# Optionally limit dashboard to your home IP:
+ufw allow from YOUR_HOME_IP to any port 8501
+
+============================================================
+STEP 8: ACCESS DASHBOARD REMOTELY
+============================================================
+
+Option A: SSH tunnel (most secure)
+  On your PC: ssh -L 8501:localhost:8501 quanta@VPS_IP
+  Then open: http://localhost:8501
+
+Option B: Direct access (add firewall rule for port 8501)
+  Open: http://VPS_IP:8501
+
+Option C: Nginx reverse proxy with SSL (most professional)
+  (too advanced for initial setup — do this in month 2)
+
+============================================================
+MONTHLY MAINTENANCE CHECKLIST
+============================================================
+
+Weekly:
+  □ Check dashboard VPS Health page
+  □ Review kill switch history
+  □ Check execution quality (slippage trends)
+  □ Review daily DD levels
+
+Monthly:
+  □ VACUUM the SQLite database:
+    sqlite3 data/journal.db "VACUUM;"
+  □ Review and archive old log files
+  □ Update pip packages: pip install -r requirements.txt --upgrade
+  □ Verify MT5 connection is stable
+  □ Review trade journal (P&L trending correctly?)
+
+============================================================
+ESTIMATED MONTHLY COSTS (2026)
+============================================================
+
+Contabo VPS S:      ~₹1,200/month
+MT5 terminal:       Free
+Python packages:    Free (all open-source)
+Telegram bot:       Free
+Dukascopy data:     Free
+FRED API:           Free
+
+Total infrastructure: ₹1,200/month
+
+Funded challenge fees (one-time per account):
+  The5ers:  ~₹8,000
+  E8:       ~₹10,000
+  FTMO:     ~₹12,000
+
+After getting funded, monthly net income target:
+  $10K account × 10% monthly = $1,000 = ~₹83,000
+  Minus VPS: ~₹81,800/month net

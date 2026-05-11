@@ -1,0 +1,27 @@
+Purpose of `scripts/test_drawdown_tracker.py`:
+
+- Smoke demo for **`risk/drawdown_tracker.py`** without MT5.
+- Requires **Redis** (same host/port as `core.bus`).
+
+What the simulation does
+
+1. Pushes **`account:balance`** and **`account:equity`** together (beginner-friendly: balance tracks equity in this demo).
+2. Calls **`evaluate_drawdown_once()`** after each step so `dd:*` keys update like the 5-second daemon would.
+
+Example path (your reference)
+
+- **100_000 → 101_000** — new peak, daily DD vs day-open reference stays **0%** while equity is above start.
+- **99_000** — DD vs **100_000** reference ≈ **1%**.
+- **97_000** — DD ≈ **3%** (crosses typical **WARNING** if `DAILY_DD_WARNING=3` in `.env`).
+
+Expected outputs
+
+- Console prints each step plus a readable dump of `dd:start_balance`, `dd:peak_equity`, `dd:lowest_equity`, `dd:current_daily_dd`, `dd:max_daily_dd`, `dd:tracker_status`, `dd:last_reset`.
+- Redis should mirror the same values (inspect with `redis-cli` / dashboard).
+
+How to run
+
+```text
+cd QUANT_ENGINE_2026
+python scripts/test_drawdown_tracker.py
+```

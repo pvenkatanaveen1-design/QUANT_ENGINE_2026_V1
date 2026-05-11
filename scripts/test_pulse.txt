@@ -1,0 +1,52 @@
+How to run: MT5 Pulse Test
+
+What this does
+- Runs the Phase 2 market data ingestion loop (`core.pulse.run_pulse()`).
+- Reads live ticks from MetaTrader 5 (MT5) once per second for all configured symbols.
+- Writes the latest values into Redis keys like `market:XAUUSD:bid`.
+
+Prerequisites (MT5)
+1) Install MetaTrader 5 terminal on your machine.
+2) Open MT5 terminal and make sure you are logged in to your trading account.
+3) In MT5, open "Market Watch" and ensure your symbols are visible (example: XAUUSD, EURUSD, ...).
+
+Prerequisites (Environment Variables)
+In your project root `QUANT_ENGINE_2026/.env`, set:
+- `MT5_LOGIN=12345678`
+- `MT5_PASSWORD=...`
+- `MT5_SERVER=YourBroker-Server`
+- `MT5_SYMBOLS=XAUUSD,EURUSD,GBPUSD,USDJPY,BTCUSD`
+
+Prerequisites (Redis)
+- Ensure Redis is running (Pulse writes to Redis).
+- If you use Docker, you can start it with:
+  `docker compose -f docker/docker-compose.yml up -d`
+
+How to run
+From the project root `QUANT_ENGINE_2026`, run:
+`python scripts/test_pulse.py`
+
+How to stop
+- Press Ctrl + C in the terminal.
+
+Expected Redis updates
+For each symbol in `MT5_SYMBOLS`, Pulse continuously updates:
+- `market:{symbol}:bid`
+- `market:{symbol}:ask`
+- `market:{symbol}:spread`
+- `market:{symbol}:timestamp`
+
+System keys (useful for debugging)
+- `pulse:status` should become `running` while the loop is active.
+- `mt5:connection` should become `connected` if MT5 initialization succeeded.
+
+Quick verification in Redis CLI
+1) Open Redis CLI (example if Redis is in Docker):
+   `docker exec -it <redis_container_name> redis-cli`
+2) Check a symbol:
+   `GET market:XAUUSD:bid`
+   `GET market:XAUUSD:ask`
+3) Check system status:
+   `GET pulse:status`
+   `GET mt5:connection`
+

@@ -1,0 +1,240 @@
+SHIELD — FUNDED DRAWDOWN ENGINE
+
+================================
+
+
+
+Funded-account relevance
+
+------------------------
+
+Prop and funded programs tie payouts and survival to **maximum loss limits**. Daily caps and
+
+total drawdown caps exist so one bad session cannot wipe the account or violate firm rules.
+
+The shield watches **simulated account equity** (your Redis snapshot) and publishes a clear
+
+**risk state** plus a hard **block_trading** flag when configured thresholds are breached.
+
+
+
+Why TEST mode exists (Phase 5.1)
+
+-------------------------------
+
+- **`SYSTEM_MODE=TEST`** (default) is the safe baseline: you can publish **`account:equity`** from demos,
+
+  **`scripts/test_shield.py`**, or placeholders **without** implying that a live broker feed is connected.
+
+- **`SYSTEM_MODE=LIVE`** does **not** auto-connect MT5 here — it only changes **log banners** and tells future
+
+  modules “real broker values are expected” once you integrate feeds.
+
+- On first shield activity per process you should see a short banner in logs, for example:
+
+      --------------------------------
+
+      SYSTEM MODE: TEST
+
+      Using simulated account values
+
+      --------------------------------
+
+  or for LIVE: **Real broker values expected**.
+
+- Use **`get_system_mode()`** (`core.system_mode`) or **`load_config()["SYSTEM_MODE"]`** anywhere new safety checks need the same signal.
+
+
+
+Configuration (Phase 4.1 — no hardcoded limits)
+
+------------------------------------------------
+
+All thresholds come from **`.env`** through **`core.config.load_config()`**:
+
+
+
+- **`DAILY_DD_WARNING`** — daily DD % where the shield turns **WARNING** (yellow).
+
+- **`DAILY_DD_BLOCK`** — daily DD % where the shield turns **BLOCKED** (red, halt flag).
+
+- **`MAX_DD_BLOCK`** — session max DD % from peak equity where the shield **BLOCKS**.
+
+- **`MAX_DD_APPROACH`** — optional; soft band before max block. If omitted, defaults to
+
+  **`max(0, MAX_DD_BLOCK - 2)`** percentage points (e.g. 8% when max block is 10%).
+
+- **`ACCOUNT_SIZE`** — reference size for logs/UI (shield math still uses live **`account:equity`**).
+
+- **`DEFAULT_RISK_PER_TRADE`** — reserved for future sizing (% per trade).
+
+- **`PROP_FIRM_NAME`** — label printed at shield startup (e.g. FTMO).
+
+
+
+On startup the shield logs one banner like:
+
+
+
+    FTMO risk rules loaded
+
+    Daily warning = 3%
+
+    Daily block = 5%
+
+    Max DD block = 10%
+
+    ...
+
+
+
+Edit `.env`, save, then **restart** `python -m risk.shield` (and Streamlit if open).
+
+
+
+Drawdown logic (what this module computes)
+
+------------------------------------------
+
+Only external Redis inputs are **`account:balance`** (logged for visibility) and
+
+**`account:equity`** (required for math).
+
+
+
+1. **Session peak equity** — highest equity seen since this Python process started monitoring.
+
+   Max drawdown % measures how far current equity has fallen from that peak.
+
+
+
+2. **Daily peak equity** — resets each **UTC calendar day** at the first observation after
+
+   midnight UTC; then tracks the day’s high-water equity. Daily drawdown % measures drop from
+
+   today’s peak.
+
+
+
+3. Percent formula (both daily and max):
+
+
+
+       DD% = (peak_equity - current_equity) / peak_equity * 100
+
+
+
+   Values are floored at 0% when equity equals or exceeds the relevant peak.
+
+
+
+**Important:** Peak state lives **in memory** inside `risk/shield.py`. Restarting the process
+
+starts peaks from scratch — for production you would persist anchors in Redis or a DB.
+
+
+
+Shield states
+
+-------------
+
+- **SAFE** — Below warning thresholds from config.
+
+- **WARNING** — Daily DD >= **`DAILY_DD_WARNING`**, or max DD in
+
+  **[`MAX_DD_APPROACH`, `MAX_DD_BLOCK`)** before a hard breach.
+
+- **BLOCKED** — Daily DD >= **`DAILY_DD_BLOCK`** **or** max DD >= **`MAX_DD_BLOCK`**.
+
+  **`risk:block_trading`** becomes **`true`**.
+
+
+
+WARNING overrides SAFE; BLOCKED overrides WARNING.
+
+
+
+Redis risk keys (published every 5 seconds)
+
+---------------------------------------------
+
+- **`risk:daily_dd`** — float percentage or JSON **null** if equity unusable.
+
+- **`risk:max_dd`** — float percentage or **null**.
+
+- **`risk:shield`** — `"SAFE"` | `"WARNING"` | `"BLOCKED"`.
+
+- **`risk:status`** — same value as `risk:shield` for dashboards that prefer `status`.
+
+- **`risk:block_trading`** — boolean; **`true` only** in **BLOCKED**.
+
+- **`risk:last_update`** — Unix timestamp (UTC) of the last cycle.
+
+
+
+Future execution blocking
+
+-------------------------
+
+Nothing in this repo automatically closes trades yet; **`risk:block_trading`** is the hook for a
+
+future execution layer (order router, strategy runner, or MT5 bridge): **refuse new orders**
+
+when **`true`**, optionally flatten per your playbook. Read **`risk:shield`** or **`risk:status`**
+
+for UI/alerts.
+
+
+
+How to test
+
+-----------
+
+1. Start Redis (`docker compose -f docker/docker-compose.yml up -d` from project root).
+
+
+
+2. Adjust `.env` thresholds if you want non-default behaviour, then from **`QUANT_ENGINE_2026`**:
+
+
+
+       python -m risk.shield
+
+
+
+3. In another terminal or Redis CLI, set equity above zero:
+
+
+
+       # Example using redis-cli — values are JSON strings in this project's bus layer.
+
+       SET account:equity "105000"
+
+       SET account:balance "100000"
+
+
+
+   Confirm keys **`risk:daily_dd`**, **`risk:max_dd`**, **`risk:shield`**, **`risk:last_update`**
+
+   update every **5** seconds.
+
+
+
+4. Lower **`account:equity`** stepwise from the peak you established:
+
+   - beyond **`DAILY_DD_WARNING`** from today's peak -> **WARNING**;
+
+   - beyond **`DAILY_DD_BLOCK`** -> **BLOCKED** and **`risk:block_trading` = true**;
+
+   - or push max DD toward **`MAX_DD_BLOCK`** from session peak -> **BLOCKED**.
+
+
+
+5. Delete **`account:equity`** temporarily -> shield logs a warning, publishes **SAFE** with
+
+   **null** DD fields and **block_trading false** (graceful degradation).
+
+
+
+6. Stop with **Ctrl+C**.
+

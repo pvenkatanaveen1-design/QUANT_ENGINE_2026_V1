@@ -1,0 +1,23 @@
+Purpose of `scripts/test_news_guard.py`
+
+- Exercises **`risk/news_guard.py`** without any live news API.
+
+What it simulates
+
+1. **ACTIVE blackout** — event time equals “now” so the ±15 minute window includes the current minute.
+2. **INACTIVE (upcoming)** — event 45 minutes ahead; blackout should not be active yet Redis should show **INACTIVE** and a positive **minutes** hint toward the next window.
+3. **Default rolling calendar** — one call to **`evaluate_news_guard_once()`** with no custom list (uses **NFP / CPI / FOMC** schedule).
+
+Expected behavior
+
+- Redis **`news:blackout`** is **`ACTIVE`** only inside **[event−15m, event+15m]**.
+- Console prints each scenario title plus the `news:*` snapshot pulled back from Redis.
+
+How to run
+
+```text
+cd QUANT_ENGINE_2026
+python scripts/test_news_guard.py
+```
+
+Requires **Redis** (same as `core.bus`).

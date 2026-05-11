@@ -1,0 +1,12 @@
+# Python cache and virtual environment artifacts.
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Runtime logs and local environment files.
+logs/runtime/*.log
+.env
+
+# Streamlit local state.
+.streamlit/

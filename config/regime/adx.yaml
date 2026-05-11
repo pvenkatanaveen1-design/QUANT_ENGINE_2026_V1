@@ -1,0 +1,6 @@
+adx:
+  weak_trend_threshold: 25.0
+  strong_trend_threshold: 30.0
+  smoothing_period: 14
+_meta:
+  source: default

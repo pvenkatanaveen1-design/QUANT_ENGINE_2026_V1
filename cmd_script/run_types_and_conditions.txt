@@ -1,0 +1,77 @@
+Purpose:
+- This file explains command types and when to use each one.
+- Use this as a quick decision guide before running anything.
+
+Run Type 1: Environment Setup
+Condition:
+- Use when opening a new terminal session.
+- Use when dependencies are not installed.
+Commands:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026"
+2) python -m venv venv
+3) .\venv\Scripts\Activate.ps1
+4) python -m pip install -r requirements.txt
+
+Run Type 2: Docker Services
+Condition:
+- Use when Redis/Postgres are not running.
+- Required before Redis bus tests and dashboard live status.
+Commands:
+1) cd "C:\Users\p venkata naveen\Cursor ai\Quant_Forex_V3\QUANT_ENGINE_2026\docker"
+2) docker compose up -d
+3) docker compose ps
+
+Run Type 3: Python Script Execution
+Condition:
+- Use for script-based testing like bus communication.
+Commands (from QUANT_ENGINE_2026 root):
+1) python -m scripts.test_bus
+2) python -m scripts.test_pulse
+3) python -m scripts.test_clock
+
+Run Type 3b: Multi-process supervisor (Phase 6.1 + 7)
+Condition:
+- Use when you want config registry + pulse + clock + heartbeat + shield in one terminal.
+- Starts config_registry first (publishes config:* every ~30s), then market/risk workers.
+Commands (from QUANT_ENGINE_2026 root):
+1) python run.py
+
+Run Type 3c: News guard (simulated blackout)
+Condition:
+- Use to populate `news:*` keys for dashboard / future execution gates.
+Commands (from QUANT_ENGINE_2026 root):
+1) python scripts/test_news_guard.py
+2) python -m risk.news_guard
+
+Run Type 3d: Cost guard (spread limits)
+Condition:
+- Use after `market:*` keys exist (pulse or test script).
+Commands (from QUANT_ENGINE_2026 root):
+1) python scripts/test_cost_guard.py
+2) python -m risk.cost_guard
+
+Run Type 4: Streamlit UI Run
+Condition:
+- Use when you want to view status in dashboard UI.
+Commands (from QUANT_ENGINE_2026 root):
+1) python -m streamlit run dashboard/dashboard_app.py
+
+Run Type 5: Verification Commands
+Condition:
+- Use when command fails and you need to check location/state.
+Commands:
+1) pwd
+2) dir
+3) python -m pip show redis
+4) docker ps
+
+Run Type 6: Cursor AI Documentation Sync
+Condition:
+- Use every time scripts are added/updated or run commands are changed.
+- Use before closing a task.
+Commands/Actions:
+1) Update cmd docs:
+   - cmd_script/run_types_and_conditions.txt
+   - cmd_script/script_run_process_steps.txt
+   - cmd_script/question_to_command_map.txt
+2) Confirm all new script commands are documented with correct paths.

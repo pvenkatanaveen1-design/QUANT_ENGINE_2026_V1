@@ -1,0 +1,78 @@
+POSITION SIZER — PHASE 5 (REFERENCE LOTS ONLY)
+==============================================
+
+Purpose
+-------
+`risk/position_sizer.py` estimates **how large a position (in lots)** you can take while
+keeping loss near a chosen **risk budget**, assuming price hits a **stop-loss** expressed in
+**pips** (simplified). Nothing here connects to MT5 order APIs yet — it only **publishes**
+numbers to Redis so a future execution layer can consume them safely.
+
+Funded-account relevance
+------------------------
+Prop firms enforce daily/max drawdown caps (see `risk/shield.py`). Position sizing is how you
+translate “I risk 0.5% of my account on this trade” into **lots**, before any bridge sends an
+order. Undersizing loses edge; oversizing breaches rules. Centralizing math keeps behaviour
+consistent across strategies.
+
+Lot sizing logic (simplified)
+-----------------------------
+1. **Risk amount (USD)**  
+   `risk_amount = balance * (risk_percent / 100)`
+
+2. **Pip value (USD per pip per 1.0 standard lot)**  
+   Fixed lookup table for now (`get_pip_value`).
+
+3. **Lots**  
+   `lot_size = risk_amount / (stop_loss_pips * pip_value)`
+
+4. **Rounding**  
+   - EURUSD, GBPUSD, USDJPY, XAUUSD → **2** decimal places  
+   - BTCUSD → **3** decimal places  
+
+If stop-loss pips ≤ 0, symbol unsupported, or balance invalid, **`sizing:last_lot_size`**
+is published as JSON **`null`** and logs explain why.
+
+Pip value assumptions (important)
+---------------------------------
+These are **teaching defaults**, not broker guarantees:
+
+| Symbol  | Assumed pip $ / lot |
+|---------|----------------------|
+| EURUSD  | $10                  |
+| GBPUSD  | $10                  |
+| USDJPY  | $9                   |
+| XAUUSD  | $1                   |
+| BTCUSD  | $1                   |
+
+Live pip values depend on contract size, quote currency, FX conversion, and tick size.
+Replace this table when wiring real MT5 contract data.
+
+Redis keys written (`publish_position_size`)
+---------------------------------------------
+- `sizing:last_symbol`
+- `sizing:last_balance`
+- `sizing:last_risk_percent`
+- `sizing:last_sl_pips`
+- `sizing:last_lot_size`
+- `sizing:last_update` — Unix UTC timestamp
+
+When `balance` is omitted, **`account:balance`** is read via `core.bus`.
+When `risk_percent` is omitted, **`DEFAULT_RISK_PER_TRADE`** from `.env` / `core.config` is used.
+
+Future MT5 integration
+-----------------------
+1. Pull **live balance/equity** from MT5 or your Redis pulse pipeline.  
+2. Replace static pip table with **contract-specific** dollar-per-pip per lot.  
+3. Map rounded lots to **broker volume min/step/max**.  
+4. Gate sends behind **`risk:block_trading`** from the shield.  
+
+How to run quick demo
+---------------------
+From `QUANT_ENGINE_2026`:
+
+    python -m risk.position_sizer
+
+Or use:
+
+    python scripts/test_position_sizer.py

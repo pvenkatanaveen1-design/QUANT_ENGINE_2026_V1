@@ -1,0 +1,150 @@
+============================================================
+MODULE GROUP: risk/
+============================================================
+Contains: kill_switch.py (S37), correlation_guard.py (S9)
+Also includes (pre-existing): shield.py, cost_guard.py, news_guard.py,
+  position_sizer.py, compliance.py
+
+============================================================
+kill_switch.py (S37) — Emergency Stop
+============================================================
+Purpose: Immediate halt of all trading activity
+
+The kill switch is the last line of defense.
+When active: NO new trades can be placed. Period.
+
+Activation triggers:
+  1. Manual: Telegram /kill command from your phone
+  2. Manual: Dashboard → Risk Center → "Emergency Stop" button
+  3. Automatic: Daily DD breach (shield.py fires event)
+  4. Automatic: Spread explosion (>50 pips for XAUUSD)
+  5. Automatic: Fill latency >5000ms (profiler fires event)
+  6. Automatic: Broker disconnect (heartbeat failure)
+  7. Crash restart with kill switch previously active
+
+Persistence:
+  Kill switch state is written to SQLite immediately.
+  If the system crashes, it comes back with kill switch STILL ACTIVE.
+  This is intentional — you must manually verify before trading resumes.
+
+Telegram integration:
+  /kill   → activates kill switch
+  /reset  → deactivates kill switch (LIVE mode: requires confirmation)
+  /status → shows current kill switch status and trigger reason
+
+TEST mode:
+  Telegram polling is simulated (prints to console instead of sending)
+
+Configuration (.env):
+  TELEGRAM_BOT_TOKEN=your_bot_token
+  TELEGRAM_CHAT_ID=your_chat_id
+
+How to get a Telegram bot:
+  1. Open Telegram, search for @BotFather
+  2. /newbot → follow instructions → copy token
+  3. Get your chat ID: message @userinfobot
+  4. Put both in .env file
+
+Public API:
+  from risk.kill_switch import kill_switch
+  kill_switch.activate(reason="Manual /kill command")
+  kill_switch.deactivate(deactivated_by="Telegram /reset")
+  is_active = kill_switch.is_active()
+
+Dashboard page: Risk Center
+  - Kill switch status (BIG RED/GREEN indicator)
+  - Trigger reason and timestamp
+  - Manual activate/deactivate buttons
+  - Kill switch activation history
+
+------------------------------------------------------------
+correlation_guard.py (S9) — Correlation Guard
+------------------------------------------------------------
+Purpose: Prevent dangerous correlated exposure
+
+What it monitors:
+  - Total XAUUSD exposure (lots across all open trades)
+  - Same-direction trades (too many BUYs or too many SELLs)
+  - Hedging detection (simultaneous BUY and SELL banned by prop firms)
+
+Rules enforced:
+  1. XAU total exposure > 0.50 lots → block new signal
+  2. More than 2 trades in same direction → block signal
+  3. Any hedge detected → block signal (prop firm rule violation)
+
+When a signal is blocked:
+  → SIGNAL_BLOCKED event published with reason="CORRELATION_LIMIT"
+  → Signal is logged to signal_repository with block_reason
+  → Dashboard shows the blocked signal
+
+Configuration (config/risk_rules.yaml):
+  max_xau_lots: 0.50
+  max_same_direction_trades: 2
+  allow_hedging: false
+
+Public API:
+  from risk.correlation_guard import correlation_guard
+  summary = correlation_guard.get_exposure_summary()
+  # Returns: total lots, direction breakdown, hedge status
+
+Dashboard page: Risk Center → Correlation Panel
+  - Total XAU exposure gauge
+  - Long vs Short lot breakdown
+  - Hedge warning if applicable
+  - Recent blocked signals due to correlation
+
+============================================================
+IMPORTANT RULES FOR RISK SYSTEMS
+============================================================
+
+1. Kill switch ALWAYS wins. If active, no signal can pass.
+   Even if spread is fine, regime is perfect, and session is optimal —
+   if kill switch is on, NO trades go out.
+
+2. Correlation guard is a supplement to position limits, not a replacement.
+   The position sizer sets lot size.
+   Correlation guard blocks NEW entries if TOTAL exposure is too high.
+
+3. Shield (daily DD) and kill_switch work together:
+   shield.py monitors equity → if DD > threshold → publishes event
+   kill_switch.py listens → activates on that event
+   Result: trading stops at the right moment, automatically.
+
+4. All risk decisions are logged. You can see the exact reason
+   any signal was blocked, at any time, in the dashboard.
+
+5. Prop firms ban hedging (simultaneous BUY and SELL).
+   correlation_guard prevents this automatically.
+   Never manually override this check.
+
+============================================================
+Pre-Existing Risk Modules (keep as-is)
+============================================================
+
+shield.py:
+  Hard equity drawdown kill switch.
+  Monitors equity every 100ms.
+  If daily DD > max (default 4%): activates kill switch.
+
+cost_guard.py:
+  Filters signals based on spread, swap, and commission costs.
+  If spread > max for the symbol: signal is blocked.
+  Prevents trading when market conditions are too expensive.
+
+news_guard.py:
+  Reads economic calendar (ForexFactory or local CSV).
+  Blocks trading 30 minutes before HIGH impact news events.
+  Automatically unblocks after the news event.
+
+position_sizer.py:
+  Calculates safe lot size: equity × risk_pct / sl_pips / pip_value
+  Default: 0.5% equity per trade.
+  Hard maximum: 1.0 lot per trade.
+
+compliance.py:
+  Enforces prop firm-specific rules:
+  - Daily DD limit (firm-specific)
+  - Total DD limit (firm-specific)
+  - Max simultaneous positions
+  - Profit target tracking
+  Reads from config/funded_rules.yaml.

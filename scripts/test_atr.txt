@@ -1,0 +1,24 @@
+`scripts/test_atr.py` — Phase 16 ATR smoke test
+===============================================
+
+Flow
+----
+1. **Synthetic block (always)** — builds a small OHLC **pandas** ``DataFrame`` without MT5, runs
+   ``calculate_true_range`` and ``calculate_atr`` to prove the math path works.
+2. **Live block (optional)** — if ``initialize_mt5()`` succeeds:
+   - For each symbol in ``ATR_SUPPORTED_SYMBOLS`` (**EURUSD**, **GBPUSD**, **USDJPY**, **XAUUSD**, **BTCUSD**):
+     - ``fetch_candle_data`` (M5, 100 bars)
+     - ``calculate_atr`` (period **14**)
+     - ``classify_volatility`` (**LOW** / **NORMAL** / **HIGH**)
+   - Prints one line per symbol: **ATR**, **volatility**, **status**.
+3. **Redis** — calls ``publish_atr_status`` once with all rows and sets ``features:atr:last_update``.
+
+Requirements
+------------
+- **Live** path: MetaTrader 5 terminal logged in; symbols should be available (add to Market Watch if needed).
+- **Redis**: for keys to appear, the bus must reach your server (same as other engine scripts).
+
+Run
+---
+
+    python scripts/test_atr.py

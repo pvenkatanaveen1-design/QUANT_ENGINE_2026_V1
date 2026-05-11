@@ -1,0 +1,24 @@
+Regime Intelligence Runbook
+
+Startup:
+1. Start Redis/Postgres containers.
+2. Start engine: python run.py
+3. Start dashboard: streamlit run dashboard/dashboard_app.py
+4. Open Regime Monitor page.
+
+Healthy signs:
+- system:regime_detector status RUNNING
+- pulse/tick_sanitizer/market_data_hub RUNNING
+- regime:last_update_ts fresh
+- Regime Monitor shows active label + probabilities
+
+Expected waiting states:
+- "waiting for H1 candle close"
+- "insufficient H1 history"
+- "DuckDB READ_ONLY fallback"
+
+Operator actions:
+- If no H1 history: keep runtime running, allow accumulation.
+- If MT5 disconnected: reconnect MT5 terminal session.
+- If Redis unavailable: restore Redis first (dashboard is monitor only).
+

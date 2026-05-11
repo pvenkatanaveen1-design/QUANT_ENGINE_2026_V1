@@ -1,0 +1,165 @@
+============================================================
+MODULE GROUP: repositories/
+============================================================
+Contains: trade_repository.py, signal_repository.py,
+          regime_repository.py, state_repository.py,
+          backtest_repository.py
+Purpose: Clean CRUD abstraction layer over StorageService
+
+============================================================
+WHY REPOSITORIES?
+============================================================
+
+WITHOUT repositories, every module would contain raw SQL:
+  cursor.execute("SELECT * FROM trades WHERE status='OPEN' AND date(open_time)=?", [today])
+  cursor.execute("UPDATE trades SET status='CLOSED', close_price=?, close_reason=? WHERE trade_id=?", ...)
+
+This is bad because:
+  - SQL scattered everywhere = hard to maintain
+  - No type safety (raw tuples, not TradeEvent objects)
+  - No pagination, no filtering, no reuse
+  - Tests become very hard to write
+
+WITH repositories:
+  open_trades = trade_repo.get_open()          # returns List[TradeEvent]
+  trade_repo.update_close(trade_id, result)    # clean interface
+
+============================================================
+trade_repository.py
+============================================================
+
+Methods:
+  insert(trade: TradeEvent) -> str
+    — Add a new trade when filled. Returns trade_id.
+
+  get_by_id(trade_id: str) -> Optional[TradeEvent]
+    — Find a specific trade.
+
+  get_open() -> List[TradeEvent]
+    — All trades with status=OPEN.
+
+  get_daily_trades(date: date) -> List[TradeEvent]
+    — All trades opened on a specific date.
+
+  get_paginated(page, size, symbol=None, strategy=None) -> List[TradeEvent]
+    — For journal and dashboard display.
+
+  update_close(trade_id, close_price, close_reason, net_pnl) -> None
+    — Update trade with exit information.
+
+  update_status(trade_id, status: TradeStatus) -> None
+    — Update trade status (PENDING → OPEN, OPEN → CLOSED).
+
+  update_excursions(trade_id, mae_pips, mfe_pips) -> None
+    — Record Maximum Adverse/Favorable Excursion for analytics.
+
+  get_daily_summary(date) -> dict
+    — Total PnL, trade count, win rate for a day.
+
+  get_performance_summary(days=30) -> dict
+    — Multi-day performance metrics.
+
+------------------------------------------------------------
+signal_repository.py
+------------------------------------------------------------
+
+Methods:
+  insert(signal: SignalEvent, approved: bool, block_reason: str) -> None
+    — Record every signal and whether it was approved or blocked.
+
+  get_today_approved() -> List[SignalEvent]
+    — Signals that were approved today.
+
+  get_blocked_today() -> List[SignalEvent]
+    — Signals that were blocked today (with reasons).
+
+  get_block_reason_summary(days=7) -> dict
+    — Count of each blocking reason over the past week.
+    — Useful for: "correlation guard is blocking 80% of my signals"
+
+  get_paginated(page, size) -> List[dict]
+    — For dashboard signal log display.
+
+------------------------------------------------------------
+regime_repository.py
+------------------------------------------------------------
+
+Uses DuckDB (not SQLite) for time-series regime history.
+
+Methods:
+  insert(state: RegimeState) -> None
+    — Save a regime classification (INSERT OR IGNORE on timestamp).
+
+  get_history(symbol, hours=24) -> List[dict]
+    — Recent regime history for charts.
+
+  get_latest(symbol) -> Optional[RegimeState]
+    — Most recent regime state.
+
+  get_regime_distribution(symbol, days=7) -> dict
+    — How many hours the market spent in each regime over N days.
+    — Useful for understanding "this pair trends 60% of the time".
+
+------------------------------------------------------------
+state_repository.py
+------------------------------------------------------------
+
+Two responsibilities:
+  1. Account state snapshots (equity, DD, balance)
+  2. Kill switch persistence
+
+Snapshot methods:
+  save_snapshot(state: dict) -> None
+  get_latest_snapshot() -> Optional[dict]
+  get_equity_history(hours=24) -> List[dict]
+
+Kill switch methods:
+  activate_kill_switch(reason: str) -> None
+  deactivate_kill_switch(deactivated_by: str) -> None
+  get_kill_switch_status() -> dict
+  get_kill_switch_history(limit=20) -> List[dict]
+
+------------------------------------------------------------
+backtest_repository.py
+------------------------------------------------------------
+
+Uses DuckDB for backtest results (analytical data).
+
+Methods:
+  save_backtest(result: BacktestResult) -> str
+    — Save a completed backtest. Returns run_id.
+
+  save_walk_forward_window(run_id, window_data) -> None
+    — Save a single walk-forward window result.
+
+  get_all(strategy_name=None) -> List[dict]
+    — All saved backtest runs (optionally filtered by strategy).
+
+  get_best_by_sharpe(strategy_name) -> Optional[dict]
+    — Best historical backtest for a strategy.
+
+  get_walk_forward_windows(run_id) -> List[dict]
+    — All OOS windows for a walk-forward run.
+
+  passes_minimum_criteria(run_id) -> bool
+    — Check if a backtest meets live trading requirements.
+
+============================================================
+IMPORTANT RULES FOR REPOSITORIES
+============================================================
+
+1. All repositories take a StorageService in their constructor.
+   This makes them testable (inject a test storage service).
+
+2. Repositories return typed objects (TradeEvent, SignalEvent),
+   not raw database rows. Type safety prevents bugs.
+
+3. NEVER write raw SQL inside systems/, strategies/, or risk/.
+   If you need data, add a method to the appropriate repository.
+
+4. All pagination uses (page, size) convention:
+   page=0, size=50 → first 50 records
+   page=1, size=50 → next 50 records
+
+5. Filtering is optional but type-safe:
+   get_paginated(page=0, size=50, symbol="XAUUSD", strategy="alpha_breakout")

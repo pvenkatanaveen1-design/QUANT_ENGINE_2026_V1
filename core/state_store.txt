@@ -1,0 +1,114 @@
+STATE STORE — core/state_store.py
+===================================
+
+PURPOSE
+-------
+One thread-safe, SQLite-persisted source of truth for live account state.
+
+Multiple threads run simultaneously: guardian (risk checks), brain (signals),
+executor (orders), dashboard (display).  Without a central store:
+  - Each system calls MT5 for equity → 3× broker API calls per second
+  - Race conditions: risk check reads equity while executor is updating it
+  - Kill switch state lost on process restart → trades resume unexpectedly
+
+With StateStore:
+  - MT5 equity updated once per second by shield.py → update_equity()
+  - All other systems read from StateStore (no broker calls)
+  - Kill switch persisted to SQLite (survives process restart)
+  - All reads/writes locked (no race conditions)
+
+KEY DATA TRACKED
+----------------
+Account:
+  equity               Current MT5 account equity (USD)
+  balance              Current MT5 account balance (USD)
+  daily_pnl            Today's PnL in USD (+/-)
+  daily_dd_pct         Daily drawdown % (e.g. 0.03 = 3%)
+  total_dd_pct         Total drawdown from peak % (e.g. 0.08 = 8%)
+  daily_start_balance  Balance at start of trading day (for DD calculation)
+  peak_equity          All-time highest equity seen
+
+Trades:
+  open_trades_count    Number of live positions
+  trades_today         Total trades opened today
+  consecutive_losses   Consecutive losses (used for daily stopping rule)
+
+Risk:
+  kill_switch_active   True = no new orders
+  kill_switch_reason   Why kill switch was activated
+  news_blackout        True = news event blocking trades
+  news_event           Name of the news event (e.g. "US CPI")
+
+System:
+  mode                 Current SystemMode (DEMO, LIVE, EMERGENCY, etc.)
+
+HOW TO USE
+----------
+Reading state (any system):
+    from core.state_store import state
+
+    equity   = state.get_equity()
+    daily_dd = state.get_daily_dd_pct()
+    blocked  = state.is_kill_switch_active()
+
+Updating state (shield.py — called every second):
+    state.update_equity(mt5_equity, mt5_balance)
+
+Recording a trade fill (executor.py):
+    state.record_trade_opened(ticket=12345, trade_info={...})
+
+Recording a close (fill_manager.py):
+    state.record_trade_closed(ticket=12345, net_pnl=-45.00)
+
+Dashboard snapshot (one call per refresh):
+    snap = state.snapshot()
+    # Returns dict with all fields — no lock held during dashboard rendering
+
+KILL SWITCH BEHAVIOR
+---------------------
+Activating:
+    state.activate_kill_switch("Daily DD 4.1% reached limit 4%")
+    # Immediately sets mode = EMERGENCY
+    # Persisted to SQLite — survives restart
+    # Call this from: shield.py, kill_switch.py, compliance.py
+
+Deactivating (MANUAL ONLY):
+    state.deactivate_kill_switch()
+    # Call ONLY from: dashboard UI button, Telegram /reset command
+    # NEVER auto-deactivate from code
+
+DAILY RESET
+-----------
+Call once per hour from guardian.py:
+    was_reset = state.check_and_reset_daily(current_equity)
+
+The reset happens only when date changes (UTC).
+FTMO reset hour is 22:00 UTC — set reset_hour_utc=22 in funded_rules.yaml.
+
+DAILY DD CALCULATION (FTMO 2026)
+---------------------------------
+FTMO measures daily DD from the START-OF-DAY BALANCE.
+NOT from peak equity.  NOT from start-of-day equity.
+
+Example:
+  Start of day balance: $10,000
+  You make $200 profit → equity $10,200
+  Then lose $600 → equity $9,600
+  Daily DD = ($10,000 - $9,600) / $10,000 = 4% → near FTMO's 5% limit
+
+StateStore uses daily_start_balance as the denominator.
+Set DD_FROM_PEAK = true in risk_rules.yaml for The5ers-style DD.
+
+NEWS BLACKOUT AUTO-EXPIRY
+--------------------------
+News blackouts auto-expire after the until time passes.
+risk/news_guard.py sets the blackout 30 minutes before a news event.
+After the event, it sets active=False to clear it.
+If news_guard.py crashes, the auto-expiry in is_news_blackout() clears it.
+
+THREAD SAFETY
+-------------
+All public methods use threading.RLock.
+RLock (reentrant) means the same thread can lock multiple times (e.g.
+  _persist_kill_switch() called from within activate_kill_switch()).
+Multiple threads can safely call state methods concurrently.

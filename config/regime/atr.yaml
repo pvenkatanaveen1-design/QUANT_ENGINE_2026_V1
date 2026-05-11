@@ -1,0 +1,7 @@
+atr:
+  low_vol_percentile: 25.0
+  high_vol_percentile: 80.0
+  chaotic_vol_percentile: 95.0
+  expansion_change_pct: 0.05
+_meta:
+  source: default

@@ -1,0 +1,71 @@
+CORE ENUMS — core/enums.py
+==========================
+
+PURPOSE
+-------
+Every categorical value in the 45-system engine is defined here exactly once.
+Importing a string like "BUY" or "TREND" directly into code creates silent bugs
+that are hard to find.  Using Direction.BUY or Regime.STRONG_TREND means your
+IDE and linter catch every typo before it reaches live trading.
+
+WHAT IS DEFINED
+---------------
+Direction       — BUY or SELL.  Used on every signal and trade object.
+Regime          — Market condition from the regime detector (6 states).
+Session         — Active trading session in IST time (5 states).
+NewsImpact      — ForexFactory event severity (LOW / MEDIUM / HIGH).
+TradeStatus     — Order lifecycle (PENDING → FILLED → CLOSED or REJECTED).
+RiskDecision    — Output of the risk engine (APPROVED / BLOCKED).
+SystemMode      — Operational mode of the full engine (5 modes).
+CloseReason     — Why a position was closed (TP, SL, KILL, TIME_EXIT, etc.).
+
+HOW TO USE
+----------
+Import only what you need in each file:
+
+    from core.enums import Direction, Regime, Session
+
+    direction = Direction.BUY
+    if regime == Regime.STRONG_TREND:
+        ...
+
+Never use raw strings:
+    BAD:   if direction == "BUY":
+    GOOD:  if direction == Direction.BUY:
+
+SYSTEM MODE NOTES
+-----------------
+RESEARCH  — offline only, no broker, no Redis needed.
+BACKTEST  — running historical simulation.
+DEMO      — real broker, demo account, full system active.
+LIVE      — funded/real account, all risk limits strictly enforced.
+EMERGENCY — kill switch active, all order submission blocked permanently
+            until manual reset via dashboard or Telegram command.
+
+Never promote DEMO → LIVE automatically.  Require human confirmation.
+EMERGENCY mode is persisted to SQLite so it survives process restarts.
+
+REGIME NOTES FOR XAUUSD (2026)
+-------------------------------
+ADX > 30 alone does not confirm STRONG_TREND.  Cross-check:
+  - Price structure: Higher highs + higher lows (BULLISH) or reverse.
+  - Candle bodies: Large bodies in trend direction, small wicks.
+  - Volume (if available): Expanding volume on trend candles.
+
+NEWS_CHAOS is separate from HIGH_VOL because:
+  - During news: spreads are deliberately widened by brokers.
+    Fills are unreliable.  Even good setups lose on execution.
+  - HIGH_VOL without news can still produce genuine breakouts.
+    NEWS_CHAOS = always skip.  HIGH_VOL = evaluate carefully.
+
+SESSION NOTES (IST TIMES)
+--------------------------
+London DST (March-October):  open shifts from 12:30 to 12:00 IST.
+core/clock.py handles DST adjustment automatically.
+These enums define the session labels only — timing logic lives in clock.py.
+
+ADDING NEW ENUMS
+----------------
+1. Add the class here in enums.py.
+2. Import in the system that needs it.
+3. Never add enums inside other files — always here.

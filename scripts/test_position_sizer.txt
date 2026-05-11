@@ -1,0 +1,55 @@
+scripts/test_position_sizer.py
+================================
+
+Purpose
+-------
+Runs three **fixed scenarios** that match the Phase 5 specification. Each step:
+
+1. Prints inputs (balance, risk %, SL pips, symbol).
+2. Shows intermediate math (`pip value`, `risk amount`, denominator, raw vs rounded lot).
+3. Calls **`publish_position_size`** so **`sizing:*`** keys land in Redis.
+
+How to run
+----------
+From `QUANT_ENGINE_2026`:
+
+    python scripts/test_position_sizer.py
+
+Or:
+
+    python -m scripts.test_position_sizer
+
+Redis must be reachable (`REDIS_HOST` / `REDIS_PORT` in `.env`).
+
+Test scenarios and expected math
+-------------------------------
+
+**Example 1 — EURUSD**  
+Balance **100,000**, risk **0.5%**, SL **20** pips, pip value **$10**.
+
+- Risk amount = 100,000 × 0.005 = **500**
+- Denominator = 20 × 10 = **200**
+- Lot = 500 / 200 = **2.50** lots (2 decimals)
+
+**Example 2 — XAUUSD**  
+Balance **100,000**, risk **1%**, SL **50**, pip value **$1**.
+
+- Risk amount = **1,000**
+- Denominator = 50 × 1 = **50**
+- Lot = **20.00** lots
+
+**Example 3 — BTCUSD**  
+Balance **50,000**, risk **0.25%**, SL **100**, pip value **$1**.
+
+- Risk amount = **125**
+- Denominator = **100**
+- Lot = **1.250** lots (3 decimals for crypto)
+
+Redis after the script
+----------------------
+Because all three examples publish in order, **`sizing:last_*`** reflects **Example 3 (BTCUSD)**.
+Re-run a single scenario from a Python shell if you need Redis to hold Example 1 or 2 only.
+
+Related docs
+------------
+See `risk/position_sizer.txt` for formula details and MT5 integration notes.

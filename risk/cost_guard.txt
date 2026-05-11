@@ -1,0 +1,58 @@
+Purpose of `risk/cost_guard.py` (Phase 9 — execution cost protection)
+
+- Reads **`market:{symbol}:bid`**, **`ask`**, **`spread`** from Redis (usually written by **`core/pulse.py`**).
+- Converts the **bid/ask gap** into **pips** with symbol-specific **`pip_size`** rules.
+- Compares to **max spread (pips)** from **`core.config` / `.env`**.
+- Publishes **`cost:{symbol}:*`** so future **router/executor** can block entries when **`cost:{symbol}:block_trading`** is **true**.
+
+Why spread protection matters
+
+- **Wide spreads** mean you pay more at entry and often face worse fills / slippage — bad for scalps and for prop evaluations.
+- Around news or thin liquidity, spreads blow out; many systems pause quoting entirely.
+
+Pip conventions in this module (beginner reference)
+
+- **EURUSD / GBPUSD**: `pip_size = 0.0001` (1 pip = 1 tenth of a big figure step on a 5-digit quote).
+- **USDJPY**: `pip_size = 0.01`.
+- **XAUUSD**: `pip_size = 0.1` (USD per “pip” — tune via `.env` thresholds if your broker differs).
+- **BTCUSD**: `pip_size = 1.0` (USD).
+
+Default max spreads (pips) — override via `.env`
+
+- **Majors** (EUR/GBP): **`COST_MAX_SPREAD_PIPS_MAJOR`** = **2**
+- **JPY**: **`COST_MAX_SPREAD_PIPS_JPY`** = **2**
+- **XAU**: **`COST_MAX_SPREAD_PIPS_XAU`** = **30**
+- **BTC**: **`COST_MAX_SPREAD_PIPS_BTC`** = **500**
+
+States
+
+- **SAFE** — spread at or below limit; **`cost:{symbol}:block_trading`** = **false**
+- **WARNING** — missing bid/ask (no market snapshot); **`block_trading`** = **false** (visibility only; you can tighten this later)
+- **BLOCKED** — spread above limit; **`block_trading`** = **true**
+
+Redis keys written
+
+**Per symbol** (`EURUSD`, `GBPUSD`, `USDJPY`, `XAUUSD`, `BTCUSD`):
+
+- `cost:{symbol}:spread` — price-width (|ask−bid|) when data exists
+- `cost:{symbol}:spread_pips` — spread expressed in pips
+- `cost:{symbol}:status` — `SAFE` | `WARNING` | `BLOCKED`
+- `cost:{symbol}:block_trading` — boolean
+- `cost:{symbol}:reason` — short text
+
+**Global**
+
+- `cost:last_update` — Unix timestamp of last full publish
+
+Main functions
+
+1. **`calculate_spread_pips()`** — price → pips
+2. **`is_spread_acceptable()`** — vs config limit
+3. **`evaluate_cost_state()`** — one symbol → dict
+4. **`publish_cost_status()`** — flush dicts to Redis
+5. **`evaluate_cost_guard_once()`** — all symbols + publish
+6. **`run_cost_guard()`** — ~**5 s** loop (`python -m risk.cost_guard`)
+
+Future router integration
+
+- **Do not** import MT5 or pulse inside the executor — read **`cost:{symbol}:block_trading`** (and **`news:blackout`**, etc.) from Redis / bus only.

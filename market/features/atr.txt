@@ -1,0 +1,63 @@
+ATR feature engine — `market/features/atr.py` (Phase 16)
+=========================================================
+
+What is ATR?
+------------
+**Average True Range (ATR)** measures how wide recent bars are — a common proxy for **volatility** in price units.
+- **True range** for each bar: max of (high−low, |high−prev_close|, |low−prev_close|).
+- **ATR** smooths those ranges (here: **Wilder / Wilder-style** smoothing, period **14**).
+- Higher ATR → larger typical bar span → often **riskier** or **faster** conditions (depends on symbol and session).
+
+What we publish
+---------------
+For each supported symbol (**EURUSD**, **GBPUSD**, **USDJPY**, **XAUUSD**, **BTCUSD**) on **M5**:
+
+- ``features:{symbol}:atr`` — last ATR value (float) or null if data is missing.
+- ``features:{symbol}:volatility_state`` — **LOW**, **NORMAL**, or **HIGH** (vs `.env` thresholds).
+- ``features:{symbol}:atr_status`` — **RUNNING**, **NO_DATA**, **NO_MT5**, or **ERROR**.
+
+Global:
+
+- ``features:atr:last_update`` — Unix time of the last successful batch publish.
+
+Data
+----
+- Pulls the **last 100** M5 candles via **MetaTrader5** ``copy_rates_from_pos``.
+- Builds a **pandas** ``DataFrame``; numeric work uses **numpy** where helpful.
+
+Volatility bands (beginner note)
+-------------------------------
+Thresholds are **absolute ATR in price** — they **differ by symbol type** (a pip on EUR is tiny; XAU/BTC move in larger numbers).
+Defaults live in **``core.config``** (tune with env vars):
+
+- **EURUSD / GBPUSD:** ``ATR_VOL_LOW_MAJOR``, ``ATR_VOL_HIGH_MAJOR``
+- **USDJPY:** ``ATR_VOL_LOW_JPY``, ``ATR_VOL_HIGH_JPY``
+- **XAUUSD:** ``ATR_VOL_LOW_XAU``, ``ATR_VOL_HIGH_XAU``
+- **BTCUSD:** ``ATR_VOL_LOW_BTC``, ``ATR_VOL_HIGH_BTC``
+
+Rules:
+
+- ATR **below** the low threshold → **LOW**
+- ATR **above** the high threshold → **HIGH**
+- Otherwise → **NORMAL**
+
+If **low ≥ high** in config, validators reset to safe defaults.
+
+Future SL / TP integration
+--------------------------
+- **Stops / targets** often scale with volatility (e.g. SL distance as multiple of ATR).
+- **Regime filters** can treat **HIGH** as “widen stops or shrink size”, **LOW** as “tighter noise, mean-reversion caution”.
+- This phase **does not** send orders; it only exposes **Redis** features so routing and risk layers can subscribe later.
+
+Redis contract
+--------------
+Downstream code should read **per-symbol** keys and respect **``atr_status``**:
+
+- **RUNNING** — ATR and state are fresh for that symbol.
+- **NO_DATA** — not enough bars or symbol unavailable in MT5.
+- **NO_MT5** / **ERROR** — engine-level problem; treat features as **stale / invalid**.
+
+Run
+---
+- Stack: **`python run.py`** (``atr_engine`` thread starts after **pulse**).
+- Standalone: **`python -m market.features.atr`**

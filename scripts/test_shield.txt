@@ -1,0 +1,66 @@
+Shield demo script — scripts/test_shield.py + scripts/test_shield.txt
+===============================================================
+
+What the Python script does
+---------------------------
+1. Writes simulated **`account:balance`** and **`account:equity`** into Redis using **`core.bus.set_value`** (JSON payloads like the rest of the stack).
+
+2. Calls **`risk.shield.publish_risk_status()`** once per scenario — this is exactly **one evaluation cycle** of the shield engine (the same work **`run_shield()`** repeats every **5** seconds).
+
+3. Prints **`risk:*`** keys by reading them back with **`get_value`**, so you can confirm **`risk:daily_dd`**, **`risk:max_dd`**, **`risk:shield`**, **`risk:status`**, **`risk:block_trading`**, **`risk:last_update`**.
+
+It **does not** block forever; use **`python -m risk.shield`** for the continuous daemon.
+
+Test scenarios (designed sequence)
+---------------------------------
+Peaks are held **in memory** inside **`risk/shield.py`**. With equity moving **down** only:
+
+**Scenario 1 — SAFE**
+- Balance/equity **100,000**. First observation builds daily + session peaks at **100,000**.
+- Drawdown **0%**.
+- Expect **`risk:shield`** / **`risk:status`** = **`SAFE`**, **`risk:block_trading`** = **`false`**.
+
+**Scenario 2 — WARNING**
+- Equity drops to **97,000** (~**3%** below peak).
+- Expect **`WARNING`** (daily/max DD gates share the same peak ladder here).
+
+**Scenario 3 — BLOCKED**
+- Equity drops to **94,000** (~**6%** below peak, above **5%** daily critical).
+- Expect **`BLOCKED`**, **`risk:block_trading`** = **`true`**.
+
+Exact percentages printed under **`risk:daily_dd`** / **`risk:max_dd`** may show rounding — compare against thresholds in **`risk/shield.py`** if tuning.
+
+Expected shield states summary
+------------------------------
+| Phase          | Approx DD | risk:shield / risk:status | risk:block_trading |
+|----------------|-----------|---------------------------|---------------------|
+| After step 1   | ~0%       | SAFE                      | false               |
+| After step 2   | ~3%       | WARNING                   | false               |
+| After step 3   | ~6%       | BLOCKED                   | true                |
+
+Expected dashboard behavior (when connected)
+---------------------------------------------
+Today’s **`dashboard/dashboard_app.py`** may **not** yet render **`risk:*`** keys — once you add a “Risk / Shield” section:
+
+- Subscribe or poll **`risk:daily_dd`** and **`risk:max_dd`** as gauges or plain metrics.
+- Map **`risk:shield`** (or **`risk:status`**) to color badges:
+  - **SAFE** → green/neutral
+  - **WARNING** → yellow call-out
+  - **BLOCKED** → red alert
+- Bind **`risk:block_trading`** to execution UX (“no new orders”, banner, button disable).
+
+Until UI wiring exists, verify behaviour via **this script’s stdout** or **`redis-cli GET`** on **`risk:shield`**.
+
+How to run the demo
+---------------------
+From **`QUANT_ENGINE_2026`**:
+
+    python scripts/test_shield.py
+
+The script adjusts **`sys.path`** so **`core`** / **`risk`** import correctly even when you invoke it by path (not only **`python -m scripts.test_shield`**).
+
+Or:
+
+    python -m scripts.test_shield
+
+Prerequisite: Redis running (**`.env`** REDIS_HOST / REDIS_PORT correct).
