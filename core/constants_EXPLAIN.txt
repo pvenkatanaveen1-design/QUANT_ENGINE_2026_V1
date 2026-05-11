@@ -1,0 +1,25 @@
+MODULE: constants
+PYTHON_FILE: core/constants.py
+LAST_UPDATED_UTC: 2026-05-02 10:39:33Z
+STATUS: Implemented
+
+WHAT_THIS_FILE_DOES:
+- This module is currently a scaffold/placeholder. Replace this note with real behavior details once implementation starts.
+
+CURRENT_STRUCTURE:
+- Classes: None yet
+- Functions: None yet
+- Imports: __future__, os
+- Has __main__ guard: No
+- Approx lines: 6
+
+INPUTS_OUTPUTS:
+- Inputs: TODO (describe runtime inputs when implemented)
+- Outputs/Side effects: TODO (describe data writes, external calls, or state changes)
+
+DEPENDENCIES:
+- Internal modules: TODO
+- External services/APIs: TODO
+
+UPDATE_RULE:
+- Keep this file synchronized with the actual Python behavior after every code change.
