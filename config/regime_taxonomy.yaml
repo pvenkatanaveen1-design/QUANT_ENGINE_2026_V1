@@ -1,0 +1,686 @@
+version: '2026-05-11'
+philosophy:
+- Detect market regime first
+- Select best strategy for that regime
+- Generate signal only if regime and strategy align
+- Score with multiple confirmations
+- Check risk limits before execution
+- Execute MT5 demo until verified
+- Log everything for analysis
+quant_reference_defaults:
+  adx_strong_min: 40
+  adx_transitional_low: 25
+  adx_transitional_high: 40
+  adx_range_max: 25
+  rsi_bull_min: 55
+  rsi_bear_max: 45
+  rsi_neutral_band:
+  - 40
+  - 60
+  zscore_reversion_sigma: 2.0
+  vix_fear: 30
+  vix_complacency: 12
+  atr_squeeze_bbwidth_quantile: 0.2
+  citations:
+  - Wilder (1978) ADX
+  - Jegadeesh & Titman (1993); Moskowitz et al. (2012) momentum
+  - Daniel et al. (2012) momentum crashes
+  - Hamilton (1989) regime switching
+  - Wyckoff methodology
+  - Engle (1982); Bollerslev (1986) GARCH
+  - CFTC Commitments of Traders
+quadrant_collapse:
+  Q1:
+  - 1
+  - 2
+  - 4
+  - 11
+  - 13
+  - 17
+  - 18
+  - 22
+  - 24
+  - 36
+  - 38
+  - 47
+  Q2:
+  - 3
+  - 5
+  - 16
+  - 19
+  - 20
+  - 25
+  - 30
+  - 32
+  - 44
+  - 46
+  Q3:
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 12
+  - 27
+  - 29
+  - 33
+  - 34
+  - 37
+  - 39
+  - 40
+  - 50
+  Q4:
+  - 14
+  - 15
+  - 21
+  - 23
+  - 26
+  - 28
+  - 31
+  - 35
+  - 41
+  - 42
+  - 43
+  - 45
+  - 48
+  - 49
+  - 51
+  - 52
+top15_priority_groups:
+- label: Stop Hunt Manipulation
+  ids:
+  - 35
+- label: Bull Trend + OB
+  ids:
+  - 1
+- label: Rate Cycle Macro
+  ids:
+  - 16
+  - 17
+- label: Risk-Off Safe Haven
+  ids:
+  - 25
+- label: Wyckoff Accumulation Spring
+  ids:
+  - 10
+- label: Momentum Regime
+  ids:
+  - 4
+- label: Hidden Markov
+  ids:
+  - 45
+- label: London Kill Zone OB
+  ids:
+  - 38
+- label: Volatility Squeeze
+  ids:
+  - 9
+- label: COT Extreme
+  ids:
+  - 51
+- label: Post-News Reversal
+  ids:
+  - 31
+- label: Mean Reversion Z
+  ids:
+  - 7
+- label: DXY Intermarket
+  ids:
+  - 49
+  - 50
+- label: Absorption / Exhaustion
+  ids:
+  - 42
+  - 43
+- label: Stagflation
+  ids:
+  - 20
+regimes:
+- id: 1
+  section_key: s1_5
+  section_title: SECTION 1 — TREND REGIMES (5)
+  name: Bull Trend
+  description: ADX above 40, RSI above 55, HH/HL structure, price above 50 EMA
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    min_adx_h1: 40
+    min_rsi_m15: 55
+    structure_h1: bull
+    close_vs_ema50_h1: above
+  suggested_strategies: &id001
+  - trend_pullback
+  - ob_continuation
+  - ema_continuation
+- id: 2
+  section_key: s1_5
+  section_title: SECTION 1 — TREND REGIMES (5)
+  name: Bear Trend
+  description: ADX above 40, RSI below 45, LH/LL structure, price below 50 EMA
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    min_adx_h1: 40
+    max_rsi_m15: 45
+    structure_h1: bear
+    close_vs_ema50_h1: below
+  suggested_strategies: *id001
+- id: 3
+  section_key: s1_5
+  section_title: SECTION 1 — TREND REGIMES (5)
+  name: Weak Transitional Trend
+  description: ADX 25–40 rising, RSI crossing 50, early structure forming
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    min_adx_h1: 25
+    max_adx_h1: 40
+    rsi_cross_50: true
+    min_atr_ratio: 0.95
+  suggested_strategies: &id002
+  - momentum_breakout
+- id: 4
+  section_key: s1_5
+  section_title: SECTION 1 — TREND REGIMES (5)
+  name: Momentum Regime
+  description: Price persistence; cross-sectional momentum factor (3–12M horizon)
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Use 6–12M equity factor momentum off-line; intraday proxy: ADX>30 and 60-bar return>0'
+  suggested_strategies: *id001
+- id: 5
+  section_key: s1_5
+  section_title: SECTION 1 — TREND REGIMES (5)
+  name: Momentum Crash Regime
+  description: Momentum factor sharp reversal after crowded positioning / crisis
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    momentum_crash_proxy: true
+    min_adx_h1: 22
+    max_atr_ratio_spike: 1.6
+  suggested_strategies: *id002
+- id: 6
+  section_key: s6_9
+  section_title: SECTION 2 — MEAN REVERSION REGIMES (4)
+  name: Range Consolidation
+  description: ADX below 25, RSI 40–60, between clear S/R
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    max_adx_h1: 25
+    min_rsi_m15: 40
+    max_rsi_m15: 60
+    max_atr_ratio: 1.15
+  suggested_strategies: &id003
+  - rsi_reversal
+  - manipulation_reversal
+- id: 7
+  section_key: s6_9
+  section_title: SECTION 2 — MEAN REVERSION REGIMES (4)
+  name: Mean Reversion Regime
+  description: Price ~2σ from rolling mean; statistical reversion studies
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    zscore_abs_min: 2.0
+    lookback_m15: 20
+  suggested_strategies: *id003
+- id: 8
+  section_key: s6_9
+  section_title: SECTION 2 — MEAN REVERSION REGIMES (4)
+  name: Premium and Discount Regime
+  description: Versus 50% equilibrium of dealing range (ICT-style)
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    dealing_range_position: extreme
+    lookback_h1: 48
+  suggested_strategies: *id003
+- id: 9
+  section_key: s6_9
+  section_title: SECTION 2 — MEAN REVERSION REGIMES (4)
+  name: Low Volatility Squeeze
+  description: ATR multi-week low, Bollinger bandwidth tight; breakout pending
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    bb_width_max_pctile: 0.25
+    lookback_h1: 60
+  suggested_strategies: *id003
+- id: 10
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Accumulation
+  description: Range lows, absorption, spring risk; institutions accumulate
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: *id003
+- id: 11
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Markup
+  description: Demand control; breakout from accumulation
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: *id001
+- id: 12
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Distribution
+  description: Range highs; supply absorbed by institutions exiting
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: *id003
+- id: 13
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Markdown
+  description: Supply control post-distribution decline
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: *id001
+- id: 14
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Re-accumulation
+  description: Mid-markup pause; re-add
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: &id004
+  - manipulation_reversal
+- id: 15
+  section_key: s10_15
+  section_title: SECTION 3 — WYCKOFF REGIMES (6)
+  name: Re-distribution
+  description: Mid-markdown pause; re-add shorts
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Wyckoff full schematic needs volume/volatility context; discretionary overlay
+  suggested_strategies: *id004
+- id: 16
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Rate Hiking Cycle
+  description: Tightening cycle; USD often strong; real yields matter for gold
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id002
+- id: 17
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Rate Cutting Cycle
+  description: Easing; gold tailwind when real yields fall
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id001
+- id: 18
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Quantitative Easing
+  description: Balance sheet expansion; liquidity/risk asset bid
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id001
+- id: 19
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Quantitative Tightening
+  description: Balance sheet run-off; liquidity headwind
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id002
+- id: 20
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Stagflation
+  description: High inflation + weak growth; commodities/gold narrative
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id002
+- id: 21
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Deflationary Regime
+  description: Falling prices; bonds bid; gold mixed
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id004
+- id: 22
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Reflation Regime
+  description: Recovery from deflation; cyclicals/commodities lead
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id001
+- id: 23
+  section_key: s16_23
+  section_title: SECTION 4 — MACRO AND CENTRAL BANK REGIMES (8)
+  name: Yield Curve Inversion
+  description: Short > long yields; recession lead literature
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: 'Macro/CB regime: FRED, Fed dots, DXY, real yields — not inferable from XAU OHLC alone'
+  suggested_strategies: *id004
+- id: 24
+  section_key: s24_28
+  section_title: SECTION 5 — SENTIMENT AND RISK REGIMES (5)
+  name: Risk-On
+  description: Equities/commodities bid; USD often soft
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Add VIX, HY spreads, or equity index for risk-on/off classification
+  suggested_strategies: *id001
+- id: 25
+  section_key: s24_28
+  section_title: SECTION 5 — SENTIMENT AND RISK REGIMES (5)
+  name: Risk-Off
+  description: Safe havens; gold/JPY/quality bonds
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Add VIX, HY spreads, or equity index for risk-on/off classification
+  suggested_strategies: *id002
+- id: 26
+  section_key: s24_28
+  section_title: SECTION 5 — SENTIMENT AND RISK REGIMES (5)
+  name: Fear Regime
+  description: VIX elevated; correlation spike
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Add VIX, HY spreads, or equity index for risk-on/off classification
+  suggested_strategies: *id004
+- id: 27
+  section_key: s24_28
+  section_title: SECTION 5 — SENTIMENT AND RISK REGIMES (5)
+  name: Greed Regime
+  description: Complacency; VIX very low
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Add VIX, HY spreads, or equity index for risk-on/off classification
+  suggested_strategies: *id003
+- id: 28
+  section_key: s24_28
+  section_title: SECTION 5 — SENTIMENT AND RISK REGIMES (5)
+  name: Liquidity Crunch
+  description: Forced deleveraging; correlations → 1
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Add VIX, HY spreads, or equity index for risk-on/off classification
+  suggested_strategies: *id004
+- id: 29
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: Pre-FOMC Drift
+  description: Documented drift patterns into central bank events
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id003
+- id: 30
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: Post-News Continuation
+  description: Surprise follow-through
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id002
+- id: 31
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: Post-News Reversal
+  description: Buy rumor / sell news; mean reversion post-event
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id004
+- id: 32
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: Geopolitical Risk Regime
+  description: War/sanctions; energy/precious metals shock
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id002
+- id: 33
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: Options Expiry Regime
+  description: Pin/max pain dynamics near expiry
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id003
+- id: 34
+  section_key: s29_34
+  section_title: SECTION 6 — NEWS AND EVENT REGIMES (6)
+  name: End of Month Rebalancing
+  description: Institutional flow seasonality
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Economic calendar + event timestamps required
+  suggested_strategies: *id003
+- id: 35
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Manipulation Phase
+  description: Stop hunt / liquidity sweep before expansion (AMD)
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    manipulation_proxy: wide_spread_or_wick_sweep
+    lookback_m15: 5
+  suggested_strategies: *id004
+- id: 36
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Expansion Phase
+  description: Directional move after manipulation; volume confirmation
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    min_adx_h1: 28
+    min_atr_ratio: 1.2
+    structure_h1: any_trend
+  suggested_strategies: *id001
+- id: 37
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Asian Range Regime
+  description: Asia session establishes range for London/NY fade or break
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    session_ist: asian_range
+  suggested_strategies: *id003
+- id: 38
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Kill Zone Regime
+  description: London/NY open institutional windows
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    session_ist: kill_zone
+  suggested_strategies: *id001
+- id: 39
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Order Block Regime
+  description: Reprice to institutional OB before continuation
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    order_block_proxy: true
+  suggested_strategies: *id003
+- id: 40
+  section_key: s35_40
+  section_title: SECTION 7 — ICT AND ORDER FLOW REGIMES (6)
+  name: Imbalance FVG Regime
+  description: Fair value gap fill then continuation
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    fvg_proxy: true
+  suggested_strategies: *id003
+- id: 41
+  section_key: s41_45
+  section_title: SECTION 8 — MICROSTRUCTURE REGIMES (5)
+  name: Order Imbalance Regime
+  description: Bid/ask stack asymmetry at level
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: L2/L3 order book or tick asymmetry ideal; OHLC incomplete
+  suggested_strategies: *id004
+- id: 42
+  section_key: s41_45
+  section_title: SECTION 8 — MICROSTRUCTURE REGIMES (5)
+  name: Absorption Regime
+  description: Aggressive prints absorbed; absorption studies
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: L2/L3 order book or tick asymmetry ideal; OHLC incomplete
+  suggested_strategies: *id004
+- id: 43
+  section_key: s41_45
+  section_title: SECTION 8 — MICROSTRUCTURE REGIMES (5)
+  name: Exhaustion Regime
+  description: Trend leg with declining effort
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: L2/L3 order book or tick asymmetry ideal; OHLC incomplete
+  suggested_strategies: *id004
+- id: 44
+  section_key: s41_45
+  section_title: SECTION 8 — MICROSTRUCTURE REGIMES (5)
+  name: Stop Cascade Regime
+  description: Liquidity run then snap-back
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: L2/L3 order book or tick asymmetry ideal; OHLC incomplete
+  suggested_strategies: *id002
+- id: 45
+  section_key: s41_45
+  section_title: SECTION 8 — MICROSTRUCTURE REGIMES (5)
+  name: Hidden Markov Regime
+  description: Latent state switching (Hamilton 1989 style)
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Fit HMM off-line on returns; not implemented intraday
+  suggested_strategies: *id004
+- id: 46
+  section_key: s46_49
+  section_title: SECTION 9 — QUANTITATIVE AND STATISTICAL REGIMES (4)
+  name: Volatility Clustering
+  description: GARCH-style persistence in variance
+  practical_quadrant: Q2
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    clustering_proxy: atr_ratio_above_1_2_and_prior_high
+  suggested_strategies: *id002
+- id: 47
+  section_key: s46_49
+  section_title: SECTION 9 — QUANTITATIVE AND STATISTICAL REGIMES (4)
+  name: Carry Trade Regime
+  description: Low-vol funding environment favours carry
+  practical_quadrant: Q1
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Carry currency cross rates; FX funding
+  suggested_strategies: *id001
+- id: 48
+  section_key: s46_49
+  section_title: SECTION 9 — QUANTITATIVE AND STATISTICAL REGIMES (4)
+  name: Factor Rotation Regime
+  description: Value/momentum/quality leadership shifts
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: Multi-factor attribution off-line
+  suggested_strategies: *id004
+- id: 49
+  section_key: s46_49
+  section_title: SECTION 9 — QUANTITATIVE AND STATISTICAL REGIMES (4)
+  name: Dollar Bull Regime
+  description: DXY trending higher; gold headwind
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: DXY daily trend filter
+  suggested_strategies: *id004
+- id: 50
+  section_key: s50_52
+  section_title: SECTION 10 — INTERMARKET AND POSITIONING REGIMES (3)
+  name: Dollar Bear Regime
+  description: DXY trending lower; gold tailwind
+  practical_quadrant: Q3
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: DXY daily trend filter (inverse)
+  suggested_strategies: *id003
+- id: 51
+  section_key: s50_52
+  section_title: SECTION 10 — INTERMARKET AND POSITIONING REGIMES (3)
+  name: COT Extreme Positioning
+  description: Specs/commercials at historical percentile
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: false
+  match_rules:
+    note: CFTC COT weekly
+  suggested_strategies: *id004
+- id: 52
+  section_key: s50_52
+  section_title: SECTION 10 — INTERMARKET AND POSITIONING REGIMES (3)
+  name: Intermarket Divergence
+  description: Correlated assets decouple; stress signal
+  practical_quadrant: Q4
+  detectable_from_mt5_ohlc: true
+  match_rules:
+    correlation_break_proxy: true
+    lookback_h1: 20
+  suggested_strategies: *id004

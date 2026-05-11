@@ -1,21 +1,29 @@
 """
-core/__init__.py — Makes `core` a Python package and exports the three singletons.
+core package — lazy exports only.
 
-Usage anywhere in the engine:
-    from core import bus, state, config
-
-    bus.publish(EventType.KILL_SWITCH, {"reason": "DD"}, source="shield")
-    equity = state.get_equity()
-    limits = config.load("risk_rules")
+Importing submodules like ``core.data_feed`` or ``core.regime_detector`` must **not**
+pull in the event bus or state store. Legacy code may still use
+``from core import bus`` / ``state`` / ``config``; those names load on first access.
 """
 
-# The in-process event bus for system decoupling
-from core.event_bus   import bus
+from __future__ import annotations
 
-# The live account state store (equity, DD, kill switch, open trades)
-from core.state_store import state
-
-# The YAML + .env config loader
-import core.config_manager as config
+from typing import Any
 
 __all__ = ["bus", "state", "config"]
+
+
+def __getattr__(name: str) -> Any:
+    if name == "bus":
+        from core.event_bus import bus as _bus
+
+        return _bus
+    if name == "state":
+        from core.state_store import state as _state
+
+        return _state
+    if name == "config":
+        import core.config_manager as _config
+
+        return _config
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

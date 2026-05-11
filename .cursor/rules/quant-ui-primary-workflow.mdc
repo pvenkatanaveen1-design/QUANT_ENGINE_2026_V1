@@ -1,0 +1,23 @@
+---
+description: Primary operator workflow is the Streamlit dashboard (UI-first)
+alwaysApply: true
+---
+
+# UI-primary workflow (QUANT_ENGINE_2026)
+
+## Strict rule
+
+- **Normal operation:** anything an operator can do (config edits, kill switch, MT5 checks, regime walk-forward backtest, viewing logs/state) **must be available and performed through** `dashboard_app.py` (Streamlit).
+- **Terminal exceptions (only these):**
+  - One-time session start: `streamlit run dashboard_app.py`
+  - If the user explicitly runs the trading loop on a VPS without Streamlit: `python main.py` (headless engine only)
+
+## Do not
+
+- Ask the operator to run one-off scripts (`python run_regime_backtest.py`, ad-hoc Python) when the same capability exists or should exist in the dashboard.
+- Add new operator-facing features **only** as CLI entry points without a matching Streamlit control.
+
+## Implementation
+
+- Prefer extending **root** `QUANT_ENGINE_2026/dashboard_app.py` for operator actions.
+- Keep `core/__init__.py` **lazy** so importing `core.data_feed` from the dashboard does not start Redis/EventBus unless explicitly requested.

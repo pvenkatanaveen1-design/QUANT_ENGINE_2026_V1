@@ -1,25 +1,36 @@
-# config/regimes.yaml
-# Thresholds used by regime/detector.py.
-# These are conservative values based on XAUUSD H1 backtesting.
-
-# ─── ADX THRESHOLDS ─────────────────────────────────────────────────────────
-adx_strong_trend: 30    # ADX > 30 = STRONG_TREND
-adx_weak_trend: 25      # ADX 25-30 = WEAK_TREND
-adx_range: 20           # ADX < 20 = RANGE
-adx_period: 14          # Standard Wilder ADX period
-
-# ─── ATR THRESHOLDS ──────────────────────────────────────────────────────────
-atr_period: 14              # Standard ATR period
-atr_lookback: 20            # Bars for ATR percentile calculation
-atr_high_vol_percentile: 80 # ATR percentile > 80 = HIGH_VOL regime
-
-# ─── EMA TREND DIRECTION ─────────────────────────────────────────────────────
-ema_fast_period: 20
-ema_slow_period: 50
-# BULLISH: price > ema_fast > ema_slow
-# BEARISH: price < ema_fast < ema_slow
-# NEUTRAL: anything else
-
-# ─── REGIME CONFIDENCE ───────────────────────────────────────────────────────
-min_bars_in_regime: 3   # Require 3+ bars in same regime before trading
-min_confidence: 0.70    # Minimum confidence to allow trading
+regimes:
+  Q1_trend_low_vol:
+    adx_min: 30
+    atr_ratio_max: 1.3
+    rsi_min: 48
+    rsi_max: 72
+    min_duration_candles: 3
+    description: Trend with normal volatility. Best regime to trade.
+  Q2_trend_high_vol:
+    adx_min: 38
+    atr_ratio_min: 1.3
+    min_duration_candles: 2
+    description: Trend with high volatility. Trade with reduced size.
+  Q3_range_low_vol:
+    adx_max: 22
+    atr_ratio_max: 1.1
+    rsi_min: 35
+    rsi_max: 65
+    min_duration_candles: 4
+    description: Range market. Mean reversion only.
+  Q4_transition:
+    description: Market changing state. Minimal trading only.
+thresholds:
+  adx_trend_min: 30
+  adx_range_max: 22
+  atr_high_threshold: 1.3
+  rsi_trend_min: 48
+  min_confidence_to_trade: 60
+  min_regime_duration: 3
+sessions:
+  london_kill_zone_start_ist: 02:00
+  london_kill_zone_end_ist: 05:00
+  ny_kill_zone_start_ist: '12:00'
+  ny_kill_zone_end_ist: '14:00'
+  asian_dead_start_ist: '22:00'
+  asian_dead_end_ist: 01:30

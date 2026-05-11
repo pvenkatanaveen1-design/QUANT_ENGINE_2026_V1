@@ -1214,3 +1214,15 @@
 {"ts": "2026-05-11T09:48:28.898Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: 69314c51-8cb8-4a5d-ae80-2165f4cc0d0f | net_pnl=+145.00 reason=TAKE_PROFIT"}
 {"ts": "2026-05-11T09:48:28.960Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: 332cfb05-487d-4236-935e-fa81d49c0c3e | XAUUSD BUY"}
 {"ts": "2026-05-11T09:48:28.962Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: 332cfb05-487d-4236-935e-fa81d49c0c3e | net_pnl=+95.00 reason=TAKE_PROFIT"}
+{"ts": "2026-05-11T10:46:32.508Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: 5b8e6a93-f230-4cfe-bce2-e89111808261 | XAUUSD BUY"}
+{"ts": "2026-05-11T10:46:32.561Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: bad4a46e-8f47-4c2d-8677-adcb1ff1b32a | XAUUSD BUY"}
+{"ts": "2026-05-11T10:46:32.607Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: 41107d84-2d45-4511-8380-ef51dc87a05e | XAUUSD BUY"}
+{"ts": "2026-05-11T10:46:32.607Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: 41107d84-2d45-4511-8380-ef51dc87a05e | net_pnl=+145.00 reason=TAKE_PROFIT"}
+{"ts": "2026-05-11T10:46:32.654Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: 0e4cc086-b6b1-49bc-abe6-65792b963c2d | XAUUSD BUY"}
+{"ts": "2026-05-11T10:46:32.654Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: 0e4cc086-b6b1-49bc-abe6-65792b963c2d | net_pnl=+95.00 reason=TAKE_PROFIT"}
+{"ts": "2026-05-11T10:52:05.582Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: 22820a7b-05cb-49a1-b58a-ffec4f3eb04f | XAUUSD BUY"}
+{"ts": "2026-05-11T10:52:05.635Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: bec848c9-900d-4ebb-9250-d56488b6b713 | XAUUSD BUY"}
+{"ts": "2026-05-11T10:52:05.683Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: e727c5d8-427b-479b-b62b-46feda86640b | XAUUSD BUY"}
+{"ts": "2026-05-11T10:52:05.683Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: e727c5d8-427b-479b-b62b-46feda86640b | net_pnl=+145.00 reason=TAKE_PROFIT"}
+{"ts": "2026-05-11T10:52:05.734Z", "lvl": "DEBUG", "cat": "trading", "component": "trade_repository", "msg": "Trade inserted: af2228e2-1b3e-4552-afce-7a5cd62c2c30 | XAUUSD BUY"}
+{"ts": "2026-05-11T10:52:05.735Z", "lvl": "INFO", "cat": "trading", "component": "trade_repository", "msg": "Trade closed: af2228e2-1b3e-4552-afce-7a5cd62c2c30 | net_pnl=+95.00 reason=TAKE_PROFIT"}

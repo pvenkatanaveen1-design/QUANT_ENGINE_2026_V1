@@ -118,7 +118,7 @@ stderr_logfile=/var/log/quanta_guardian.err
 stdout_logfile=/var/log/quanta_guardian.out
 
 [program:quanta_brain]
-command=/home/quanta/.../python brain.py
+command=/home/quanta/.../python simple_main.py
 ... (similar)
 
 [program:quanta_dashboard]

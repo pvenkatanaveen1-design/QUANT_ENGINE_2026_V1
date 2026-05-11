@@ -1,28 +1,65 @@
-# config/strategies.yaml
-# Which strategies are enabled and their individual parameters.
+# Strategy definitions for core/strategy_map.py and core/signal_engine.py
 
-active_strategies:
-  - alpha_breakout
+strategies:
+  trend_pullback:
+    enabled: true
+    regimes: [Q1]
+    description: "Buy pullback to EMA in uptrend, sell rally to EMA in downtrend"
+    entry_rsi_min: 42
+    entry_rsi_max: 55
+    ema_period: 21
+    require_ema_alignment: true
+    rrr_min: 2.0
+    rrr_target: 3.0
 
-# Set enabled: false to disable a strategy without removing code
-alpha_breakout:
-  enabled: true
-  timeframe: "H1"
-  min_score: 65
-  sl_atr_multiplier: 1.5
-  rr_minimum: 2.0
-  max_trades_per_day: 2
+  ob_continuation:
+    enabled: true
+    regimes: [Q1, Q2]
+    description: "Enter at Order Block retest in trend direction"
+    ob_lookback_candles: 20
+    require_fvg: false
+    require_volume_confirmation: true
+    rrr_min: 2.5
+    rrr_target: 3.0
 
-alpha_sweep:
-  enabled: false      # Enable after alpha_breakout is proven
-  timeframe: "H1"
-  min_score: 70
-  sl_atr_multiplier: 1.2
-  rr_minimum: 2.5
+  manipulation_reversal:
+    enabled: true
+    regimes: [Q4, Q3]
+    description: "Enter after stop hunt sweep confirmed"
+    sweep_min_pips: 3
+    sweep_max_pips: 20
+    require_wick_close_back: true
+    require_volume_spike: true
+    confirm_candles: 1
+    rrr_min: 2.0
+    rrr_target: 3.0
 
-alpha_pullback:
-  enabled: false
-  timeframe: "H1"
-  min_score: 65
-  sl_atr_multiplier: 1.5
-  rr_minimum: 2.0
+  rsi_reversal:
+    enabled: true
+    regimes: [Q3]
+    description: "RSI reversal at range boundaries"
+    rsi_buy_level: 38
+    rsi_sell_level: 62
+    require_sr_level: true
+    rrr_min: 1.8
+    rrr_target: 2.5
+
+  momentum_breakout:
+    enabled: true
+    regimes: [Q2]
+    description: "Breakout with volume in high volatility trend"
+    volume_multiplier: 1.8
+    require_structure_break: true
+    size_multiplier: 0.5
+    rrr_min: 2.0
+    rrr_target: 3.0
+
+  ema_continuation:
+    enabled: true
+    regimes: [Q1]
+    description: "Price returns to EMA during trend continuation"
+    ema_period: 21
+    rsi_min: 45
+    rsi_max: 58
+    rrr_min: 2.0
+    rrr_target: 3.0

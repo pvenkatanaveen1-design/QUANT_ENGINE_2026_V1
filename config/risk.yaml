@@ -1,0 +1,25 @@
+risk:
+  base_risk_pct: 0.005
+  max_daily_loss_pct: 0.03
+  max_weekly_loss_pct: 0.05
+  max_trades_per_day: 3
+  max_open_trades: 2
+  consecutive_loss_stop: 3
+  news_blackout_minutes: 30
+  min_signal_score: 6
+  max_spread_pips: 2.5
+
+regime_size_multipliers:
+  Q1: 1.0
+  Q2: 0.5
+  Q3: 0.75
+  Q4: 0.25
+  SKIP: 0.0
+
+funded_account:
+  enabled: false
+  firm: FTMO
+  max_daily_loss_pct: 0.05
+  max_total_drawdown_pct: 0.10
+  profit_target_pct: 0.10
+  safety_buffer: 0.02

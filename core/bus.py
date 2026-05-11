@@ -1,92 +1,133 @@
 """Foundation Redis bus: pub/sub + key-value helpers."""
 
-# We import json so dictionaries/lists can be converted to strings for Redis.
-import json
+from __future__ import annotations
 
-# We import redis for Redis pub/sub and key-value operations.
+import json
+import os
+import time
+from typing import Any, Iterator, Optional, Tuple, Union
+
 import redis
 
-# We import load_config so Redis host/port come from centralized config.
 from core.config import load_config
-# We import get_logger so every bus action is logged consistently.
 from core.logger import get_logger
 
-# We create one shared logger for this module.
 log = get_logger()
 
-# We keep a cached Redis client so repeated calls are fast and simple.
-_redis_client = None
+_shared_bus: Union["RedisBus", "LocalBus", None] = None
 
 
-# This helper creates and validates Redis connection safely.
-def _get_redis_client():
-    # We mark this variable global so we can reuse one client instance.
-    global _redis_client
+class RedisBus:
+    """Redis-backed pub/sub and string key-value operations."""
 
-    # We return existing client if it was already created successfully.
-    if _redis_client is not None:
-        return _redis_client
+    def __init__(self) -> None:
+        config = load_config()
+        host = config.get("REDIS_HOST", "localhost")
+        port = int(config.get("REDIS_PORT", 6379))
+        self._client = redis.Redis(host=host, port=port, decode_responses=True)
+        self._client.ping()
+        log.info(f"Redis connected successfully at {host}:{port}")
 
-    # We load configuration values from core.config.
-    config = load_config()
-    # We read host from config and default to localhost for safety.
-    host = config.get("REDIS_HOST", "localhost")
-    # We read port from config and default to 6379 as required.
-    port = int(config.get("REDIS_PORT", 6379))
+    def iter_pattern_messages(self, pattern: str) -> Iterator[Tuple[str, str]]:
+        pubsub = self._client.pubsub()
+        pubsub.psubscribe(pattern)
+        try:
+            for msg in pubsub.listen():
+                if msg["type"] == "pmessage":
+                    yield msg["channel"], msg["data"]
+        finally:
+            try:
+                pubsub.punsubscribe(pattern)
+                pubsub.close()
+            except redis.RedisError:
+                pass
+
+    def publish_json(self, channel: str, data_dict: Any) -> int:
+        payload = json.dumps(data_dict)
+        return int(self._client.publish(channel, payload))
+
+    def set_str(self, key: str, value: str, ex: Optional[int] = None) -> bool:
+        return bool(self._client.set(key, value, ex=ex))
+
+    def get_str(self, key: str) -> Optional[str]:
+        return self._client.get(key)
+
+    def scan_count_pattern(self, pattern: str) -> int:
+        cursor = 0
+        total = 0
+        while True:
+            cursor, keys = self._client.scan(cursor=cursor, match=pattern, count=256)
+            total += len(keys)
+            if cursor == 0:
+                break
+        return total
+
+    def heartbeat(self, name: str) -> None:
+        self.set_str(f"heartbeat:{name}", str(time.time()))
+
+    def rpush(self, key: str, *values: str) -> int:
+        if not values:
+            return int(self._client.llen(key))
+        return int(self._client.rpush(key, *[str(v) for v in values]))
+
+    def ltrim(self, key: str, start: int, end: int) -> bool:
+        self._client.ltrim(key, start, end)
+        return True
+
+    @classmethod
+    def from_env(cls):
+        return get_shared_bus()
+
+
+def get_shared_bus():
+    """Return the process-wide bus (Redis or :class:`core.local_bus.LocalBus`)."""
+    global _shared_bus
+    if _shared_bus is not None:
+        return _shared_bus
+
+    from core.local_bus import LocalBus
+
+    if os.environ.get("BUS_TYPE", "").strip().lower() == "local":
+        log.info("BUS_TYPE=local: using in-process LocalBus")
+        _shared_bus = LocalBus()
+        return _shared_bus
 
     try:
-        # We create the Redis client with decode_responses for plain strings.
-        client = redis.Redis(host=host, port=port, decode_responses=True)
-        # We ping Redis once to fail fast if server is not reachable.
-        client.ping()
-        # We cache the connected client for later calls.
-        _redis_client = client
-        # We log successful Redis connection details.
-        log.info(f"Redis connected successfully at {host}:{port}")
-        # We return the connected client.
-        return _redis_client
-    except redis.RedisError as error:
-        # We log connection error with context for debugging.
-        log.error(f"Redis connection failed at {host}:{port} | error={error}")
-        # We raise a runtime error so calling code can handle the failure clearly.
-        raise RuntimeError("Redis connection failed. Ensure Redis is running.") from error
+        _shared_bus = RedisBus()
+        return _shared_bus
+    except (ConnectionRefusedError, redis.ConnectionError) as error:
+        log.warning(
+            "Redis unavailable (%s); falling back to in-process LocalBus. "
+            "Start Redis or set BUS_TYPE=local to avoid this.",
+            error,
+        )
+        _shared_bus = LocalBus()
+        return _shared_bus
 
 
 # This function publishes JSON data to a Redis pub/sub channel.
 def publish(channel, data):
-    # We get a safe connected Redis client.
-    client = _get_redis_client()
-    # We serialize input data to JSON string before publishing.
+    bus = get_shared_bus()
     payload = json.dumps(data)
-    # We publish JSON payload to provided channel.
-    receivers = client.publish(channel, payload)
-    # We log channel name and number of subscribers that received the message.
+    receivers = bus.publish_json(channel, data)
     log.info(f"publish | channel={channel} | subscribers={receivers} | payload={payload}")
-    # We return number of subscribers for basic validation.
     return receivers
 
 
 # This function stores a value in Redis key-value storage using JSON serialization.
 def set_value(key, value, *, silent: bool = False):
-    # We get a safe connected Redis client.
-    client = _get_redis_client()
-    # We convert Python value into JSON string before saving.
+    bus = get_shared_bus()
     payload = json.dumps(value)
-    # We write the JSON payload at the given Redis key.
-    result = client.set(key, payload)
-    # Heartbeats and dashboards should pass silent=True to avoid log storms.
+    result = bus.set_str(key, payload)
     if not silent:
         log.info(f"set_value | key={key} | success={result} | payload={payload}")
-    # We return Redis set result (True on success).
     return result
 
 
 # This function fetches a key and deserializes JSON back into Python data.
 def get_value(key, *, silent: bool = False):
-    # We get a safe connected Redis client.
-    client = _get_redis_client()
-    # We read raw value from Redis for the given key.
-    raw_value = client.get(key)
+    bus = get_shared_bus()
+    raw_value = bus.get_str(key)
 
     # We return None when key is missing to keep behavior explicit.
     if raw_value is None:

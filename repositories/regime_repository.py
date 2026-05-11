@@ -50,6 +50,15 @@ class RegimeRepository:
                 # Column may already exist or DB may be read-only in dashboard process.
                 continue
 
+    def _duckdb_columns(self) -> set[str]:
+        """Best-effort table column discovery (works in RW/RO dashboard modes)."""
+        try:
+            rows = self._storage.execute_duckdb("PRAGMA table_info('regime_history')")
+            # DuckDB pragma columns: cid, name, type, notnull, dflt_value, pk
+            return {str(r[1]) for r in rows}
+        except Exception:
+            return set()
+
     def insert(self, regime: RegimeState) -> None:
         """
         Persist one regime classification to DuckDB.
@@ -95,21 +104,40 @@ class RegimeRepository:
         Return last N regime records for a symbol.
         Used by dashboard Regime Monitor page to draw regime timeline.
         """
-        rows = self._storage.execute_duckdb(
-            """SELECT symbol, timeframe, time, regime, adx, atr, atr_percentile, confidence, session, bars_in_regime,
-                      COALESCE(regime_label, regime) as regime_label,
-                      probabilities_json, transition_state, structure_label, rsi, volume_signal,
-                      candles_used, lookback_years
-               FROM regime_history
-               WHERE symbol = ? AND timeframe = ?
-               ORDER BY time DESC LIMIT ?""",
-            (symbol, timeframe, limit),
-        )
+        cols_available = self._duckdb_columns()
+        has_ext = "regime_label" in cols_available
+        if has_ext:
+            rows = self._storage.execute_duckdb(
+                """SELECT symbol, timeframe, time, regime, adx, atr, atr_percentile, confidence, session, bars_in_regime,
+                          regime_label AS resolved_regime_label,
+                          probabilities_json, transition_state, structure_label, rsi, volume_signal,
+                          candles_used, lookback_years
+                   FROM regime_history
+                   WHERE symbol = ? AND timeframe = ?
+                   ORDER BY time DESC LIMIT ?""",
+                (symbol, timeframe, limit),
+            )
+        else:
+            rows = self._storage.execute_duckdb(
+                """SELECT symbol, timeframe, time, regime, adx, atr, atr_percentile, confidence, session, bars_in_regime,
+                          regime AS resolved_regime_label,
+                          NULL AS probabilities_json, NULL AS transition_state, NULL AS structure_label,
+                          NULL AS rsi, NULL AS volume_signal, NULL AS candles_used, NULL AS lookback_years
+                   FROM regime_history
+                   WHERE symbol = ? AND timeframe = ?
+                   ORDER BY time DESC LIMIT ?""",
+                (symbol, timeframe, limit),
+            )
         cols = ["symbol", "timeframe", "time", "regime", "adx", "atr",
                 "atr_percentile", "confidence", "session", "bars_in_regime",
-                "regime_label", "probabilities_json", "transition_state", "structure_label",
+                "resolved_regime_label", "probabilities_json", "transition_state", "structure_label",
                 "rsi", "volume_signal", "candles_used", "lookback_years"]
-        return [dict(zip(cols, r)) for r in rows]
+        out: list[dict] = []
+        for r in rows:
+            item = dict(zip(cols, r))
+            item["regime_label"] = item.pop("resolved_regime_label", None) or item.get("regime")
+            out.append(item)
+        return out
 
     def get_latest(self, symbol: str, timeframe: str = "H1") -> Optional[dict]:
         """Return the most recent regime for a symbol."""
@@ -130,22 +158,34 @@ class RegimeRepository:
         Return count of each regime type over N days.
         Used by dashboard analytics to show how often each regime occurs.
         """
+        cols_available = self._duckdb_columns()
+        label_expr = (
+            "CASE WHEN regime_label IS NULL OR regime_label = '' THEN regime ELSE regime_label END"
+            if "regime_label" in cols_available
+            else "regime"
+        )
         rows = self._storage.execute_duckdb(
-            """SELECT COALESCE(regime_label, regime) as label, COUNT(*) as cnt
-               FROM regime_history
-               WHERE symbol = ? AND time >= CURRENT_TIMESTAMP - INTERVAL ? DAY
-               GROUP BY label ORDER BY cnt DESC""",
+            f"""SELECT {label_expr} as label, COUNT(*) as cnt
+                FROM regime_history
+                WHERE symbol = ? AND time >= CURRENT_TIMESTAMP - INTERVAL ? DAY
+                GROUP BY 1 ORDER BY cnt DESC""",
             (symbol, days),
         )
         return {r[0]: r[1] for r in rows} if rows else {}
 
     def get_regime_distribution_by_years(self, symbol: str, timeframe: str, years: float) -> dict:
         days = max(7, int(years * 365))
+        cols_available = self._duckdb_columns()
+        label_expr = (
+            "CASE WHEN regime_label IS NULL OR regime_label = '' THEN regime ELSE regime_label END"
+            if "regime_label" in cols_available
+            else "regime"
+        )
         rows = self._storage.execute_duckdb(
-            """SELECT COALESCE(regime_label, regime) as label, COUNT(*) as cnt
-               FROM regime_history
-               WHERE symbol = ? AND timeframe = ? AND time >= CURRENT_TIMESTAMP - INTERVAL ? DAY
-               GROUP BY label ORDER BY cnt DESC""",
+            f"""SELECT {label_expr} as label, COUNT(*) as cnt
+                FROM regime_history
+                WHERE symbol = ? AND timeframe = ? AND time >= CURRENT_TIMESTAMP - INTERVAL ? DAY
+                GROUP BY 1 ORDER BY cnt DESC""",
             (symbol, timeframe, days),
         )
         return {r[0]: int(r[1]) for r in rows} if rows else {}
